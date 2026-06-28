@@ -43,8 +43,25 @@ Exit criteria:
 - prototype repository status is documented
 - prototype repositories remain public unless a later accepted decision changes their status
 
+## Genesis-0.0.3: AICS Draft
+
+Scope:
+
+- draft AICS v0.1
+- define validation rules
+- add an example AICS context tree
+- plan CLI validation path
+
+Exit criteria:
+
+- AICS v0.1 spec exists
+- validation rules are documented
+- example context tree exists
+- CLI path decision exists
+
 ## Revision History
 
+- 2026-06-28: Added Genesis-0.0.3 AICS milestone.
 - 2026-06-28: Added prototype repository disposition.
 - 2026-06-28: Expanded Genesis-0.0.2 exit criteria.
 - 2026-06-28: Initial draft.

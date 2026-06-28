@@ -46,5 +46,6 @@ Deliverables:
 
 ## Revision History
 
+- 2026-06-28: Added AICS v0.1 draft.
 - 2026-06-28: Added gateway reconciliation requirements and ADR deliverables.
 - 2026-06-28: Initial roadmap draft.

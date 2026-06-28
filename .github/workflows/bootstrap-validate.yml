@@ -23,6 +23,7 @@ jobs:
           test -f .agentforge/adrs/0001-modular-monorepo.md
           test -f .agentforge/adrs/0002-gateway-module-placement.md
           test -f .agentforge/requirements/gateway-reconciliation.md
+          test -f .agentforge/specs/aics-v0.1.md
           test -f .agentforge/agents/AGENTS.md
           test -f .agentforge/agents/CODEX.md
           test -f apps/gateway/README.md

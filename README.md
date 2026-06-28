@@ -19,6 +19,8 @@ The `.agentforge/` directory is the institutional memory of the project. It cont
 
 Every human contributor and AI assistant should treat `.agentforge/` as the first source of truth.
 
+The draft AgentForge AI Context Specification is available at `.agentforge/specs/aics-v0.1.md`.
+
 ## Initial Layout
 
 - `.agentforge/`: project governance, memory, standards, and AI context

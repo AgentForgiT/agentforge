@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added draft AICS v0.1 specification.
 - Migrated the gateway MVP into `apps/gateway`.
 - Added gateway tests, examples, docs, and CI validation.
 - Documented disposition for pre-governance prototype repositories.
