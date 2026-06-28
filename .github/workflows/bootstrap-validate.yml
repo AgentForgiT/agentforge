@@ -1,0 +1,27 @@
+name: Bootstrap Validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check required bootstrap files
+        shell: bash
+        run: |
+          test -f README.md
+          test -f CONTRIBUTING.md
+          test -f SECURITY.md
+          test -f ROADMAP.md
+          test -f CHANGELOG.md
+          test -f .agentforge/constitution.md
+          test -f .agentforge/charter.md
+          test -f .agentforge/decisions.md
+          test -f .agentforge/adrs/0001-modular-monorepo.md
+          test -f .agentforge/agents/AGENTS.md
+          test -f .agentforge/agents/CODEX.md
+      - name: Run bootstrap validator
+        run: python scripts/validate_bootstrap.py

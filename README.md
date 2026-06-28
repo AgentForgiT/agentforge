@@ -34,6 +34,12 @@ Every human contributor and AI assistant should treat `.agentforge/` as the firs
 
 Genesis Sprint 1 creates the AgentForge Bootstrap Kit: a production-quality AI-native project skeleton that can be opened by Codex, Claude Code, Kiro, Gemini CLI, OpenCode, GitHub Copilot, and future AI coding assistants while preserving one shared architectural truth.
 
+Run local validation:
+
+```bash
+python scripts/validate_bootstrap.py
+```
+
 ## Governance
 
 Authority flows in this order:
