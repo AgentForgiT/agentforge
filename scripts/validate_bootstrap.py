@@ -17,6 +17,7 @@ REQUIRED_FILES = (
     ".agentforge/repo-map.md",
     ".agentforge/adrs/0001-modular-monorepo.md",
     ".agentforge/adrs/0002-gateway-module-placement.md",
+    ".agentforge/decisions/0002-prototype-repository-disposition.md",
     ".agentforge/requirements/gateway-reconciliation.md",
     ".agentforge/rfcs/RFC_TEMPLATE.md",
     ".agentforge/adrs/ADR_TEMPLATE.md",

@@ -41,8 +41,10 @@ Exit criteria:
 - gateway MVP is migrated into `apps/gateway`
 - gateway tests run in CI
 - prototype repository status is documented
+- prototype repositories remain public unless a later accepted decision changes their status
 
 ## Revision History
 
+- 2026-06-28: Added prototype repository disposition.
 - 2026-06-28: Expanded Genesis-0.0.2 exit criteria.
 - 2026-06-28: Initial draft.
