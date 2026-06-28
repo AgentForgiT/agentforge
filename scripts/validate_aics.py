@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from pathlib import Path
+import sys
 
 from aics_validation import validate_aics
 
 
 def main() -> int:
-    root = Path(__file__).resolve().parents[1]
+    root = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else Path(__file__).resolve().parents[1]
     result = validate_aics(root)
     if not result.ok:
         for error in result.errors:

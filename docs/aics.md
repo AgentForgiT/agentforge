@@ -29,6 +29,7 @@ Run validation:
 
 ```bash
 python scripts/validate_aics.py
+python scripts/validate_aics.py examples/aics/minimal-project
 ```
 
 ## Current Adoption Level

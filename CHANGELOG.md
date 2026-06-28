@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added a minimal AICS example project context tree.
 - Added AICS v0.1 validation rules and local validator.
 - Added draft AICS v0.1 specification.
 - Migrated the gateway MVP into `apps/gateway`.

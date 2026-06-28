@@ -34,5 +34,7 @@ jobs:
         run: python scripts/validate_bootstrap.py
       - name: Run AICS validator
         run: python scripts/validate_aics.py
+      - name: Run AICS example validator
+        run: python scripts/validate_aics.py examples/aics/minimal-project
       - name: Run gateway tests
         run: python -m unittest discover -s apps/gateway/tests
