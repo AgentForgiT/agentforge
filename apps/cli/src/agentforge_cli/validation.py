@@ -5,7 +5,7 @@ import sys
 
 
 def validate_context(root: Path):
-    scripts_dir = _repo_root() / "scripts"
+    scripts_dir = find_repo_root(root) / "scripts"
     scripts_dir_text = str(scripts_dir)
     if scripts_dir_text not in sys.path:
         sys.path.insert(0, scripts_dir_text)
@@ -15,5 +15,17 @@ def validate_context(root: Path):
     return validate_aics(root)
 
 
-def _repo_root() -> Path:
-    return Path(__file__).resolve().parents[4]
+def find_repo_root(start: Path) -> Path:
+    for candidate in (start, *start.parents):
+        if _is_repo_root(candidate):
+            return candidate
+
+    package_repo_root = Path(__file__).resolve().parents[4]
+    if _is_repo_root(package_repo_root):
+        return package_repo_root
+
+    raise RuntimeError("could not locate AgentForge repository root for AICS validation")
+
+
+def _is_repo_root(path: Path) -> bool:
+    return (path / "scripts" / "aics_validation.py").is_file()

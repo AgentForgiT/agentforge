@@ -30,6 +30,7 @@ REQUIRED_FILES = (
     ".agentforge/agents/AGENTS.md",
     ".agentforge/agents/CODEX.md",
     "apps/cli/README.md",
+    "apps/cli/pyproject.toml",
     "apps/cli/bin/agentforge.py",
     "apps/cli/src/agentforge_cli/cli.py",
     "apps/cli/tests/test_cli.py",

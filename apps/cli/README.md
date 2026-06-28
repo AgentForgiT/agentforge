@@ -5,9 +5,9 @@ Canonical command-line interface for AgentForge.
 ## Status
 
 - Module: `apps/cli`
-- Status: Genesis MVP
-- Related requirements: `.agentforge/requirements/canonical-cli-mvp.md`
-- Related ADR: `.agentforge/adrs/0003-cli-module-architecture.md`
+- Status: Genesis installable MVP
+- Related requirements: `.agentforge/requirements/canonical-cli-mvp.md`, `.agentforge/requirements/installable-cli.md`
+- Related ADRs: `.agentforge/adrs/0003-cli-module-architecture.md`, `.agentforge/adrs/0004-cli-packaging-and-distribution.md`
 
 ## Run Locally
 
@@ -23,6 +23,15 @@ Source-tree wrapper:
 python apps/cli/bin/agentforge.py validate-context
 ```
 
+Editable install:
+
+```bash
+python -m pip install -e apps/cli
+agentforge validate-context
+```
+
+This Genesis workflow assumes a standard Python environment with local packaging tools available. Public registry publishing remains deferred.
+
 Windows PowerShell:
 
 ```powershell
@@ -36,6 +45,13 @@ Windows PowerShell wrapper:
 python apps\cli\bin\agentforge.py validate-context
 ```
 
+Windows PowerShell editable install:
+
+```powershell
+python -m pip install -e apps/cli
+agentforge validate-context
+```
+
 Validate an explicit project path:
 
 ```bash
@@ -46,6 +62,12 @@ Source-tree wrapper:
 
 ```bash
 python apps/cli/bin/agentforge.py validate-context examples/aics/minimal-project
+```
+
+Installed command:
+
+```bash
+agentforge validate-context examples/aics/minimal-project
 ```
 
 ## Output and Exit Codes
