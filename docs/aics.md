@@ -32,6 +32,8 @@ python scripts/validate_aics.py
 python scripts/validate_aics.py examples/aics/minimal-project
 ```
 
+The future user-facing CLI path is documented in `.agentforge/decisions/0003-cli-path-for-aics-validation.md`.
+
 ## Current Adoption Level
 
 The AgentForge monorepo targets AICS Level 3:
@@ -42,5 +44,6 @@ The AgentForge monorepo targets AICS Level 3:
 
 ## Revision History
 
+- 2026-06-28: Added CLI path decision reference.
 - 2026-06-28: Added validation rules reference.
 - 2026-06-28: Initial public AICS documentation page.

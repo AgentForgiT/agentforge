@@ -61,6 +61,7 @@ Exit criteria:
 
 ## Revision History
 
+- 2026-06-28: Added CLI path decision for AICS validation.
 - 2026-06-28: Added Genesis-0.0.3 AICS milestone.
 - 2026-06-28: Added prototype repository disposition.
 - 2026-06-28: Expanded Genesis-0.0.2 exit criteria.

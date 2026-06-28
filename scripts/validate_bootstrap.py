@@ -20,6 +20,7 @@ REQUIRED_FILES = (
     ".agentforge/adrs/0001-modular-monorepo.md",
     ".agentforge/adrs/0002-gateway-module-placement.md",
     ".agentforge/decisions/0002-prototype-repository-disposition.md",
+    ".agentforge/decisions/0003-cli-path-for-aics-validation.md",
     ".agentforge/requirements/gateway-reconciliation.md",
     ".agentforge/specs/aics-v0.1.md",
     ".agentforge/specs/aics-validation-v0.1.md",

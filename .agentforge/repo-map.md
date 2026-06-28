@@ -20,7 +20,7 @@ Metadata:
 | Repository | Role | Recommended handling |
 | --- | --- | --- |
 | `agentforge-gateway` | Historical gateway prototype | Keep public with notice; canonical gateway now lives in `agentforge/apps/gateway` |
-| `agentforge-cli` | Working scaffold CLI prototype | Keep public with notice; migrate or supersede through AICS validation tooling |
+| `agentforge-cli` | Historical scaffold CLI prototype | Keep public with notice; future AICS validation CLI work starts in `agentforge/apps/cli` |
 
 ## Reconciliation Rule
 
@@ -30,5 +30,6 @@ After migration, prototype repositories remain public until a later accepted dec
 
 ## Revision History
 
+- 2026-06-28: Added canonical CLI path for AICS validation.
 - 2026-06-28: Updated prototype repository disposition after gateway migration.
 - 2026-06-28: Initial map.
