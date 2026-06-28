@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added canonical CLI MVP requirements for `agentforge validate-context`.
+
 ## Genesis-0.0.3 - 2026-06-28
 
 - Documented the canonical CLI path for AICS validation.
