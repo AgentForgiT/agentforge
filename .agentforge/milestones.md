@@ -1,0 +1,38 @@
+# AgentForge Milestones
+
+Metadata:
+
+- Status: Draft
+- Phase: Genesis
+- Last updated: 2026-06-28
+
+## Genesis-0.0.1: Bootstrap Kit
+
+Scope:
+
+- governance baseline
+- AI context baseline
+- repository structure
+- starter templates
+- validation workflow placeholder
+
+Exit criteria:
+
+- canonical `agentforge` repository exists
+- `.agentforge/` project brain exists
+- ADR-0001 records the monorepo decision
+- AI assistant context files exist
+- CI validates required bootstrap files
+
+## Genesis-0.0.2: Gateway Reconciliation
+
+Scope:
+
+- import or recreate gateway prototype under governance
+- document provider adapter boundaries
+- preserve OpenAI-compatible API shape
+- keep tests deterministic
+
+## Revision History
+
+- 2026-06-28: Initial draft.
