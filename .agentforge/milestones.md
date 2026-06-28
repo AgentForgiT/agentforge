@@ -32,7 +32,17 @@ Scope:
 - document provider adapter boundaries
 - preserve OpenAI-compatible API shape
 - keep tests deterministic
+- decide prototype repository disposition
+
+Exit criteria:
+
+- requirements document exists
+- gateway placement ADR is accepted
+- gateway MVP is migrated into `apps/gateway`
+- gateway tests run in CI
+- prototype repository status is documented
 
 ## Revision History
 
+- 2026-06-28: Expanded Genesis-0.0.2 exit criteria.
 - 2026-06-28: Initial draft.

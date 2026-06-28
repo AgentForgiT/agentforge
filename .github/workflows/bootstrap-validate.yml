@@ -21,6 +21,8 @@ jobs:
           test -f .agentforge/charter.md
           test -f .agentforge/decisions.md
           test -f .agentforge/adrs/0001-modular-monorepo.md
+          test -f .agentforge/adrs/0002-gateway-module-placement.md
+          test -f .agentforge/requirements/gateway-reconciliation.md
           test -f .agentforge/agents/AGENTS.md
           test -f .agentforge/agents/CODEX.md
       - name: Run bootstrap validator

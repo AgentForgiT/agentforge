@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added Genesis Sprint 2 gateway reconciliation requirements.
+- Added ADR-0002 for gateway module placement and provider adapter boundaries.
 - Initialized the canonical AgentForge monorepo.
 - Added the `.agentforge/` project brain.
 - Recorded ADR-0001 for the modular monorepo strategy.

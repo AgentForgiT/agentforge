@@ -31,6 +31,7 @@ Deliverables:
 - ADR for gateway placement and provider adapter boundaries
 - imported local MVP under `apps/gateway`
 - tests and examples
+- prototype repository disposition decision
 
 ## Genesis Sprint 3: Context Specification
 
@@ -45,4 +46,5 @@ Deliverables:
 
 ## Revision History
 
+- 2026-06-28: Added gateway reconciliation requirements and ADR deliverables.
 - 2026-06-28: Initial roadmap draft.
