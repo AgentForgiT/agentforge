@@ -78,8 +78,28 @@ Exit criteria:
 - CLI tests run locally and in CI
 - docs explain how to run the CLI against the repo and minimal example
 
+## Genesis-0.0.5: Installable CLI
+
+Scope:
+
+- define installable CLI requirements
+- decide CLI packaging and distribution strategy
+- implement an installable `agentforge` command
+- add install smoke tests and CI validation
+- document installation and release limitations
+
+Exit criteria:
+
+- requirements document exists for issue #16
+- packaging ADR or decision exists for issue #18
+- a documented local install exposes `agentforge validate-context`
+- installed CLI validates the canonical repo and minimal AICS example
+- install smoke tests run locally and in CI for issue #17
+- docs explain how to install and run the CLI for issue #19
+
 ## Revision History
 
+- 2026-06-28: Added Genesis-0.0.5 installable CLI milestone.
 - 2026-06-28: Added Genesis-0.0.4 canonical CLI MVP milestone.
 - 2026-06-28: Added CLI path decision for AICS validation.
 - 2026-06-28: Added Genesis-0.0.3 AICS milestone.

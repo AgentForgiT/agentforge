@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added installable CLI requirements for Genesis Sprint 5.
+
 ## Genesis-0.0.4 - 2026-06-28
 
 - Added CLI command tests and CI validation.
