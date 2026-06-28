@@ -40,6 +40,7 @@ Run local validation:
 
 ```bash
 python scripts/validate_bootstrap.py
+python scripts/validate_aics.py
 python -m unittest discover -s apps/gateway/tests
 ```
 

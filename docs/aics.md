@@ -23,6 +23,14 @@ AICS v0.1 standardizes:
 - optional tool-specific adapter files
 - validation goals for machine-checkable context
 
+Validation rules are documented in `.agentforge/specs/aics-validation-v0.1.md`.
+
+Run validation:
+
+```bash
+python scripts/validate_aics.py
+```
+
 ## Current Adoption Level
 
 The AgentForge monorepo targets AICS Level 3:
@@ -33,4 +41,5 @@ The AgentForge monorepo targets AICS Level 3:
 
 ## Revision History
 
+- 2026-06-28: Added validation rules reference.
 - 2026-06-28: Initial public AICS documentation page.

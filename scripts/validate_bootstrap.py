@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 import sys
 
+from aics_validation import validate_aics
+
 
 REQUIRED_FILES = (
     "README.md",
@@ -20,6 +22,7 @@ REQUIRED_FILES = (
     ".agentforge/decisions/0002-prototype-repository-disposition.md",
     ".agentforge/requirements/gateway-reconciliation.md",
     ".agentforge/specs/aics-v0.1.md",
+    ".agentforge/specs/aics-validation-v0.1.md",
     ".agentforge/rfcs/RFC_TEMPLATE.md",
     ".agentforge/adrs/ADR_TEMPLATE.md",
     ".agentforge/agents/AGENTS.md",
@@ -67,6 +70,8 @@ def main() -> int:
     for relative in REQUIRED_DIRS:
         if not (root / relative).is_dir():
             errors.append(f"missing directory: {relative}")
+
+    errors.extend(validate_aics(root).errors)
 
     if errors:
         for error in errors:

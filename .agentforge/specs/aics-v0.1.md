@@ -209,6 +209,8 @@ Validation SHOULD produce actionable messages.
 
 Validation SHOULD NOT require network access.
 
+The initial validation rule set is documented in `.agentforge/specs/aics-validation-v0.1.md`.
+
 ## Adoption Levels
 
 AICS v0.1 defines three adoption levels:
@@ -267,4 +269,5 @@ AICS does not assume any one assistant is canonical.
 
 ## Revision History
 
+- 2026-06-28: Added reference to AICS validation rules.
 - 2026-06-28: Initial AICS v0.1 draft.
