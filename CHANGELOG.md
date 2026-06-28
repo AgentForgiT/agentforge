@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Accepted ADR-0003 for canonical CLI architecture and packaging boundaries.
 - Added canonical CLI MVP requirements for `agentforge validate-context`.
 
 ## Genesis-0.0.3 - 2026-06-28
