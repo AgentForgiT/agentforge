@@ -38,6 +38,7 @@ Run local validation:
 
 ```bash
 python scripts/validate_bootstrap.py
+python -m unittest discover -s apps/gateway/tests
 ```
 
 ## Governance

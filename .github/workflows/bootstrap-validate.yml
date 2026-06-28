@@ -25,5 +25,10 @@ jobs:
           test -f .agentforge/requirements/gateway-reconciliation.md
           test -f .agentforge/agents/AGENTS.md
           test -f .agentforge/agents/CODEX.md
+          test -f apps/gateway/README.md
+          test -f apps/gateway/src/agentforge_gateway/app.py
+          test -f apps/gateway/tests/test_app.py
       - name: Run bootstrap validator
         run: python scripts/validate_bootstrap.py
+      - name: Run gateway tests
+        run: python -m unittest discover -s apps/gateway/tests

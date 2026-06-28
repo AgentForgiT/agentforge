@@ -1,0 +1,31 @@
+{
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8080
+  },
+  "models": {
+    "mock-coder": {
+      "provider": "mock",
+      "provider_model": "mock-coder-v1"
+    },
+    "openrouter-coder": {
+      "provider": "openrouter",
+      "provider_model": "qwen/qwen3-coder:free"
+    }
+  },
+  "providers": {
+    "mock": {
+      "type": "mock"
+    },
+    "openrouter": {
+      "type": "openrouter",
+      "base_url": "https://openrouter.ai/api/v1",
+      "api_key_env": "OPENROUTER_API_KEY",
+      "timeout_seconds": 30,
+      "headers": {
+        "HTTP-Referer": "https://github.com/AgentForgiT/agentforge",
+        "X-OpenRouter-Title": "AgentForge Gateway"
+      }
+    }
+  }
+}
