@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added CLI command tests and CI validation.
 - Implemented the canonical `agentforge validate-context` CLI MVP.
 - Accepted ADR-0003 for canonical CLI architecture and packaging boundaries.
 - Added canonical CLI MVP requirements for `agentforge validate-context`.
