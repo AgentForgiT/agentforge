@@ -34,14 +34,23 @@ The draft AgentForge AI Context Specification is available at `.agentforge/specs
 
 ## Current Priority
 
-Genesis Sprint 1 creates the AgentForge Bootstrap Kit: a production-quality AI-native project skeleton that can be opened by Codex, Claude Code, Kiro, Gemini CLI, OpenCode, GitHub Copilot, and future AI coding assistants while preserving one shared architectural truth.
+Genesis Sprint 4 adds the first canonical AgentForge CLI MVP for validating AICS project context.
 
 Run local validation:
 
 ```bash
 python scripts/validate_bootstrap.py
 python scripts/validate_aics.py
+python scripts/validate_aics.py examples/aics/minimal-project
+python -m unittest discover -s apps/cli/tests
 python -m unittest discover -s apps/gateway/tests
+```
+
+Run the source-tree CLI:
+
+```bash
+python apps/cli/bin/agentforge.py validate-context
+python apps/cli/bin/agentforge.py validate-context examples/aics/minimal-project
 ```
 
 ## Governance

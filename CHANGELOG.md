@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## Genesis-0.0.4 - 2026-06-28
+
 - Added CLI command tests and CI validation.
 - Implemented the canonical `agentforge validate-context` CLI MVP.
 - Accepted ADR-0003 for canonical CLI architecture and packaging boundaries.

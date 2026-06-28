@@ -59,8 +59,28 @@ Exit criteria:
 - example context tree exists
 - CLI path decision exists
 
+## Genesis-0.0.4: Canonical CLI MVP
+
+Scope:
+
+- define canonical CLI MVP requirements
+- decide `apps/cli` architecture and packaging boundaries
+- implement `agentforge validate-context`
+- add CLI tests and CI validation
+- document CLI usage and release limitations
+
+Exit criteria:
+
+- requirements document exists
+- ADR-0003 is accepted and linked from the decision register
+- `apps/cli` contains the source-tree CLI MVP
+- CLI validates the canonical repo and minimal AICS example
+- CLI tests run locally and in CI
+- docs explain how to run the CLI against the repo and minimal example
+
 ## Revision History
 
+- 2026-06-28: Added Genesis-0.0.4 canonical CLI MVP milestone.
 - 2026-06-28: Added CLI path decision for AICS validation.
 - 2026-06-28: Added Genesis-0.0.3 AICS milestone.
 - 2026-06-28: Added prototype repository disposition.
