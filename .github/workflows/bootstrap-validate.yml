@@ -38,5 +38,7 @@ jobs:
         run: python scripts/validate_aics.py examples/aics/minimal-project
       - name: Run CLI tests
         run: python -m unittest discover -s apps/cli/tests
+      - name: Run CLI install smoke tests
+        run: python -m unittest apps.cli.tests.test_install
       - name: Run gateway tests
         run: python -m unittest discover -s apps/gateway/tests

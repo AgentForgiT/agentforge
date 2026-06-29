@@ -34,6 +34,7 @@ REQUIRED_FILES = (
     "apps/cli/bin/agentforge.py",
     "apps/cli/src/agentforge_cli/cli.py",
     "apps/cli/tests/test_cli.py",
+    "apps/cli/tests/test_install.py",
     "apps/gateway/README.md",
     "apps/gateway/config.example.json",
     "apps/gateway/src/agentforge_gateway/app.py",

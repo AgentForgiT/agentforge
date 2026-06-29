@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added explicit install smoke tests and CI validation for the installable CLI.
 - Added editable-install packaging for the canonical `agentforge` CLI command.
 - Accepted ADR-0004 for installable CLI packaging and editable-install distribution strategy.
 - Added installable CLI requirements for Genesis Sprint 5.

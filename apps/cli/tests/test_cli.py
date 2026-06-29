@@ -1,10 +1,8 @@
 from __future__ import annotations
 
 import io
-import os
 from pathlib import Path
 import shutil
-import subprocess
 import sys
 import tempfile
 import unittest
@@ -61,40 +59,6 @@ class CliValidateContextTests(unittest.TestCase):
         self.assertEqual(result, 2)
         self.assertIn("usage: agentforge", output)
 
-    def test_editable_install_exposes_agentforge_command(self) -> None:
-        with temp_virtualenv() as venv_python:
-            install = subprocess.run(
-                [
-                    str(venv_python),
-                    "-m",
-                    "pip",
-                    "install",
-                    "--no-build-isolation",
-                    "-e",
-                    str(ROOT / "apps" / "cli"),
-                ],
-                cwd=str(ROOT),
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                check=False,
-            )
-            self.assertEqual(install.returncode, 0, install.stderr)
-
-            command = resolve_agentforge_command(venv_python)
-            result = subprocess.run(
-                [str(command), "validate-context", str(ROOT)],
-                cwd=str(ROOT),
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                check=False,
-            )
-
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(result.stdout, "aics ok\n")
-
-
 def run_cli(args: list[str]) -> tuple[int, str]:
     stdout = io.StringIO()
     with redirect_stdout(stdout):
@@ -111,36 +75,6 @@ class copied_example:
 
     def __exit__(self, *args: object) -> None:
         shutil.rmtree(self.temp_dir)
-
-
-class temp_virtualenv:
-    def __enter__(self) -> Path:
-        self.temp_dir = Path(tempfile.mkdtemp(prefix="agentforge-cli-venv-"))
-        result = subprocess.run(
-            [sys.executable, "-m", "venv", "--system-site-packages", str(self.temp_dir)],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            check=False,
-        )
-        if result.returncode != 0:
-            raise AssertionError(result.stderr)
-        return resolve_venv_python(self.temp_dir)
-
-    def __exit__(self, *args: object) -> None:
-        shutil.rmtree(self.temp_dir)
-
-
-def resolve_venv_python(venv_dir: Path) -> Path:
-    scripts_dir = "Scripts" if os.name == "nt" else "bin"
-    executable = "python.exe" if os.name == "nt" else "python"
-    return venv_dir / scripts_dir / executable
-
-
-def resolve_agentforge_command(venv_python: Path) -> Path:
-    scripts_dir = venv_python.parent
-    executable = "agentforge.exe" if os.name == "nt" else "agentforge"
-    return scripts_dir / executable
 
 
 if __name__ == "__main__":
