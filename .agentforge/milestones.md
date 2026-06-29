@@ -99,6 +99,7 @@ Exit criteria:
 
 ## Revision History
 
+- 2026-06-29: Confirmed installable CLI smoke-test coverage for Genesis-0.0.5.
 - 2026-06-28: Added Genesis-0.0.5 installable CLI milestone.
 - 2026-06-28: Added Genesis-0.0.4 canonical CLI MVP milestone.
 - 2026-06-28: Added CLI path decision for AICS validation.

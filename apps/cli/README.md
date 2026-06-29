@@ -70,6 +70,16 @@ Installed command:
 agentforge validate-context examples/aics/minimal-project
 ```
 
+## Install Validation
+
+Local install smoke coverage runs in:
+
+```bash
+python -m unittest apps.cli.tests.test_install
+```
+
+CI runs the same smoke test after checkout to confirm the editable install path still exposes `agentforge`.
+
 ## Output and Exit Codes
 
 Successful validation prints:

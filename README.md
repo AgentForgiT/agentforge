@@ -34,7 +34,7 @@ The draft AgentForge AI Context Specification is available at `.agentforge/specs
 
 ## Current Priority
 
-Genesis Sprint 4 adds the first canonical AgentForge CLI MVP for validating AICS project context.
+Genesis Sprint 5 makes the canonical AgentForge CLI installable while preserving the validated source-tree workflow.
 
 Run local validation:
 
@@ -43,6 +43,7 @@ python scripts/validate_bootstrap.py
 python scripts/validate_aics.py
 python scripts/validate_aics.py examples/aics/minimal-project
 python -m unittest discover -s apps/cli/tests
+python -m unittest apps.cli.tests.test_install
 python -m unittest discover -s apps/gateway/tests
 ```
 
@@ -51,6 +52,14 @@ Run the source-tree CLI:
 ```bash
 python apps/cli/bin/agentforge.py validate-context
 python apps/cli/bin/agentforge.py validate-context examples/aics/minimal-project
+```
+
+Install the CLI from the monorepo:
+
+```bash
+python -m pip install -e apps/cli
+agentforge validate-context
+agentforge validate-context examples/aics/minimal-project
 ```
 
 ## Governance

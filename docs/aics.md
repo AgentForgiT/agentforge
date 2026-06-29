@@ -39,7 +39,15 @@ python apps/cli/bin/agentforge.py validate-context
 python apps/cli/bin/agentforge.py validate-context examples/aics/minimal-project
 ```
 
-The CLI path is governed by `.agentforge/decisions/0003-cli-path-for-aics-validation.md` and `.agentforge/adrs/0003-cli-module-architecture.md`.
+Run the installed CLI:
+
+```bash
+python -m pip install -e apps/cli
+agentforge validate-context
+agentforge validate-context examples/aics/minimal-project
+```
+
+The CLI path is governed by `.agentforge/decisions/0003-cli-path-for-aics-validation.md`, `.agentforge/adrs/0003-cli-module-architecture.md`, and `.agentforge/adrs/0004-cli-packaging-and-distribution.md`.
 
 ## Troubleshooting
 
@@ -55,6 +63,8 @@ missing required text 'Decision': .agentforge/adrs/ADR_TEMPLATE.md
 
 The CLI returns `0` when validation succeeds, `1` when AICS validation fails, and `2` for invalid CLI usage such as a missing project path.
 
+Editable installation is the supported Genesis install path. Public registry distribution and standalone binaries remain deferred.
+
 ## Current Adoption Level
 
 The AgentForge monorepo targets AICS Level 3:
@@ -65,6 +75,7 @@ The AgentForge monorepo targets AICS Level 3:
 
 ## Revision History
 
+- 2026-06-29: Added installable CLI usage.
 - 2026-06-28: Added canonical CLI usage and troubleshooting.
 - 2026-06-28: Added CLI path decision reference.
 - 2026-06-28: Added validation rules reference.
