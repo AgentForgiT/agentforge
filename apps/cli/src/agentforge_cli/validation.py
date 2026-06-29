@@ -5,14 +5,19 @@ import sys
 
 
 def validate_context(root: Path):
+    validation_module = load_aics_validation(root)
+    return validation_module.validate_aics(root)
+
+
+def load_aics_validation(root: Path):
     scripts_dir = find_repo_root(root) / "scripts"
     scripts_dir_text = str(scripts_dir)
     if scripts_dir_text not in sys.path:
         sys.path.insert(0, scripts_dir_text)
 
-    from aics_validation import validate_aics
+    import aics_validation
 
-    return validate_aics(root)
+    return aics_validation
 
 
 def find_repo_root(start: Path) -> Path:

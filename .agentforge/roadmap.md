@@ -92,8 +92,21 @@ Deliverables:
 - explanation tests and CI validation for issue #28
 - explanation docs and `Genesis-0.0.7` release for issue #27
 
+## Genesis Sprint 8: Doctor Diagnostics MVP
+
+Goal: let contributors and AI assistants diagnose local AICS project context health through the canonical CLI without adding network, provider, package-manager, or repair behavior during Genesis.
+
+Deliverables:
+
+- doctor diagnostics requirements for issue #30
+- diagnostics scope and safety boundary ADR for issue #31
+- `agentforge doctor` MVP for issue #33
+- diagnostics tests and CI validation for issue #34
+- diagnostics docs and `Genesis-0.0.8` release for issue #32
+
 ## Revision History
 
+- 2026-06-29: Added Sprint 8 doctor diagnostics deliverables.
 - 2026-06-29: Added Sprint 7 context explanation deliverables.
 - 2026-06-29: Added Sprint 6 context scaffolding deliverables.
 - 2026-06-28: Added Sprint 4 and Sprint 5 CLI deliverables.

@@ -133,8 +133,27 @@ Exit criteria:
 - automated tests and CI validate explanation output behavior for issue #28
 - docs explain how to explain and validate a project context for issue #27
 
+## Genesis-0.0.8: Doctor Diagnostics MVP
+
+Scope:
+
+- define doctor diagnostics requirements
+- decide read-only local diagnostics scope and safety boundary
+- implement `agentforge doctor`
+- add diagnostics tests and CI validation
+- document the diagnostics workflow and release limitations
+
+Exit criteria:
+
+- requirements document exists for issue #30
+- diagnostics ADR or durable decision exists for issue #31
+- `agentforge doctor` can diagnose the canonical repo and a minimal/scaffolded AICS project for issue #33
+- automated tests and CI validate diagnostics output behavior for issue #34
+- docs explain how diagnostics differs from validation and explanation for issue #32
+
 ## Revision History
 
+- 2026-06-29: Added Genesis-0.0.8 doctor diagnostics milestone.
 - 2026-06-29: Added Genesis-0.0.7 context explanation milestone.
 - 2026-06-29: Added Genesis-0.0.6 context scaffolding milestone.
 - 2026-06-29: Confirmed installable CLI smoke-test coverage for Genesis-0.0.5.

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Genesis-0.0.8 - 2026-06-29
+
+- Added the canonical `agentforge doctor` CLI command for read-only local AICS context diagnostics.
+- Added grouped diagnostic checks, unhealthy-context exit semantics, and next-step guidance.
+- Added ADR-0007, Sprint 8 requirements, diagnostics tests, install smoke coverage, and docs.
+
 ## Genesis-0.0.7 - 2026-06-29
 
 - Added the canonical `agentforge explain-context` CLI command for read-only AICS project orientation.

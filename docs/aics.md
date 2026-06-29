@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Draft
 - Version: 0.1
-- Phase: Genesis Sprint 7
+- Phase: Genesis Sprint 8
 - Last updated: 2026-06-29
 
 ## Purpose
@@ -62,7 +62,14 @@ python apps/cli/bin/agentforge.py explain-context demo-project
 agentforge explain-context demo-project
 ```
 
-The CLI path is governed by `.agentforge/decisions/0003-cli-path-for-aics-validation.md`, `.agentforge/adrs/0003-cli-module-architecture.md`, `.agentforge/adrs/0004-cli-packaging-and-distribution.md`, `.agentforge/adrs/0005-context-scaffolding-strategy.md`, and `.agentforge/adrs/0006-context-explanation-boundary.md`.
+Diagnose local AICS project context health:
+
+```bash
+python apps/cli/bin/agentforge.py doctor demo-project
+agentforge doctor demo-project
+```
+
+The CLI path is governed by `.agentforge/decisions/0003-cli-path-for-aics-validation.md`, `.agentforge/adrs/0003-cli-module-architecture.md`, `.agentforge/adrs/0004-cli-packaging-and-distribution.md`, `.agentforge/adrs/0005-context-scaffolding-strategy.md`, `.agentforge/adrs/0006-context-explanation-boundary.md`, and `.agentforge/adrs/0007-doctor-diagnostics-boundary.md`.
 
 ## Scaffolding Behavior
 
@@ -89,6 +96,21 @@ The Sprint 7 MVP:
 
 `agentforge validate-context` remains the canonical pass/fail command. Explanation can succeed when it successfully explains an incomplete context.
 
+## Diagnostics Behavior
+
+`agentforge doctor` prints a read-only local diagnostics report for AICS context health.
+
+The Sprint 8 MVP:
+
+- reports the resolved project root
+- reports whether local diagnostics passed
+- reports whether AICS validation currently passes
+- groups local checks for required directories, required files, metadata, and required template text
+- includes validation signals when context is unhealthy
+- suggests a next action
+
+`doctor` returns success only when the local context is healthy. It does not perform network, provider, GitHub, package-manager, dependency, or repair checks during Genesis.
+
 ## Troubleshooting
 
 If validation fails, read each output line as an actionable file-level fix.
@@ -103,6 +125,8 @@ missing required text 'Decision': .agentforge/adrs/ADR_TEMPLATE.md
 
 The CLI returns `0` when validation succeeds, `1` when AICS validation fails, and `2` for invalid CLI usage such as a missing project path.
 
+`agentforge doctor` returns `0` when local context diagnostics pass and `1` when the project is unhealthy or cannot be inspected.
+
 Editable installation is the supported Genesis install path. Public registry distribution and standalone binaries remain deferred.
 
 ## Current Adoption Level
@@ -115,6 +139,7 @@ The AgentForge monorepo targets AICS Level 3:
 
 ## Revision History
 
+- 2026-06-29: Added `doctor` usage and ADR-0007 reference.
 - 2026-06-29: Added `explain-context` usage and ADR-0006 reference.
 - 2026-06-29: Added `init-context` scaffolding usage and ADR-0005 reference.
 - 2026-06-29: Added installable CLI usage.

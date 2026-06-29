@@ -5,11 +5,11 @@ Canonical command-line interface for AgentForge.
 ## Status
 
 - Module: `apps/cli`
-- Status: Genesis context explanation MVP
-- Related requirements: `.agentforge/requirements/canonical-cli-mvp.md`, `.agentforge/requirements/installable-cli.md`, `.agentforge/requirements/context-scaffolding-mvp.md`, `.agentforge/requirements/context-explanation-mvp.md`
-- Related ADRs: `.agentforge/adrs/0003-cli-module-architecture.md`, `.agentforge/adrs/0004-cli-packaging-and-distribution.md`, `.agentforge/adrs/0005-context-scaffolding-strategy.md`, `.agentforge/adrs/0006-context-explanation-boundary.md`
+- Status: Genesis doctor diagnostics MVP
+- Related requirements: `.agentforge/requirements/canonical-cli-mvp.md`, `.agentforge/requirements/installable-cli.md`, `.agentforge/requirements/context-scaffolding-mvp.md`, `.agentforge/requirements/context-explanation-mvp.md`, `.agentforge/requirements/doctor-diagnostics-mvp.md`
+- Related ADRs: `.agentforge/adrs/0003-cli-module-architecture.md`, `.agentforge/adrs/0004-cli-packaging-and-distribution.md`, `.agentforge/adrs/0005-context-scaffolding-strategy.md`, `.agentforge/adrs/0006-context-explanation-boundary.md`, `.agentforge/adrs/0007-doctor-diagnostics-boundary.md`
 
-The canonical CLI now supports `agentforge validate-context`, `agentforge init-context`, and `agentforge explain-context`.
+The canonical CLI now supports `agentforge validate-context`, `agentforge init-context`, `agentforge explain-context`, and `agentforge doctor`.
 
 ## Run Locally
 
@@ -32,6 +32,7 @@ python -m pip install -e apps/cli
 agentforge validate-context
 agentforge init-context demo-project
 agentforge explain-context demo-project
+agentforge doctor demo-project
 ```
 
 This Genesis workflow assumes a standard Python environment with local packaging tools available. Public registry publishing remains deferred.
@@ -56,6 +57,7 @@ python -m pip install -e apps/cli
 agentforge validate-context
 agentforge init-context demo-project
 agentforge explain-context demo-project
+agentforge doctor demo-project
 ```
 
 Validate an explicit project path:
@@ -112,6 +114,18 @@ agentforge explain-context demo-project
 
 `validate-context` remains the canonical pass/fail command. `explain-context` can still return success when it successfully explains an incomplete context.
 
+Diagnose local project context health:
+
+```bash
+PYTHONPATH=apps/cli/src python -m agentforge_cli doctor demo-project
+python apps/cli/bin/agentforge.py doctor demo-project
+agentforge doctor demo-project
+```
+
+`doctor` prints a read-only local diagnostics report with overall health, AICS validation status, grouped local checks, validation signals, and a suggested next action.
+
+`doctor` returns success only when the local context is healthy. It does not perform network, provider, GitHub, package-manager, or repair checks in the Genesis MVP.
+
 ## Install Validation
 
 Local install smoke coverage runs in:
@@ -137,5 +151,7 @@ Invalid CLI usage, such as a missing project path, returns exit code `2`.
 Initialization failures caused by scaffold conflicts or filesystem errors return exit code `1`.
 
 Explanation failures caused by missing or inaccessible project paths return exit code `1`.
+
+Diagnostics return `0` when local context health checks pass and `1` when the project is unhealthy or cannot be inspected.
 
 Installer-level packaging and global `agentforge` command distribution are deferred during Genesis.

@@ -153,6 +153,70 @@ class CliValidateContextTests(unittest.TestCase):
         self.assertEqual(result, 1)
         self.assertIn("project path does not exist:", output)
 
+    def test_doctor_reports_current_repo_as_healthy(self) -> None:
+        result, output = run_cli(["doctor", str(ROOT)])
+
+        self.assertEqual(result, 0)
+        self.assertIn("AgentForge doctor\n", output)
+        self.assertIn(f"Project root: {ROOT}", output)
+        self.assertIn("Overall status: healthy", output)
+        self.assertIn("AICS validation: passed", output)
+        self.assertIn("Context root: .agentforge (present)", output)
+        self.assertIn("- required directories: passed", output)
+        self.assertIn("- required files: passed", output)
+        self.assertIn("- metadata blocks: passed", output)
+        self.assertIn("- required template text: passed", output)
+        self.assertIn("- context is healthy for AICS v0.1 validation", output)
+
+    def test_doctor_reports_explicit_example_as_healthy(self) -> None:
+        result, output = run_cli(["doctor", str(ROOT / "examples" / "aics" / "minimal-project")])
+
+        self.assertEqual(result, 0)
+        self.assertIn("Overall status: healthy", output)
+        self.assertIn("AICS validation: passed", output)
+
+    def test_doctor_reports_scaffolded_project_as_healthy(self) -> None:
+        with temp_project_dir() as temp_dir:
+            project = temp_dir / "scaffolded-project"
+            run_cli(["init-context", str(project)])
+
+            result, output = run_cli(["doctor", str(project)])
+
+        self.assertEqual(result, 0)
+        self.assertIn("Overall status: healthy", output)
+        self.assertIn("- context is healthy for AICS v0.1 validation", output)
+
+    def test_doctor_reports_invalid_context_as_unhealthy(self) -> None:
+        with copied_example() as project:
+            (project / ".agentforge" / "constitution.md").unlink()
+
+            result, output = run_cli(["doctor", str(project)])
+
+        self.assertEqual(result, 1)
+        self.assertIn("Overall status: unhealthy", output)
+        self.assertIn("AICS validation: failed", output)
+        self.assertIn("- required files: failed (1 missing)", output)
+        self.assertIn("- missing AICS file: .agentforge/constitution.md", output)
+        self.assertIn("Next action: fix the validation signals", output)
+
+    def test_doctor_reports_invalid_metadata_as_unhealthy(self) -> None:
+        with copied_example() as project:
+            charter = project / ".agentforge" / "charter.md"
+            charter.write_text("# Charter\n\nNo metadata here.\n", encoding="utf-8")
+
+            result, output = run_cli(["doctor", str(project)])
+
+        self.assertEqual(result, 1)
+        self.assertIn("Overall status: unhealthy", output)
+        self.assertIn("- metadata blocks: failed (1 missing)", output)
+        self.assertIn("- missing Metadata block: .agentforge/charter.md", output)
+
+    def test_doctor_reports_missing_project_path(self) -> None:
+        result, output = run_cli(["doctor", str(ROOT / "missing-project")])
+
+        self.assertEqual(result, 1)
+        self.assertIn("project path does not exist:", output)
+
 def run_cli(args: list[str]) -> tuple[int, str]:
     stdout = io.StringIO()
     with redirect_stdout(stdout):
