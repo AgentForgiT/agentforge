@@ -55,6 +55,31 @@ class CliInstallSmokeTests(unittest.TestCase):
                 check=False,
             )
 
+            scaffold_temp = Path(tempfile.mkdtemp(prefix="agentforge-cli-scaffold-"))
+            scaffold_project = scaffold_temp / "scaffolded-project"
+            scaffold_result = subprocess.run(
+                [str(command), "init-context", str(scaffold_project)],
+                cwd=str(ROOT),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(scaffold_result.returncode, 0, scaffold_result.stderr)
+            self.assertIn("initialized AICS context:", scaffold_result.stdout)
+
+            scaffold_validate = subprocess.run(
+                [str(command), "validate-context", str(scaffold_project)],
+                cwd=str(ROOT),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(scaffold_validate.returncode, 0, scaffold_validate.stderr)
+            self.assertEqual(scaffold_validate.stdout, "aics ok\n")
+            shutil.rmtree(scaffold_temp)
+
         self.assertEqual(example_result.returncode, 0, example_result.stderr)
         self.assertEqual(example_result.stdout, "aics ok\n")
 

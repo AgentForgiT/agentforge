@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from .scaffolding import init_context
 from .validation import validate_context
 
 
@@ -21,6 +22,17 @@ def build_parser() -> argparse.ArgumentParser:
         help="Project root to validate",
     )
 
+    init_context_parser = subparsers.add_parser(
+        "init-context",
+        help="Initialize a minimal AICS project context",
+    )
+    init_context_parser.add_argument(
+        "project_path",
+        nargs="?",
+        default=".",
+        help="Project root to initialize",
+    )
+
     return parser
 
 
@@ -30,6 +42,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "validate-context":
         return _run_validate_context(Path(args.project_path))
+    if args.command == "init-context":
+        return _run_init_context(Path(args.project_path))
 
     parser.print_help()
     return 2
@@ -50,3 +64,13 @@ def _run_validate_context(project_path: Path) -> int:
     print("aics ok")
     return 0
 
+
+def _run_init_context(project_path: Path) -> int:
+    result = init_context(project_path)
+    if not result.ok:
+        for error in result.errors:
+            print(error)
+        return 1
+
+    print(f"initialized AICS context: {result.root}")
+    return 0

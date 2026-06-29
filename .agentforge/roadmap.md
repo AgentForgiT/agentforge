@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Draft
 - Phase: Genesis
-- Last updated: 2026-06-28
+- Last updated: 2026-06-29
 
 ## Genesis Sprint 1: Bootstrap Kit
 
@@ -68,8 +68,21 @@ Deliverables:
 - install smoke tests and CI validation for issue #17
 - installation docs and `Genesis-0.0.5` release for issue #19
 
+## Genesis Sprint 6: Context Scaffolding MVP
+
+Goal: let contributors initialize a validation-ready AICS baseline from the canonical AgentForge CLI without hand-authoring the required governance structure.
+
+Deliverables:
+
+- context scaffolding requirements for issue #20
+- scaffolding template and safety decision for issue #21
+- `agentforge init-context` MVP for issue #22
+- scaffolding tests and CI validation for issue #23
+- scaffolding docs and `Genesis-0.0.6` release for issue #24
+
 ## Revision History
 
+- 2026-06-29: Added Sprint 6 context scaffolding deliverables.
 - 2026-06-28: Added Sprint 4 and Sprint 5 CLI deliverables.
 - 2026-06-28: Added AICS v0.1 draft.
 - 2026-06-28: Added gateway reconciliation requirements and ADR deliverables.

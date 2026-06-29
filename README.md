@@ -34,7 +34,7 @@ The draft AgentForge AI Context Specification is available at `.agentforge/specs
 
 ## Current Priority
 
-Genesis Sprint 5 makes the canonical AgentForge CLI installable while preserving the validated source-tree workflow.
+Genesis Sprint 6 delivers the context scaffolding MVP for the canonical AgentForge CLI with the new `agentforge init-context` command.
 
 Run local validation:
 
@@ -52,6 +52,7 @@ Run the source-tree CLI:
 ```bash
 python apps/cli/bin/agentforge.py validate-context
 python apps/cli/bin/agentforge.py validate-context examples/aics/minimal-project
+python apps/cli/bin/agentforge.py init-context demo-project
 ```
 
 Install the CLI from the monorepo:
@@ -60,6 +61,7 @@ Install the CLI from the monorepo:
 python -m pip install -e apps/cli
 agentforge validate-context
 agentforge validate-context examples/aics/minimal-project
+agentforge init-context demo-project
 ```
 
 ## Governance

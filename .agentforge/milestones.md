@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Draft
 - Phase: Genesis
-- Last updated: 2026-06-28
+- Last updated: 2026-06-29
 
 ## Genesis-0.0.1: Bootstrap Kit
 
@@ -97,8 +97,27 @@ Exit criteria:
 - install smoke tests run locally and in CI for issue #17
 - docs explain how to install and run the CLI for issue #19
 
+## Genesis-0.0.6: Context Scaffolding MVP
+
+Scope:
+
+- define context scaffolding requirements
+- decide scaffold template and safety strategy
+- implement `agentforge init-context`
+- add scaffolding tests and CI validation
+- document the scaffolding workflow and release limitations
+
+Exit criteria:
+
+- requirements document exists for issue #20
+- a scaffolding ADR or durable decision exists for issue #21
+- `agentforge init-context` can scaffold a validation-ready AICS baseline for issue #22
+- automated tests and CI validate generated scaffold output for issue #23
+- docs explain how to initialize and validate a new project for issue #24
+
 ## Revision History
 
+- 2026-06-29: Added Genesis-0.0.6 context scaffolding milestone.
 - 2026-06-29: Confirmed installable CLI smoke-test coverage for Genesis-0.0.5.
 - 2026-06-28: Added Genesis-0.0.5 installable CLI milestone.
 - 2026-06-28: Added Genesis-0.0.4 canonical CLI MVP milestone.

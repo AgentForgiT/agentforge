@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agentforge-cli"
-version = "0.0.5"
+version = "0.0.6"
 description = "Canonical AgentForge command-line interface"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -18,3 +18,16 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+agentforge_cli = [
+  "templates/context-v0.1/.agentforge/constitution.md",
+  "templates/context-v0.1/.agentforge/charter.md",
+  "templates/context-v0.1/.agentforge/decisions.md",
+  "templates/context-v0.1/.agentforge/architecture.md",
+  "templates/context-v0.1/.agentforge/repo-map.md",
+  "templates/context-v0.1/.agentforge/agents/AGENTS.md",
+  "templates/context-v0.1/.agentforge/adrs/ADR_TEMPLATE.md",
+  "templates/context-v0.1/.agentforge/rfcs/RFC_TEMPLATE.md",
+  "templates/context-v0.1/.agentforge/standards/.gitkeep",
+]

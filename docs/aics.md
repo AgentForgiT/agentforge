@@ -4,8 +4,8 @@ Metadata:
 
 - Status: Draft
 - Version: 0.1
-- Phase: Genesis Sprint 3
-- Last updated: 2026-06-28
+- Phase: Genesis Sprint 6
+- Last updated: 2026-06-29
 
 ## Purpose
 
@@ -47,7 +47,26 @@ agentforge validate-context
 agentforge validate-context examples/aics/minimal-project
 ```
 
-The CLI path is governed by `.agentforge/decisions/0003-cli-path-for-aics-validation.md`, `.agentforge/adrs/0003-cli-module-architecture.md`, and `.agentforge/adrs/0004-cli-packaging-and-distribution.md`.
+Initialize a minimal AICS project context:
+
+```bash
+python apps/cli/bin/agentforge.py init-context demo-project
+agentforge init-context demo-project
+agentforge validate-context demo-project
+```
+
+The CLI path is governed by `.agentforge/decisions/0003-cli-path-for-aics-validation.md`, `.agentforge/adrs/0003-cli-module-architecture.md`, `.agentforge/adrs/0004-cli-packaging-and-distribution.md`, and `.agentforge/adrs/0005-context-scaffolding-strategy.md`.
+
+## Scaffolding Behavior
+
+`agentforge init-context` creates the required AICS v0.1 baseline under `.agentforge/`.
+
+The Sprint 6 MVP:
+
+- scaffolds the required directories and files
+- creates validator-compatible starter content
+- avoids overwriting scaffold-managed files
+- defers merge, force, and interactive update flows
 
 ## Troubleshooting
 
@@ -75,6 +94,7 @@ The AgentForge monorepo targets AICS Level 3:
 
 ## Revision History
 
+- 2026-06-29: Added `init-context` scaffolding usage and ADR-0005 reference.
 - 2026-06-29: Added installable CLI usage.
 - 2026-06-28: Added canonical CLI usage and troubleshooting.
 - 2026-06-28: Added CLI path decision reference.

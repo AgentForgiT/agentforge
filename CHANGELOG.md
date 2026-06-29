@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Genesis-0.0.6 - 2026-06-29
+
+- Added the canonical `agentforge init-context` CLI command for scaffolding a minimal AICS v0.1 project context.
+- Added CLI-owned scaffold templates, safe no-overwrite initialization behavior, and ADR-0005.
+- Added scaffolding tests, editable-install smoke coverage, and Sprint 6 planning artifacts.
+
 ## Genesis-0.0.5 - 2026-06-29
 
 - Added explicit install smoke tests and CI validation for the installable CLI.

@@ -59,6 +59,61 @@ class CliValidateContextTests(unittest.TestCase):
         self.assertEqual(result, 2)
         self.assertIn("usage: agentforge", output)
 
+    def test_init_context_scaffolds_new_target_directory(self) -> None:
+        with temp_project_dir() as temp_dir:
+            project = temp_dir / "scaffolded-project"
+
+            result, output = run_cli(["init-context", str(project)])
+            validation_result, validation_output = run_cli(["validate-context", str(project)])
+
+            self.assertTrue((project / ".agentforge" / "constitution.md").is_file())
+            self.assertTrue((project / ".agentforge" / "standards").is_dir())
+
+        self.assertEqual(result, 0)
+        self.assertIn("initialized AICS context:", output)
+        self.assertEqual(validation_result, 0)
+        self.assertEqual(validation_output, "aics ok\n")
+
+    def test_init_context_scaffolds_existing_directory_without_conflict(self) -> None:
+        with temp_project_dir() as project:
+            readme = project / "README.md"
+            readme.write_text("# Existing project\n", encoding="utf-8")
+
+            result, output = run_cli(["init-context", str(project)])
+            validation_result, validation_output = run_cli(["validate-context", str(project)])
+
+            self.assertEqual(readme.read_text(encoding="utf-8"), "# Existing project\n")
+
+        self.assertEqual(result, 0)
+        self.assertIn("initialized AICS context:", output)
+        self.assertEqual(validation_result, 0)
+        self.assertEqual(validation_output, "aics ok\n")
+
+    def test_init_context_reports_conflicts_without_writing_other_files(self) -> None:
+        with temp_project_dir() as project:
+            managed_dir = project / ".agentforge"
+            managed_dir.mkdir(parents=True)
+            constitution = managed_dir / "constitution.md"
+            constitution.write_text("custom constitution\n", encoding="utf-8")
+
+            result, output = run_cli(["init-context", str(project)])
+
+            self.assertEqual(constitution.read_text(encoding="utf-8"), "custom constitution\n")
+            self.assertFalse((managed_dir / "charter.md").exists())
+
+        self.assertEqual(result, 1)
+        self.assertIn("scaffold conflict: .agentforge/constitution.md already exists", output)
+
+    def test_init_context_reports_file_target_as_error(self) -> None:
+        with temp_project_dir() as temp_dir:
+            project_file = temp_dir / "project.txt"
+            project_file.write_text("not a directory\n", encoding="utf-8")
+
+            result, output = run_cli(["init-context", str(project_file)])
+
+        self.assertEqual(result, 1)
+        self.assertIn("project path is not a directory:", output)
+
 def run_cli(args: list[str]) -> tuple[int, str]:
     stdout = io.StringIO()
     with redirect_stdout(stdout):
@@ -72,6 +127,15 @@ class copied_example:
         self.project = self.temp_dir / "minimal-project"
         shutil.copytree(ROOT / "examples" / "aics" / "minimal-project", self.project)
         return self.project
+
+    def __exit__(self, *args: object) -> None:
+        shutil.rmtree(self.temp_dir)
+
+
+class temp_project_dir:
+    def __enter__(self) -> Path:
+        self.temp_dir = Path(tempfile.mkdtemp(prefix="agentforge-cli-init-"))
+        return self.temp_dir
 
     def __exit__(self, *args: object) -> None:
         shutil.rmtree(self.temp_dir)
