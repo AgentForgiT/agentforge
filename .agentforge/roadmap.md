@@ -80,8 +80,21 @@ Deliverables:
 - scaffolding tests and CI validation for issue #23
 - scaffolding docs and `Genesis-0.0.6` release for issue #24
 
+## Genesis Sprint 7: Context Explanation MVP
+
+Goal: let contributors and AI assistants explain an AICS project context through the canonical CLI without reducing orientation to pass/fail validation output alone.
+
+Deliverables:
+
+- context explanation requirements for issue #25
+- explanation output and validation boundary decision for issue #26
+- `agentforge explain-context` MVP for issue #29
+- explanation tests and CI validation for issue #28
+- explanation docs and `Genesis-0.0.7` release for issue #27
+
 ## Revision History
 
+- 2026-06-29: Added Sprint 7 context explanation deliverables.
 - 2026-06-29: Added Sprint 6 context scaffolding deliverables.
 - 2026-06-28: Added Sprint 4 and Sprint 5 CLI deliverables.
 - 2026-06-28: Added AICS v0.1 draft.

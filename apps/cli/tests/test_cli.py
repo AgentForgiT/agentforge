@@ -114,6 +114,45 @@ class CliValidateContextTests(unittest.TestCase):
         self.assertEqual(result, 1)
         self.assertIn("project path is not a directory:", output)
 
+    def test_explain_context_reports_current_repo(self) -> None:
+        result, output = run_cli(["explain-context", str(ROOT)])
+
+        self.assertEqual(result, 0)
+        self.assertIn("AgentForge context explanation\n", output)
+        self.assertIn(f"Project root: {ROOT}", output)
+        self.assertIn("AICS validation: passed", output)
+        self.assertIn("Context root: .agentforge (present)", output)
+        self.assertIn("- .agentforge/constitution.md (present)", output)
+        self.assertIn("- context is complete for AICS v0.1 validation", output)
+
+    def test_explain_context_reports_scaffolded_project(self) -> None:
+        with temp_project_dir() as temp_dir:
+            project = temp_dir / "scaffolded-project"
+            run_cli(["init-context", str(project)])
+
+            result, output = run_cli(["explain-context", str(project)])
+
+        self.assertEqual(result, 0)
+        self.assertIn("AICS validation: passed", output)
+        self.assertIn("- .agentforge/agents/AGENTS.md (present)", output)
+
+    def test_explain_context_reports_invalid_context_without_failing(self) -> None:
+        with copied_example() as project:
+            (project / ".agentforge" / "constitution.md").unlink()
+
+            result, output = run_cli(["explain-context", str(project)])
+
+        self.assertEqual(result, 0)
+        self.assertIn("AICS validation: failed", output)
+        self.assertIn("- .agentforge/constitution.md (missing)", output)
+        self.assertIn("- missing AICS file: .agentforge/constitution.md", output)
+
+    def test_explain_context_reports_missing_project_path(self) -> None:
+        result, output = run_cli(["explain-context", str(ROOT / "missing-project")])
+
+        self.assertEqual(result, 1)
+        self.assertIn("project path does not exist:", output)
+
 def run_cli(args: list[str]) -> tuple[int, str]:
     stdout = io.StringIO()
     with redirect_stdout(stdout):

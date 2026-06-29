@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Draft
 - Version: 0.1
-- Phase: Genesis Sprint 6
+- Phase: Genesis Sprint 7
 - Last updated: 2026-06-29
 
 ## Purpose
@@ -55,7 +55,14 @@ agentforge init-context demo-project
 agentforge validate-context demo-project
 ```
 
-The CLI path is governed by `.agentforge/decisions/0003-cli-path-for-aics-validation.md`, `.agentforge/adrs/0003-cli-module-architecture.md`, `.agentforge/adrs/0004-cli-packaging-and-distribution.md`, and `.agentforge/adrs/0005-context-scaffolding-strategy.md`.
+Explain an AICS project context:
+
+```bash
+python apps/cli/bin/agentforge.py explain-context demo-project
+agentforge explain-context demo-project
+```
+
+The CLI path is governed by `.agentforge/decisions/0003-cli-path-for-aics-validation.md`, `.agentforge/adrs/0003-cli-module-architecture.md`, `.agentforge/adrs/0004-cli-packaging-and-distribution.md`, `.agentforge/adrs/0005-context-scaffolding-strategy.md`, and `.agentforge/adrs/0006-context-explanation-boundary.md`.
 
 ## Scaffolding Behavior
 
@@ -67,6 +74,20 @@ The Sprint 6 MVP:
 - creates validator-compatible starter content
 - avoids overwriting scaffold-managed files
 - defers merge, force, and interactive update flows
+
+## Explanation Behavior
+
+`agentforge explain-context` prints a read-only orientation report for a project context.
+
+The Sprint 7 MVP:
+
+- reports the resolved project root
+- reports whether AICS validation currently passes
+- points to the `.agentforge/` context root
+- lists primary governance entry points
+- includes validation signals when context is incomplete
+
+`agentforge validate-context` remains the canonical pass/fail command. Explanation can succeed when it successfully explains an incomplete context.
 
 ## Troubleshooting
 
@@ -94,6 +115,7 @@ The AgentForge monorepo targets AICS Level 3:
 
 ## Revision History
 
+- 2026-06-29: Added `explain-context` usage and ADR-0006 reference.
 - 2026-06-29: Added `init-context` scaffolding usage and ADR-0005 reference.
 - 2026-06-29: Added installable CLI usage.
 - 2026-06-28: Added canonical CLI usage and troubleshooting.

@@ -34,7 +34,7 @@ The draft AgentForge AI Context Specification is available at `.agentforge/specs
 
 ## Current Priority
 
-Genesis Sprint 6 delivers the context scaffolding MVP for the canonical AgentForge CLI with the new `agentforge init-context` command.
+Genesis Sprint 7 delivers the context explanation MVP for the canonical AgentForge CLI with the new `agentforge explain-context` command.
 
 Run local validation:
 
@@ -53,6 +53,7 @@ Run the source-tree CLI:
 python apps/cli/bin/agentforge.py validate-context
 python apps/cli/bin/agentforge.py validate-context examples/aics/minimal-project
 python apps/cli/bin/agentforge.py init-context demo-project
+python apps/cli/bin/agentforge.py explain-context demo-project
 ```
 
 Install the CLI from the monorepo:
@@ -62,6 +63,7 @@ python -m pip install -e apps/cli
 agentforge validate-context
 agentforge validate-context examples/aics/minimal-project
 agentforge init-context demo-project
+agentforge explain-context demo-project
 ```
 
 ## Governance

@@ -115,8 +115,27 @@ Exit criteria:
 - automated tests and CI validate generated scaffold output for issue #23
 - docs explain how to initialize and validate a new project for issue #24
 
+## Genesis-0.0.7: Context Explanation MVP
+
+Scope:
+
+- define context explanation requirements
+- decide explanation output and validation boundary
+- implement `agentforge explain-context`
+- add explanation tests and CI validation
+- document the explanation workflow and release limitations
+
+Exit criteria:
+
+- requirements document exists for issue #25
+- an explanation ADR or durable decision exists for issue #26
+- `agentforge explain-context` can explain the canonical repo and a minimal/scaffolded AICS project for issue #29
+- automated tests and CI validate explanation output behavior for issue #28
+- docs explain how to explain and validate a project context for issue #27
+
 ## Revision History
 
+- 2026-06-29: Added Genesis-0.0.7 context explanation milestone.
 - 2026-06-29: Added Genesis-0.0.6 context scaffolding milestone.
 - 2026-06-29: Confirmed installable CLI smoke-test coverage for Genesis-0.0.5.
 - 2026-06-28: Added Genesis-0.0.5 installable CLI milestone.

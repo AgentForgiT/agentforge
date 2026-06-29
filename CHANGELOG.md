@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Genesis-0.0.7 - 2026-06-29
+
+- Added the canonical `agentforge explain-context` CLI command for read-only AICS project orientation.
+- Added validation-informed explanation output with key governance entry points and incomplete-context signals.
+- Added ADR-0006, Sprint 7 requirements, explanation tests, install smoke coverage, and docs.
+
 ## Genesis-0.0.6 - 2026-06-29
 
 - Added the canonical `agentforge init-context` CLI command for scaffolding a minimal AICS v0.1 project context.

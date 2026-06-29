@@ -78,6 +78,18 @@ class CliInstallSmokeTests(unittest.TestCase):
             )
             self.assertEqual(scaffold_validate.returncode, 0, scaffold_validate.stderr)
             self.assertEqual(scaffold_validate.stdout, "aics ok\n")
+
+            explain_result = subprocess.run(
+                [str(command), "explain-context", str(scaffold_project)],
+                cwd=str(ROOT),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(explain_result.returncode, 0, explain_result.stderr)
+            self.assertIn("AgentForge context explanation", explain_result.stdout)
+            self.assertIn("AICS validation: passed", explain_result.stdout)
             shutil.rmtree(scaffold_temp)
 
         self.assertEqual(example_result.returncode, 0, example_result.stderr)

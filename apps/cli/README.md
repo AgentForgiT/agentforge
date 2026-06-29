@@ -5,11 +5,11 @@ Canonical command-line interface for AgentForge.
 ## Status
 
 - Module: `apps/cli`
-- Status: Genesis context scaffolding MVP
-- Related requirements: `.agentforge/requirements/canonical-cli-mvp.md`, `.agentforge/requirements/installable-cli.md`, `.agentforge/requirements/context-scaffolding-mvp.md`
-- Related ADRs: `.agentforge/adrs/0003-cli-module-architecture.md`, `.agentforge/adrs/0004-cli-packaging-and-distribution.md`, `.agentforge/adrs/0005-context-scaffolding-strategy.md`
+- Status: Genesis context explanation MVP
+- Related requirements: `.agentforge/requirements/canonical-cli-mvp.md`, `.agentforge/requirements/installable-cli.md`, `.agentforge/requirements/context-scaffolding-mvp.md`, `.agentforge/requirements/context-explanation-mvp.md`
+- Related ADRs: `.agentforge/adrs/0003-cli-module-architecture.md`, `.agentforge/adrs/0004-cli-packaging-and-distribution.md`, `.agentforge/adrs/0005-context-scaffolding-strategy.md`, `.agentforge/adrs/0006-context-explanation-boundary.md`
 
-The canonical CLI now supports both `agentforge validate-context` and `agentforge init-context`.
+The canonical CLI now supports `agentforge validate-context`, `agentforge init-context`, and `agentforge explain-context`.
 
 ## Run Locally
 
@@ -31,6 +31,7 @@ Editable install:
 python -m pip install -e apps/cli
 agentforge validate-context
 agentforge init-context demo-project
+agentforge explain-context demo-project
 ```
 
 This Genesis workflow assumes a standard Python environment with local packaging tools available. Public registry publishing remains deferred.
@@ -54,6 +55,7 @@ Windows PowerShell editable install:
 python -m pip install -e apps/cli
 agentforge validate-context
 agentforge init-context demo-project
+agentforge explain-context demo-project
 ```
 
 Validate an explicit project path:
@@ -98,6 +100,18 @@ Validate a generated project:
 agentforge validate-context demo-project
 ```
 
+Explain a project context:
+
+```bash
+PYTHONPATH=apps/cli/src python -m agentforge_cli explain-context demo-project
+python apps/cli/bin/agentforge.py explain-context demo-project
+agentforge explain-context demo-project
+```
+
+`explain-context` prints a read-only orientation report with the resolved project root, AICS validation status, context root, primary governance files, and validation signals when context is incomplete.
+
+`validate-context` remains the canonical pass/fail command. `explain-context` can still return success when it successfully explains an incomplete context.
+
 ## Install Validation
 
 Local install smoke coverage runs in:
@@ -121,5 +135,7 @@ Validation failures print one actionable error per line and return exit code `1`
 Invalid CLI usage, such as a missing project path, returns exit code `2`.
 
 Initialization failures caused by scaffold conflicts or filesystem errors return exit code `1`.
+
+Explanation failures caused by missing or inaccessible project paths return exit code `1`.
 
 Installer-level packaging and global `agentforge` command distribution are deferred during Genesis.
