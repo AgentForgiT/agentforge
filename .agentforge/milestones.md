@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Draft
 - Phase: Genesis
-- Last updated: 2026-06-29
+- Last updated: 2026-07-02
 
 ## Genesis-0.0.1: Bootstrap Kit
 
@@ -151,8 +151,27 @@ Exit criteria:
 - automated tests and CI validate diagnostics output behavior for issue #34
 - docs explain how diagnostics differs from validation and explanation for issue #32
 
+## Genesis-0.0.9: Prototype Repository Notices
+
+Scope:
+
+- define prototype repository notice requirements
+- decide post-Sprint-8 prototype disposition
+- update canonical repository docs
+- refine public prototype README notices
+- validate and release the disposition update
+
+Exit criteria:
+
+- requirements document exists for issue #35
+- DEC-0004 records post-Sprint-8 prototype disposition for issue #36
+- canonical docs identify prototype repositories as public historical references for issue #37
+- `agentforge-gateway` and `agentforge-cli` README notices point to canonical modules for issue #39
+- validation passes and release notes document `Genesis-0.0.9` for issue #38
+
 ## Revision History
 
+- 2026-07-02: Added Genesis-0.0.9 prototype repository notices milestone.
 - 2026-06-29: Added Genesis-0.0.8 doctor diagnostics milestone.
 - 2026-06-29: Added Genesis-0.0.7 context explanation milestone.
 - 2026-06-29: Added Genesis-0.0.6 context scaffolding milestone.

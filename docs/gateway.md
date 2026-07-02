@@ -6,7 +6,7 @@ Metadata:
 - Module: `apps/gateway`
 - Related requirements: `.agentforge/requirements/gateway-reconciliation.md`
 - Related ADR: `.agentforge/adrs/0002-gateway-module-placement.md`
-- Last updated: 2026-06-28
+- Last updated: 2026-07-02
 
 ## Purpose
 
@@ -26,7 +26,9 @@ The Genesis MVP includes:
 
 ## Prototype Lineage
 
-This module was migrated from the pre-governance `agentforge-gateway` repository. That repository remains a prototype until AgentForge decides its final disposition.
+This module was migrated from the pre-governance `agentforge-gateway` repository.
+
+DEC-0004 keeps that repository public as a historical reference, but canonical gateway development now belongs in `AgentForgiT/agentforge` under `apps/gateway`.
 
 ## Local Validation
 
@@ -49,4 +51,5 @@ The OpenRouter example at `apps/gateway/config.openrouter.example.json` uses `OP
 
 ## Revision History
 
+- 2026-07-02: Clarified post-Sprint-8 prototype repository disposition.
 - 2026-06-28: Initial migrated gateway documentation.

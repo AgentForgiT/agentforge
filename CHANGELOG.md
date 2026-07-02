@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Genesis-0.0.9 - 2026-07-02
+
+- Added Sprint 9 requirements and DEC-0004 for post-Sprint-8 prototype repository disposition.
+- Clarified that `agentforge-gateway` and `agentforge-cli` remain public historical references and are superseded for canonical development by monorepo modules.
+- Updated repository docs, roadmap, milestones, and prototype notice guidance.
+
 ## Genesis-0.0.8 - 2026-06-29
 
 - Added the canonical `agentforge doctor` CLI command for read-only local AICS context diagnostics.

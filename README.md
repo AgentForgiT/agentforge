@@ -34,7 +34,9 @@ The draft AgentForge AI Context Specification is available at `.agentforge/specs
 
 ## Current Priority
 
-Genesis Sprint 8 delivers the doctor diagnostics MVP for the canonical AgentForge CLI with the new `agentforge doctor` command.
+Genesis Sprint 9 clarifies public prototype repository status now that canonical gateway and CLI development paths exist in this monorepo.
+
+The public `agentforge-gateway` and `agentforge-cli` repositories are historical pre-governance prototypes. They remain public for history and migration traceability, but new canonical gateway and CLI work belongs in this repository under `apps/gateway` and `apps/cli`.
 
 Run local validation:
 

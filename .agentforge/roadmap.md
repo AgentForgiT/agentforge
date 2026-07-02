@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Draft
 - Phase: Genesis
-- Last updated: 2026-06-29
+- Last updated: 2026-07-02
 
 ## Genesis Sprint 1: Bootstrap Kit
 
@@ -104,8 +104,21 @@ Deliverables:
 - diagnostics tests and CI validation for issue #34
 - diagnostics docs and `Genesis-0.0.8` release for issue #32
 
+## Genesis Sprint 9: Prototype Repository Notices
+
+Goal: close the post-Sprint-8 prototype disposition loop by clarifying that public pre-governance repositories remain historical references while canonical gateway and CLI development continues in the monorepo.
+
+Deliverables:
+
+- prototype notice requirements for issue #35
+- post-Sprint-8 prototype disposition decision for issue #36
+- canonical repository documentation updates for issue #37
+- README notices in `agentforge-gateway` and `agentforge-cli` for issue #39
+- validation and `Genesis-0.0.9` release for issue #38
+
 ## Revision History
 
+- 2026-07-02: Added Sprint 9 prototype repository notice deliverables.
 - 2026-06-29: Added Sprint 8 doctor diagnostics deliverables.
 - 2026-06-29: Added Sprint 7 context explanation deliverables.
 - 2026-06-29: Added Sprint 6 context scaffolding deliverables.

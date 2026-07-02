@@ -26,9 +26,11 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 | DEC-0001 | 2026-06-28 | Accepted | Treat early gateway and CLI repos as pre-governance prototypes | `.agentforge/decisions/0001-pre-governance-prototypes.md` |
 | DEC-0002 | 2026-06-28 | Accepted | Keep prototype repositories public with canonical monorepo notices | `.agentforge/decisions/0002-prototype-repository-disposition.md` |
 | DEC-0003 | 2026-06-28 | Accepted | Build AICS validation CLI in the canonical monorepo | `.agentforge/decisions/0003-cli-path-for-aics-validation.md` |
+| DEC-0004 | 2026-07-02 | Accepted | Keep public prototype repositories as historical references after canonical gateway and CLI paths exist | `.agentforge/decisions/0004-post-sprint-8-prototype-disposition.md` |
 
 ## Revision History
 
+- 2026-07-02: Added DEC-0004.
 - 2026-06-29: Added ADR-0007.
 - 2026-06-29: Added ADR-0006.
 - 2026-06-29: Added ADR-0005.
