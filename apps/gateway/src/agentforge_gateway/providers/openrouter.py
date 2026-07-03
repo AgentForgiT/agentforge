@@ -1,49 +1,13 @@
 from __future__ import annotations
 
+from typing import Any, Callable
 import json
 import os
-import time
-from typing import Any, Callable, Protocol
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
-import uuid
 
-from .config import ModelConfig, ProviderConfig
-from .errors import ProviderConfigurationError, UpstreamProviderError
-
-
-class ChatProvider(Protocol):
-    def chat_completion(self, model: ModelConfig, body: dict[str, Any]) -> dict[str, object]:
-        ...
-
-
-class MockProvider:
-    def chat_completion(self, model: ModelConfig, body: dict[str, Any]) -> dict[str, object]:
-        messages = body["messages"]
-        user_text = _last_user_text(messages)
-        content = f"Mock response from {model.name}: {user_text}"
-
-        return {
-            "id": f"chatcmpl-{uuid.uuid4().hex[:24]}",
-            "object": "chat.completion",
-            "created": int(time.time()),
-            "model": model.name,
-            "choices": [
-                {
-                    "index": 0,
-                    "message": {
-                        "role": "assistant",
-                        "content": content,
-                    },
-                    "finish_reason": "stop",
-                }
-            ],
-            "usage": {
-                "prompt_tokens": _estimate_tokens(messages),
-                "completion_tokens": _estimate_text_tokens(content),
-                "total_tokens": _estimate_tokens(messages) + _estimate_text_tokens(content),
-            },
-        }
+from ..config import ModelConfig, ProviderConfig
+from ..errors import ProviderConfigurationError, UpstreamProviderError
 
 
 class OpenRouterProvider:
@@ -100,14 +64,6 @@ class OpenRouterProvider:
         return headers
 
 
-def build_provider(config: ProviderConfig) -> ChatProvider:
-    if config.type == "mock":
-        return MockProvider()
-    if config.type == "openrouter":
-        return OpenRouterProvider(config)
-    raise ProviderConfigurationError(f"unsupported provider type: {config.type}")
-
-
 def _http_error_message(provider_name: str, exc: HTTPError) -> str:
     raw = exc.read().decode("utf-8", errors="replace")
     try:
@@ -124,19 +80,3 @@ def _http_error_message(provider_name: str, exc: HTTPError) -> str:
             message = str(parsed["message"])
 
     return f"provider '{provider_name}' request failed with status {exc.code}: {message}"
-
-
-def _last_user_text(messages: list[dict[str, object]]) -> str:
-    for message in reversed(messages):
-        if message.get("role") == "user":
-            content = message.get("content", "")
-            return str(content)
-    return "No user message provided."
-
-
-def _estimate_tokens(messages: list[dict[str, object]]) -> int:
-    return sum(_estimate_text_tokens(str(message.get("content", ""))) for message in messages)
-
-
-def _estimate_text_tokens(text: str) -> int:
-    return max(1, len(text.split()))

@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Draft
 - Phase: Genesis
-- Last updated: 2026-07-02
+- Last updated: 2026-07-03
 
 ## Genesis Sprint 1: Bootstrap Kit
 
@@ -116,8 +116,21 @@ Deliverables:
 - README notices in `agentforge-gateway` and `agentforge-cli` for issue #39
 - validation and `Genesis-0.0.9` release for issue #38
 
+## Genesis Sprint 10: Gateway Provider Boundary MVP
+
+Goal: make the gateway provider adapter boundary explicit inside `apps/gateway` without prematurely extracting standalone provider packages.
+
+Deliverables:
+
+- provider boundary requirements for issue #40
+- internal provider adapter boundary ADR for issue #41
+- provider adapter module refactor for issue #42
+- provider boundary tests and CI validation for issue #44
+- provider boundary docs and `Genesis-0.0.10` release for issue #43
+
 ## Revision History
 
+- 2026-07-03: Added Sprint 10 gateway provider boundary deliverables.
 - 2026-07-02: Added Sprint 9 prototype repository notice deliverables.
 - 2026-06-29: Added Sprint 8 doctor diagnostics deliverables.
 - 2026-06-29: Added Sprint 7 context explanation deliverables.

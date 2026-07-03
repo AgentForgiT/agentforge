@@ -9,7 +9,7 @@ This module was migrated from the pre-governance `agentforge-gateway` prototype 
 - Module: `apps/gateway`
 - Status: Genesis MVP
 - Related requirements: `.agentforge/requirements/gateway-reconciliation.md`
-- Related ADR: `.agentforge/adrs/0002-gateway-module-placement.md`
+- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`
 
 ## Features
 
@@ -19,8 +19,21 @@ This module was migrated from the pre-governance `agentforge-gateway` prototype 
 - `POST /v1/chat/completions`
 - deterministic mock provider
 - optional OpenRouter provider adapter
+- explicit internal provider adapter boundary
 - JSON configuration
 - offline unit and endpoint tests
+
+## Provider Boundary
+
+Provider adapter code lives under `agentforge_gateway.providers`.
+
+The Genesis boundary keeps adapters inside `apps/gateway` while separating:
+
+- provider protocol and factory
+- deterministic mock adapter
+- OpenRouter adapter
+
+`packages/providers` extraction remains deferred until the boundary is proven by more provider maturity or reuse.
 
 ## Run Tests
 

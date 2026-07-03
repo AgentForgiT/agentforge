@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Genesis-0.0.10 - 2026-07-03
+
+- Added Sprint 10 requirements and ADR-0008 for the gateway provider adapter boundary.
+- Refactored gateway provider adapters behind explicit internal modules while preserving mock and OpenRouter behavior.
+- Added provider boundary tests and updated gateway documentation.
+
 ## Genesis-0.0.9 - 2026-07-02
 
 - Added Sprint 9 requirements and DEC-0004 for post-Sprint-8 prototype repository disposition.

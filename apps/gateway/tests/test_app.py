@@ -17,7 +17,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from agentforge_gateway.app import GatewayApp, create_handler
 from agentforge_gateway.config import DEFAULT_CONFIG, ModelConfig, ProviderConfig, parse_config
 from agentforge_gateway.errors import ProviderConfigurationError
-from agentforge_gateway.providers import OpenRouterProvider
+from agentforge_gateway.providers import MockProvider, OpenRouterProvider, build_provider, supported_provider_types
 
 
 class GatewayAppTests(unittest.TestCase):
@@ -113,6 +113,46 @@ class ConfigTests(unittest.TestCase):
             )
 
         self.assertIn("unknown provider", str(ctx.exception))
+
+
+class ProviderFactoryTests(unittest.TestCase):
+    def test_build_provider_returns_mock_provider(self) -> None:
+        provider = build_provider(ProviderConfig(name="mock", type="mock"))
+
+        self.assertIsInstance(provider, MockProvider)
+
+    def test_build_provider_returns_openrouter_provider(self) -> None:
+        provider = build_provider(ProviderConfig(name="openrouter", type="openrouter"))
+
+        self.assertIsInstance(provider, OpenRouterProvider)
+
+    def test_build_provider_rejects_unsupported_provider_type(self) -> None:
+        with self.assertRaises(ProviderConfigurationError) as ctx:
+            build_provider(ProviderConfig(name="custom", type="custom"))
+
+        self.assertIn("unsupported provider type: custom", str(ctx.exception))
+
+    def test_supported_provider_types_are_explicit(self) -> None:
+        self.assertEqual(supported_provider_types(), ("mock", "openrouter"))
+
+
+class MockProviderTests(unittest.TestCase):
+    def test_chat_completion_returns_openai_compatible_shape(self) -> None:
+        provider = MockProvider()
+
+        response = provider.chat_completion(
+            ModelConfig(
+                name="mock-coder",
+                provider="mock",
+                provider_model="mock-coder-v1",
+            ),
+            {"messages": [{"role": "user", "content": "Hello"}]},
+        )
+
+        self.assertEqual(response["object"], "chat.completion")
+        self.assertEqual(response["model"], "mock-coder")
+        self.assertIn("usage", response)
+        self.assertIn("Mock response from mock-coder: Hello", response["choices"][0]["message"]["content"])
 
 
 class OpenRouterProviderTests(unittest.TestCase):

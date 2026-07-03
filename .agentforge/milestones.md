@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Draft
 - Phase: Genesis
-- Last updated: 2026-07-02
+- Last updated: 2026-07-03
 
 ## Genesis-0.0.1: Bootstrap Kit
 
@@ -169,8 +169,27 @@ Exit criteria:
 - `agentforge-gateway` and `agentforge-cli` README notices point to canonical modules for issue #39
 - validation passes and release notes document `Genesis-0.0.9` for issue #38
 
+## Genesis-0.0.10: Gateway Provider Boundary MVP
+
+Scope:
+
+- define gateway provider boundary requirements
+- decide internal provider adapter module boundary
+- refactor provider adapters into explicit internal modules
+- add provider boundary tests and CI validation
+- document the boundary and release limitations
+
+Exit criteria:
+
+- requirements document exists for issue #40
+- ADR-0008 records the internal provider boundary for issue #41
+- provider adapters live behind explicit internal modules for issue #42
+- automated tests and CI validate provider factory and adapter behavior for issue #44
+- docs explain why `packages/providers` extraction remains deferred for issue #43
+
 ## Revision History
 
+- 2026-07-03: Added Genesis-0.0.10 gateway provider boundary milestone.
 - 2026-07-02: Added Genesis-0.0.9 prototype repository notices milestone.
 - 2026-06-29: Added Genesis-0.0.8 doctor diagnostics milestone.
 - 2026-06-29: Added Genesis-0.0.7 context explanation milestone.

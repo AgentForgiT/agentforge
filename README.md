@@ -34,9 +34,9 @@ The draft AgentForge AI Context Specification is available at `.agentforge/specs
 
 ## Current Priority
 
-Genesis Sprint 9 clarifies public prototype repository status now that canonical gateway and CLI development paths exist in this monorepo.
+Genesis Sprint 10 hardens the gateway provider adapter boundary inside `apps/gateway` without prematurely extracting standalone provider packages.
 
-The public `agentforge-gateway` and `agentforge-cli` repositories are historical pre-governance prototypes. They remain public for history and migration traceability, but new canonical gateway and CLI work belongs in this repository under `apps/gateway` and `apps/cli`.
+Gateway provider adapters now live behind explicit internal modules under `agentforge_gateway.providers`. The public `agentforge-gateway` and `agentforge-cli` repositories remain historical pre-governance prototypes; new canonical gateway and CLI work belongs in this repository under `apps/gateway` and `apps/cli`.
 
 Run local validation:
 
