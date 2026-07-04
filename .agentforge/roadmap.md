@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Draft
 - Phase: Genesis
-- Last updated: 2026-07-03
+- Last updated: 2026-07-04
 
 ## Genesis Sprint 1: Bootstrap Kit
 
@@ -128,8 +128,21 @@ Deliverables:
 - provider boundary tests and CI validation for issue #44
 - provider boundary docs and `Genesis-0.0.10` release for issue #43
 
+## Genesis Sprint 11: Gateway Provider Contract Tests MVP
+
+Goal: validate gateway provider adapters against an offline chat completion contract before adding more providers or extracting packages.
+
+Deliverables:
+
+- provider contract test requirements for issue #49
+- provider contract testing boundary ADR for issue #45
+- provider contract test implementation for issue #46
+- provider contract CI validation for issue #48
+- provider contract docs and `Genesis-0.0.11` release for issue #47
+
 ## Revision History
 
+- 2026-07-04: Added Sprint 11 gateway provider contract test deliverables.
 - 2026-07-03: Added Sprint 10 gateway provider boundary deliverables.
 - 2026-07-02: Added Sprint 9 prototype repository notice deliverables.
 - 2026-06-29: Added Sprint 8 doctor diagnostics deliverables.

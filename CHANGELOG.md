@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Genesis-0.0.11 - 2026-07-04
+
+- Added Sprint 11 requirements and ADR-0009 for offline gateway provider contract tests.
+- Added provider contract tests for mock and OpenRouter adapters without live network or credential requirements.
+- Updated gateway documentation to explain provider contract validation and the deferred provider package extraction path.
+
 ## Genesis-0.0.10 - 2026-07-03
 
 - Added Sprint 10 requirements and ADR-0008 for the gateway provider adapter boundary.

@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Draft
 - Phase: Genesis
-- Last updated: 2026-07-03
+- Last updated: 2026-07-04
 
 ## Genesis-0.0.1: Bootstrap Kit
 
@@ -187,8 +187,27 @@ Exit criteria:
 - automated tests and CI validate provider factory and adapter behavior for issue #44
 - docs explain why `packages/providers` extraction remains deferred for issue #43
 
+## Genesis-0.0.11: Gateway Provider Contract Tests MVP
+
+Scope:
+
+- define gateway provider contract test requirements
+- decide provider contract testing boundary
+- add offline contract tests for current providers
+- validate provider contracts in local tests and CI
+- document the contract and release limitations
+
+Exit criteria:
+
+- requirements document exists for issue #49
+- ADR-0009 records the offline provider contract test boundary for issue #45
+- mock and OpenRouter adapters have offline contract coverage for issue #46
+- validation passes locally and in CI for issue #48
+- docs explain provider contracts and release notes document `Genesis-0.0.11` for issue #47
+
 ## Revision History
 
+- 2026-07-04: Added Genesis-0.0.11 gateway provider contract tests milestone.
 - 2026-07-03: Added Genesis-0.0.10 gateway provider boundary milestone.
 - 2026-07-02: Added Genesis-0.0.9 prototype repository notices milestone.
 - 2026-06-29: Added Genesis-0.0.8 doctor diagnostics milestone.

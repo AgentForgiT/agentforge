@@ -5,8 +5,8 @@ Metadata:
 - Status: Genesis MVP
 - Module: `apps/gateway`
 - Related requirements: `.agentforge/requirements/gateway-reconciliation.md`
-- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`
-- Last updated: 2026-07-03
+- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`
+- Last updated: 2026-07-04
 
 ## Purpose
 
@@ -22,6 +22,7 @@ The Genesis MVP includes:
 - deterministic mock provider
 - optional OpenRouter provider
 - internal provider adapter boundary
+- offline provider contract tests
 - JSON configuration
 - offline tests
 
@@ -57,6 +58,20 @@ ADR-0008 defines the internal provider package boundary:
 
 `packages/providers` remains a long-term extraction target from ADR-0002, but extraction is deferred until provider maturity, ownership, or release cadence justifies it.
 
+## Provider Contract Tests
+
+ADR-0009 defines offline provider contract tests for the Genesis gateway.
+
+The contract tests verify that gateway providers return the minimal OpenAI-compatible chat completion shape expected by the gateway:
+
+- `chat.completion` object marker
+- public gateway model alias
+- non-empty choices
+- assistant message role and string content
+- finish reason
+
+The current suite covers the deterministic mock provider and the OpenRouter provider through injected offline transport. Live upstream calls and provider credentials are intentionally excluded from default validation.
+
 ## Risks
 
 - Provider adapters are still inside `apps/gateway`; ADR-0002 and ADR-0008 identify `packages/providers` as a later extraction target.
@@ -65,6 +80,7 @@ ADR-0008 defines the internal provider package boundary:
 
 ## Revision History
 
+- 2026-07-04: Documented offline provider contract tests from ADR-0009.
 - 2026-07-03: Documented internal provider adapter boundary from ADR-0008.
 - 2026-07-02: Clarified post-Sprint-8 prototype repository disposition.
 - 2026-06-28: Initial migrated gateway documentation.
