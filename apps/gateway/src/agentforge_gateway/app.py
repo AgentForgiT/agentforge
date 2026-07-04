@@ -8,6 +8,7 @@ from .config import GatewayConfig, load_config
 from .errors import BadRequestError, GatewayError
 from .models import ModelRegistry
 from .providers import ChatProvider, build_provider
+from .requests import validate_chat_completion_request
 
 
 class GatewayApp:
@@ -29,22 +30,10 @@ class GatewayApp:
         return self.registry.list_models()
 
     def chat_completions(self, body: dict[str, Any]) -> dict[str, object]:
-        model_name = body.get("model")
-        messages = body.get("messages")
-
-        if not isinstance(model_name, str) or not model_name:
-            raise BadRequestError("request requires a model")
-        if not isinstance(messages, list) or not messages:
-            raise BadRequestError("request requires non-empty messages")
-        if body.get("stream") is True:
-            raise BadRequestError("streaming responses are not supported yet")
-        for message in messages:
-            if not isinstance(message, dict) or "role" not in message or "content" not in message:
-                raise BadRequestError("each message requires role and content")
-
-        model = self.registry.get(model_name)
+        request = validate_chat_completion_request(body)
+        model = self.registry.get(request.model)
         provider = self.providers[model.provider]
-        return provider.chat_completion(model, body)
+        return provider.chat_completion(model, request.body)
 
 
 def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:

@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Draft
 - Phase: Genesis
-- Last updated: 2026-07-04
+- Last updated: 2026-07-05
 
 ## Genesis Sprint 1: Bootstrap Kit
 
@@ -140,8 +140,21 @@ Deliverables:
 - provider contract CI validation for issue #48
 - provider contract docs and `Genesis-0.0.11` release for issue #47
 
+## Genesis Sprint 12: Gateway Request Validation MVP
+
+Goal: separate chat-completion request validation from gateway orchestration while preserving the current OpenAI-compatible endpoint behavior.
+
+Deliverables:
+
+- request validation requirements for issue #50
+- request validation boundary ADR for issue #52
+- internal request validation module for issue #54
+- request validation tests and CI validation for issue #51
+- request validation docs and `Genesis-0.0.12` release for issue #53
+
 ## Revision History
 
+- 2026-07-05: Added Sprint 12 gateway request validation deliverables.
 - 2026-07-04: Added Sprint 11 gateway provider contract test deliverables.
 - 2026-07-03: Added Sprint 10 gateway provider boundary deliverables.
 - 2026-07-02: Added Sprint 9 prototype repository notice deliverables.

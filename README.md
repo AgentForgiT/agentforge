@@ -34,9 +34,9 @@ The draft AgentForge AI Context Specification is available at `.agentforge/specs
 
 ## Current Priority
 
-Genesis Sprint 11 validates gateway provider adapters against an offline chat completion contract before adding more providers or extracting standalone provider packages.
+Genesis Sprint 12 separates gateway chat-completion request validation from orchestration while preserving the current OpenAI-compatible endpoint behavior.
 
-Gateway provider adapters live behind explicit internal modules under `agentforge_gateway.providers`, with contract tests that keep mock and OpenRouter behavior aligned to the gateway response boundary. The public `agentforge-gateway` and `agentforge-cli` repositories remain historical pre-governance prototypes; new canonical gateway and CLI work belongs in this repository under `apps/gateway` and `apps/cli`.
+Gateway provider adapters live behind explicit internal modules under `agentforge_gateway.providers`, and chat-completion request validation now has its own internal boundary under `agentforge_gateway.requests`. The public `agentforge-gateway` and `agentforge-cli` repositories remain historical pre-governance prototypes; new canonical gateway and CLI work belongs in this repository under `apps/gateway` and `apps/cli`.
 
 Run local validation:
 

@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Draft
 - Phase: Genesis
-- Last updated: 2026-07-04
+- Last updated: 2026-07-05
 
 ## Genesis-0.0.1: Bootstrap Kit
 
@@ -205,8 +205,27 @@ Exit criteria:
 - validation passes locally and in CI for issue #48
 - docs explain provider contracts and release notes document `Genesis-0.0.11` for issue #47
 
+## Genesis-0.0.12: Gateway Request Validation MVP
+
+Scope:
+
+- define gateway request validation requirements
+- decide chat-completion request validation boundary
+- add an internal request validation module
+- add focused request validation tests
+- document the request validation boundary and release limitations
+
+Exit criteria:
+
+- requirements document exists for issue #50
+- ADR-0010 records the request validation boundary for issue #52
+- request validation lives outside gateway orchestration for issue #54
+- validation passes locally and in CI for issue #51
+- docs explain request validation and release notes document `Genesis-0.0.12` for issue #53
+
 ## Revision History
 
+- 2026-07-05: Added Genesis-0.0.12 gateway request validation milestone.
 - 2026-07-04: Added Genesis-0.0.11 gateway provider contract tests milestone.
 - 2026-07-03: Added Genesis-0.0.10 gateway provider boundary milestone.
 - 2026-07-02: Added Genesis-0.0.9 prototype repository notices milestone.

@@ -9,7 +9,7 @@ This module was migrated from the pre-governance `agentforge-gateway` prototype 
 - Module: `apps/gateway`
 - Status: Genesis MVP
 - Related requirements: `.agentforge/requirements/gateway-reconciliation.md`
-- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`
+- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`
 
 ## Features
 
@@ -21,6 +21,7 @@ This module was migrated from the pre-governance `agentforge-gateway` prototype 
 - optional OpenRouter provider adapter
 - explicit internal provider adapter boundary
 - offline provider contract tests
+- internal request validation boundary
 - JSON configuration
 - offline unit and endpoint tests
 
@@ -48,6 +49,14 @@ Current contract coverage includes:
 - OpenRouter payload mapping through injected transport
 - public model alias normalization
 - upstream HTTP error translation
+
+## Request Validation
+
+Chat-completion request validation lives in `agentforge_gateway.requests`.
+
+The request boundary validates required `model` and `messages` fields, rejects unsupported streaming requests, and preserves the original request body passed to provider adapters.
+
+Streaming remains unsupported during Genesis because it changes HTTP response behavior, provider contracts, and validation expectations.
 
 ## Run Tests
 

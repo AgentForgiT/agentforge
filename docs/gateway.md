@@ -5,8 +5,8 @@ Metadata:
 - Status: Genesis MVP
 - Module: `apps/gateway`
 - Related requirements: `.agentforge/requirements/gateway-reconciliation.md`
-- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`
-- Last updated: 2026-07-04
+- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`
+- Last updated: 2026-07-05
 
 ## Purpose
 
@@ -23,6 +23,7 @@ The Genesis MVP includes:
 - optional OpenRouter provider
 - internal provider adapter boundary
 - offline provider contract tests
+- internal request validation boundary
 - JSON configuration
 - offline tests
 
@@ -72,14 +73,28 @@ The contract tests verify that gateway providers return the minimal OpenAI-compa
 
 The current suite covers the deterministic mock provider and the OpenRouter provider through injected offline transport. Live upstream calls and provider credentials are intentionally excluded from default validation.
 
+## Request Validation
+
+ADR-0010 defines the internal request validation boundary for `/v1/chat/completions`.
+
+Request validation lives in `agentforge_gateway.requests` and validates:
+
+- required `model`
+- non-empty `messages`
+- unsupported streaming requests
+- message `role` and `content` presence
+
+`GatewayApp` remains responsible for model lookup and provider dispatch after validation succeeds. The original request body is preserved so optional provider payload fields continue to pass through to provider adapters.
+
 ## Risks
 
 - Provider adapters are still inside `apps/gateway`; ADR-0002 and ADR-0008 identify `packages/providers` as a later extraction target.
-- Streaming is explicitly unsupported in the Genesis MVP.
+- Streaming is explicitly unsupported in the Genesis MVP and requires later design work before implementation.
 - OpenRouter live testing is optional and must not be required in default CI.
 
 ## Revision History
 
+- 2026-07-05: Documented internal request validation boundary from ADR-0010.
 - 2026-07-04: Documented offline provider contract tests from ADR-0009.
 - 2026-07-03: Documented internal provider adapter boundary from ADR-0008.
 - 2026-07-02: Clarified post-Sprint-8 prototype repository disposition.

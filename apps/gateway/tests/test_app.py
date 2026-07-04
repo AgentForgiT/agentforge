@@ -44,6 +44,20 @@ class GatewayAppTests(unittest.TestCase):
         self.assertEqual(response["model"], "mock-coder")
         self.assertIn("Mock response", response["choices"][0]["message"]["content"])
 
+    def test_chat_completion_preserves_request_body_for_provider(self) -> None:
+        provider = RecordingProvider()
+        app = GatewayApp(DEFAULT_CONFIG, providers={"mock": provider})
+        body = {
+            "model": "mock-coder",
+            "messages": [{"role": "user", "content": "Hello"}],
+            "temperature": 0.2,
+        }
+
+        app.chat_completions(body)
+
+        self.assertIs(provider.calls[0], body)
+        self.assertEqual(provider.calls[0]["temperature"], 0.2)
+
     def test_unknown_model(self) -> None:
         with self.assertRaises(Exception) as ctx:
             self.app.chat_completions(
@@ -243,6 +257,27 @@ class FakeResponse:
 
     def read(self) -> bytes:
         return json.dumps(self.body).encode("utf-8")
+
+
+class RecordingProvider:
+    def __init__(self) -> None:
+        self.calls: list[dict[str, object]] = []
+
+    def chat_completion(self, model: ModelConfig, body: dict[str, object]) -> dict[str, object]:
+        self.calls.append(body)
+        return {
+            "id": "chatcmpl-recording",
+            "object": "chat.completion",
+            "created": 123,
+            "model": model.name,
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {"role": "assistant", "content": "Recorded"},
+                    "finish_reason": "stop",
+                }
+            ],
+        }
 
 
 class GatewayHttpTests(unittest.TestCase):

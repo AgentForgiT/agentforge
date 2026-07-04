@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Genesis-0.0.12 - 2026-07-05
+
+- Added Sprint 12 requirements and ADR-0010 for the gateway request validation boundary.
+- Moved chat-completion request validation into an internal request module while preserving provider payload forwarding.
+- Added focused request validation tests and updated gateway documentation.
+
 ## Genesis-0.0.11 - 2026-07-04
 
 - Added Sprint 11 requirements and ADR-0009 for offline gateway provider contract tests.
