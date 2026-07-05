@@ -16,7 +16,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from agentforge_gateway.app import GatewayApp, create_handler
 from agentforge_gateway.config import DEFAULT_CONFIG, ModelConfig, ProviderConfig, parse_config
-from agentforge_gateway.errors import ProviderConfigurationError
+from agentforge_gateway.errors import ProviderConfigurationError, UpstreamProviderError
 from agentforge_gateway.providers import MockProvider, OpenRouterProvider, build_provider, supported_provider_types
 
 
@@ -325,10 +325,133 @@ class GatewayHttpTests(unittest.TestCase):
             )
 
         self.assertEqual(ctx.exception.code, 404)
+        body = self.error_json(ctx.exception)
+        self.assertEqual(body["error"]["type"], "model_not_found")
+        self.assertIn("unknown model", body["error"]["message"])
+
+    def test_unknown_route_returns_error_envelope(self) -> None:
+        with self.assertRaises(HTTPError) as ctx:
+            self.get_json("/missing")
+
+        self.assertEqual(ctx.exception.code, 404)
+        body = self.error_json(ctx.exception)
+        self.assertEqual(body["error"], {"message": "not found", "type": "not_found"})
+
+    def test_invalid_json_returns_error_envelope(self) -> None:
+        request = Request(
+            f"{self.base_url}/v1/chat/completions",
+            data=b"{",
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+
+        with self.assertRaises(HTTPError) as ctx:
+            urlopen(request)
+
+        self.assertEqual(ctx.exception.code, 400)
+        body = self.error_json(ctx.exception)
+        self.assertEqual(body["error"], {"message": "invalid JSON body", "type": "bad_request"})
+
+    def test_non_object_body_returns_error_envelope(self) -> None:
+        with self.assertRaises(HTTPError) as ctx:
+            self.post_raw("/v1/chat/completions", [])
+
+        self.assertEqual(ctx.exception.code, 400)
+        body = self.error_json(ctx.exception)
+        self.assertEqual(body["error"]["type"], "bad_request")
+        self.assertIn("JSON object", body["error"]["message"])
+
+    def test_request_validation_error_returns_error_envelope(self) -> None:
+        with self.assertRaises(HTTPError) as ctx:
+            self.post_json("/v1/chat/completions", {"model": "mock-coder"})
+
+        self.assertEqual(ctx.exception.code, 400)
+        body = self.error_json(ctx.exception)
+        self.assertEqual(body["error"]["type"], "bad_request")
+        self.assertIn("messages", body["error"]["message"])
 
     def get_json(self, path: str) -> dict[str, object]:
         with urlopen(f"{self.base_url}{path}") as response:
             return json.loads(response.read().decode("utf-8"))
+
+    def post_json(self, path: str, body: dict[str, object]) -> dict[str, object]:
+        request = Request(
+            f"{self.base_url}{path}",
+            data=json.dumps(body).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urlopen(request) as response:
+            return json.loads(response.read().decode("utf-8"))
+
+    def post_raw(self, path: str, body: object) -> dict[str, object]:
+        request = Request(
+            f"{self.base_url}{path}",
+            data=json.dumps(body).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urlopen(request) as response:
+            return json.loads(response.read().decode("utf-8"))
+
+    def error_json(self, error: HTTPError) -> dict[str, object]:
+        return json.loads(error.read().decode("utf-8"))
+
+
+class ProviderErrorHttpTests(unittest.TestCase):
+    def test_provider_configuration_error_returns_error_envelope(self) -> None:
+        app = GatewayApp(DEFAULT_CONFIG, providers={"mock": RaisingProvider(ProviderConfigurationError("missing key"))})
+        server = LocalServer(app)
+        try:
+            with self.assertRaises(HTTPError) as ctx:
+                server.post_json(
+                    "/v1/chat/completions",
+                    {"model": "mock-coder", "messages": [{"role": "user", "content": "Hello"}]},
+                )
+        finally:
+            server.close()
+
+        self.assertEqual(ctx.exception.code, 500)
+        body = json.loads(ctx.exception.read().decode("utf-8"))
+        self.assertEqual(body["error"], {"message": "missing key", "type": "provider_configuration_error"})
+
+    def test_upstream_provider_error_returns_error_envelope(self) -> None:
+        app = GatewayApp(DEFAULT_CONFIG, providers={"mock": RaisingProvider(UpstreamProviderError("upstream down"))})
+        server = LocalServer(app)
+        try:
+            with self.assertRaises(HTTPError) as ctx:
+                server.post_json(
+                    "/v1/chat/completions",
+                    {"model": "mock-coder", "messages": [{"role": "user", "content": "Hello"}]},
+                )
+        finally:
+            server.close()
+
+        self.assertEqual(ctx.exception.code, 502)
+        body = json.loads(ctx.exception.read().decode("utf-8"))
+        self.assertEqual(body["error"], {"message": "upstream down", "type": "upstream_provider_error"})
+
+
+class RaisingProvider:
+    def __init__(self, error: Exception) -> None:
+        self.error = error
+
+    def chat_completion(self, model: ModelConfig, body: dict[str, object]) -> dict[str, object]:
+        raise self.error
+
+
+class LocalServer:
+    def __init__(self, app: GatewayApp) -> None:
+        self.server = ThreadingHTTPServer(("127.0.0.1", 0), create_handler(app))
+        self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
+        self.thread.start()
+        host, port = self.server.server_address
+        self.base_url = f"http://{host}:{port}"
+
+    def close(self) -> None:
+        self.server.shutdown()
+        self.server.server_close()
+        self.thread.join(timeout=5)
 
     def post_json(self, path: str, body: dict[str, object]) -> dict[str, object]:
         request = Request(

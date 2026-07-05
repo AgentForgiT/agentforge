@@ -5,7 +5,7 @@ import json
 from typing import Any
 
 from .config import GatewayConfig, load_config
-from .errors import BadRequestError, GatewayError
+from .errors import BadRequestError, GatewayError, invalid_json_response, not_found_response
 from .models import ModelRegistry
 from .providers import ChatProvider, build_provider
 from .requests import validate_chat_completion_request
@@ -51,7 +51,7 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
                 if self.path == "/v1/models":
                     self._send_json(200, app.models())
                     return
-                self._send_json(404, {"error": {"message": "not found", "type": "not_found"}})
+                self._send_json(404, not_found_response())
             except GatewayError as exc:
                 self._send_json(exc.status_code, exc.to_response())
 
@@ -60,11 +60,11 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
                 if self.path == "/v1/chat/completions":
                     self._send_json(200, app.chat_completions(self._read_json()))
                     return
-                self._send_json(404, {"error": {"message": "not found", "type": "not_found"}})
+                self._send_json(404, not_found_response())
             except GatewayError as exc:
                 self._send_json(exc.status_code, exc.to_response())
             except json.JSONDecodeError:
-                self._send_json(400, {"error": {"message": "invalid JSON body", "type": "bad_request"}})
+                self._send_json(400, invalid_json_response())
 
         def _read_json(self) -> dict[str, Any]:
             content_length = int(self.headers.get("Content-Length", "0"))

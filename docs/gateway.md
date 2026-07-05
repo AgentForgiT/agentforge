@@ -5,7 +5,7 @@ Metadata:
 - Status: Genesis MVP
 - Module: `apps/gateway`
 - Related requirements: `.agentforge/requirements/gateway-reconciliation.md`
-- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`
+- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`, `.agentforge/adrs/0011-gateway-error-response-boundary.md`
 - Last updated: 2026-07-05
 
 ## Purpose
@@ -24,6 +24,7 @@ The Genesis MVP includes:
 - internal provider adapter boundary
 - offline provider contract tests
 - internal request validation boundary
+- standard JSON error envelope
 - JSON configuration
 - offline tests
 
@@ -86,6 +87,29 @@ Request validation lives in `agentforge_gateway.requests` and validates:
 
 `GatewayApp` remains responsible for model lookup and provider dispatch after validation succeeds. The original request body is preserved so optional provider payload fields continue to pass through to provider adapters.
 
+## Error Contract
+
+ADR-0011 defines the gateway JSON error contract.
+
+Gateway errors use this envelope:
+
+```json
+{
+  "error": {
+    "message": "human-readable message",
+    "type": "machine_readable_type"
+  }
+}
+```
+
+Current status mappings:
+
+- bad request: `400`
+- unknown model: `404`
+- provider configuration error: `500`
+- upstream provider error: `502`
+- unknown route: `404`
+
 ## Risks
 
 - Provider adapters are still inside `apps/gateway`; ADR-0002 and ADR-0008 identify `packages/providers` as a later extraction target.
@@ -94,6 +118,7 @@ Request validation lives in `agentforge_gateway.requests` and validates:
 
 ## Revision History
 
+- 2026-07-05: Documented JSON error contract from ADR-0011.
 - 2026-07-05: Documented internal request validation boundary from ADR-0010.
 - 2026-07-04: Documented offline provider contract tests from ADR-0009.
 - 2026-07-03: Documented internal provider adapter boundary from ADR-0008.

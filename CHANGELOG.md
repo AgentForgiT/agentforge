@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Genesis-0.0.13 - 2026-07-05
+
+- Added Sprint 13 requirements and ADR-0011 for the gateway JSON error response boundary.
+- Centralized gateway error envelope helpers while preserving current status mappings.
+- Added focused endpoint tests for invalid JSON, non-object bodies, request validation errors, unknown routes, unknown models, provider configuration errors, and upstream provider errors.
+
 ## Genesis-0.0.12 - 2026-07-05
 
 - Added Sprint 12 requirements and ADR-0010 for the gateway request validation boundary.

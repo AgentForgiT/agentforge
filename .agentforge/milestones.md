@@ -223,8 +223,27 @@ Exit criteria:
 - validation passes locally and in CI for issue #51
 - docs explain request validation and release notes document `Genesis-0.0.12` for issue #53
 
+## Genesis-0.0.13: Gateway Error Contract MVP
+
+Scope:
+
+- define gateway error contract requirements
+- decide JSON error response boundary
+- centralize gateway error response helpers
+- add focused error contract tests
+- document the error contract and release limitations
+
+Exit criteria:
+
+- requirements document exists for issue #57
+- ADR-0011 records the error response boundary for issue #59
+- standard error helpers are used by HTTP handling for issue #55
+- validation passes locally and in CI for issue #58
+- docs explain the error contract and release notes document `Genesis-0.0.13` for issue #56
+
 ## Revision History
 
+- 2026-07-05: Added Genesis-0.0.13 gateway error contract milestone.
 - 2026-07-05: Added Genesis-0.0.12 gateway request validation milestone.
 - 2026-07-04: Added Genesis-0.0.11 gateway provider contract tests milestone.
 - 2026-07-03: Added Genesis-0.0.10 gateway provider boundary milestone.

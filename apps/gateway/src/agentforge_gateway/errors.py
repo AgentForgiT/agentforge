@@ -1,6 +1,23 @@
 from __future__ import annotations
 
 
+def error_response(message: str, error_type: str) -> dict[str, object]:
+    return {
+        "error": {
+            "message": message,
+            "type": error_type,
+        }
+    }
+
+
+def not_found_response() -> dict[str, object]:
+    return error_response("not found", "not_found")
+
+
+def invalid_json_response() -> dict[str, object]:
+    return error_response("invalid JSON body", "bad_request")
+
+
 class GatewayError(Exception):
     status_code = 500
     error_type = "internal_error"
@@ -12,12 +29,7 @@ class GatewayError(Exception):
             self.status_code = status_code
 
     def to_response(self) -> dict[str, object]:
-        return {
-            "error": {
-                "message": self.message,
-                "type": self.error_type,
-            }
-        }
+        return error_response(self.message, self.error_type)
 
 
 class BadRequestError(GatewayError):

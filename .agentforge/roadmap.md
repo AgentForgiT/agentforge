@@ -152,8 +152,21 @@ Deliverables:
 - request validation tests and CI validation for issue #51
 - request validation docs and `Genesis-0.0.12` release for issue #53
 
+## Genesis Sprint 13: Gateway Error Contract MVP
+
+Goal: centralize and test the gateway JSON error contract while preserving current endpoint behavior.
+
+Deliverables:
+
+- error contract requirements for issue #57
+- error response boundary ADR for issue #59
+- error response helper implementation for issue #55
+- error contract tests and CI validation for issue #58
+- error contract docs and `Genesis-0.0.13` release for issue #56
+
 ## Revision History
 
+- 2026-07-05: Added Sprint 13 gateway error contract deliverables.
 - 2026-07-05: Added Sprint 12 gateway request validation deliverables.
 - 2026-07-04: Added Sprint 11 gateway provider contract test deliverables.
 - 2026-07-03: Added Sprint 10 gateway provider boundary deliverables.
