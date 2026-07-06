@@ -9,7 +9,7 @@ This module was migrated from the pre-governance `agentforge-gateway` prototype 
 - Module: `apps/gateway`
 - Status: Genesis MVP
 - Related requirements: `.agentforge/requirements/gateway-reconciliation.md`
-- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`, `.agentforge/adrs/0011-gateway-error-response-boundary.md`
+- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`, `.agentforge/adrs/0011-gateway-error-response-boundary.md`, `.agentforge/adrs/0012-gateway-response-normalization-boundary.md`
 
 ## Features
 
@@ -23,6 +23,7 @@ This module was migrated from the pre-governance `agentforge-gateway` prototype 
 - offline provider contract tests
 - internal request validation boundary
 - standard JSON error envelope
+- successful response normalization boundary
 - JSON configuration
 - offline unit and endpoint tests
 
@@ -68,6 +69,14 @@ Gateway errors use a standard JSON envelope:
 ```
 
 Known gateway errors map to explicit HTTP status codes, including bad request `400`, unknown model `404`, provider configuration `500`, and upstream provider `502`.
+
+## Response Normalization
+
+Successful chat-completion responses pass through `agentforge_gateway.responses` after provider dispatch.
+
+The normalizer preserves provider response fields, validates the minimal `chat.completion` shape expected by the gateway, and sets the response `model` field to the public gateway model alias. Malformed provider success responses are returned as upstream provider errors through the standard error envelope.
+
+Streaming and full OpenAI response schema validation remain deferred during Genesis.
 
 ## Run Tests
 

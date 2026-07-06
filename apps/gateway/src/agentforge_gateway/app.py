@@ -9,6 +9,7 @@ from .errors import BadRequestError, GatewayError, invalid_json_response, not_fo
 from .models import ModelRegistry
 from .providers import ChatProvider, build_provider
 from .requests import validate_chat_completion_request
+from .responses import normalize_chat_completion_response
 
 
 class GatewayApp:
@@ -33,7 +34,7 @@ class GatewayApp:
         request = validate_chat_completion_request(body)
         model = self.registry.get(request.model)
         provider = self.providers[model.provider]
-        return provider.chat_completion(model, request.body)
+        return normalize_chat_completion_response(model, provider.chat_completion(model, request.body))
 
 
 def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:

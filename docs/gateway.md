@@ -5,8 +5,8 @@ Metadata:
 - Status: Genesis MVP
 - Module: `apps/gateway`
 - Related requirements: `.agentforge/requirements/gateway-reconciliation.md`
-- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`, `.agentforge/adrs/0011-gateway-error-response-boundary.md`
-- Last updated: 2026-07-05
+- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`, `.agentforge/adrs/0011-gateway-error-response-boundary.md`, `.agentforge/adrs/0012-gateway-response-normalization-boundary.md`
+- Last updated: 2026-07-06
 
 ## Purpose
 
@@ -25,6 +25,7 @@ The Genesis MVP includes:
 - offline provider contract tests
 - internal request validation boundary
 - standard JSON error envelope
+- successful response normalization boundary
 - JSON configuration
 - offline tests
 
@@ -110,6 +111,21 @@ Current status mappings:
 - upstream provider error: `502`
 - unknown route: `404`
 
+## Response Normalization
+
+ADR-0012 defines the gateway response normalization boundary for successful `/v1/chat/completions` responses.
+
+Response normalization lives in `agentforge_gateway.responses` and validates the minimal successful chat-completion shape expected by the gateway:
+
+- `chat.completion` object marker
+- non-empty choices list
+- first assistant message with string content
+- public gateway model alias in the response `model` field
+
+Provider adapters still own provider-specific request mapping, authentication, transport behavior, upstream JSON parsing, and upstream error translation. Malformed provider success responses are treated as upstream provider errors and returned through the standard error envelope.
+
+Full OpenAI response schema validation and streaming response semantics remain deferred until explicit requirements and ADR coverage exist.
+
 ## Risks
 
 - Provider adapters are still inside `apps/gateway`; ADR-0002 and ADR-0008 identify `packages/providers` as a later extraction target.
@@ -118,6 +134,7 @@ Current status mappings:
 
 ## Revision History
 
+- 2026-07-06: Documented response normalization boundary from ADR-0012.
 - 2026-07-05: Documented JSON error contract from ADR-0011.
 - 2026-07-05: Documented internal request validation boundary from ADR-0010.
 - 2026-07-04: Documented offline provider contract tests from ADR-0009.

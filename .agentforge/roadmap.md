@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Draft
 - Phase: Genesis
-- Last updated: 2026-07-05
+- Last updated: 2026-07-06
 
 ## Genesis Sprint 1: Bootstrap Kit
 
@@ -164,8 +164,21 @@ Deliverables:
 - error contract tests and CI validation for issue #58
 - error contract docs and `Genesis-0.0.13` release for issue #56
 
+## Genesis Sprint 14: Gateway Response Normalization MVP
+
+Goal: centralize and test successful gateway chat-completion response normalization while preserving current endpoint behavior.
+
+Deliverables:
+
+- response normalization requirements for issue #60
+- response normalization boundary ADR for issue #63
+- response normalization helper implementation for issue #61
+- response normalization tests and CI validation for issue #64
+- response normalization docs and `Genesis-0.0.14` release for issue #62
+
 ## Revision History
 
+- 2026-07-06: Added Sprint 14 gateway response normalization deliverables.
 - 2026-07-05: Added Sprint 13 gateway error contract deliverables.
 - 2026-07-05: Added Sprint 12 gateway request validation deliverables.
 - 2026-07-04: Added Sprint 11 gateway provider contract test deliverables.

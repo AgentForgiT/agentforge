@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Draft
 - Phase: Genesis
-- Last updated: 2026-07-05
+- Last updated: 2026-07-06
 
 ## Genesis-0.0.1: Bootstrap Kit
 
@@ -241,8 +241,27 @@ Exit criteria:
 - validation passes locally and in CI for issue #58
 - docs explain the error contract and release notes document `Genesis-0.0.13` for issue #56
 
+## Genesis-0.0.14: Gateway Response Normalization MVP
+
+Scope:
+
+- define gateway response normalization requirements
+- decide the chat-completion response normalization boundary
+- centralize successful response normalization helpers
+- add focused response normalization tests
+- document the response normalization boundary and release limitations
+
+Exit criteria:
+
+- requirements document exists for issue #60
+- ADR-0012 records the response normalization boundary for issue #63
+- successful chat-completion responses pass through a gateway-owned normalizer for issue #61
+- validation passes locally and in CI for issue #64
+- docs explain response normalization and release notes document `Genesis-0.0.14` for issue #62
+
 ## Revision History
 
+- 2026-07-06: Added Genesis-0.0.14 gateway response normalization milestone.
 - 2026-07-05: Added Genesis-0.0.13 gateway error contract milestone.
 - 2026-07-05: Added Genesis-0.0.12 gateway request validation milestone.
 - 2026-07-04: Added Genesis-0.0.11 gateway provider contract tests milestone.

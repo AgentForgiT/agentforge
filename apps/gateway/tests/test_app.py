@@ -58,6 +58,19 @@ class GatewayAppTests(unittest.TestCase):
         self.assertIs(provider.calls[0], body)
         self.assertEqual(provider.calls[0]["temperature"], 0.2)
 
+    def test_chat_completion_normalizes_provider_model_alias(self) -> None:
+        provider = UpstreamModelProvider()
+        app = GatewayApp(DEFAULT_CONFIG, providers={"mock": provider})
+
+        response = app.chat_completions(
+            {
+                "model": "mock-coder",
+                "messages": [{"role": "user", "content": "Hello"}],
+            }
+        )
+
+        self.assertEqual(response["model"], "mock-coder")
+
     def test_unknown_model(self) -> None:
         with self.assertRaises(Exception) as ctx:
             self.app.chat_completions(
@@ -431,6 +444,23 @@ class ProviderErrorHttpTests(unittest.TestCase):
         body = json.loads(ctx.exception.read().decode("utf-8"))
         self.assertEqual(body["error"], {"message": "upstream down", "type": "upstream_provider_error"})
 
+    def test_malformed_provider_success_returns_upstream_error_envelope(self) -> None:
+        app = GatewayApp(DEFAULT_CONFIG, providers={"mock": MalformedSuccessProvider()})
+        server = LocalServer(app)
+        try:
+            with self.assertRaises(HTTPError) as ctx:
+                server.post_json(
+                    "/v1/chat/completions",
+                    {"model": "mock-coder", "messages": [{"role": "user", "content": "Hello"}]},
+                )
+        finally:
+            server.close()
+
+        self.assertEqual(ctx.exception.code, 502)
+        body = json.loads(ctx.exception.read().decode("utf-8"))
+        self.assertEqual(body["error"]["type"], "upstream_provider_error")
+        self.assertIn("choices", body["error"]["message"])
+
 
 class RaisingProvider:
     def __init__(self, error: Exception) -> None:
@@ -438,6 +468,33 @@ class RaisingProvider:
 
     def chat_completion(self, model: ModelConfig, body: dict[str, object]) -> dict[str, object]:
         raise self.error
+
+
+class UpstreamModelProvider:
+    def chat_completion(self, model: ModelConfig, body: dict[str, object]) -> dict[str, object]:
+        return {
+            "id": "chatcmpl-upstream",
+            "object": "chat.completion",
+            "created": 123,
+            "model": "upstream-model",
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {"role": "assistant", "content": "Normalized"},
+                    "finish_reason": "stop",
+                }
+            ],
+        }
+
+
+class MalformedSuccessProvider:
+    def chat_completion(self, model: ModelConfig, body: dict[str, object]) -> dict[str, object]:
+        return {
+            "id": "chatcmpl-malformed",
+            "object": "chat.completion",
+            "model": model.name,
+            "choices": [],
+        }
 
 
 class LocalServer:

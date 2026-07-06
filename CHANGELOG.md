@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Genesis-0.0.14 - 2026-07-06
+
+- Added Sprint 14 requirements and ADR-0012 for the gateway response normalization boundary.
+- Centralized successful chat-completion response normalization while preserving public model aliases.
+- Added focused response normalization tests and endpoint coverage for malformed provider success responses.
+
 ## Genesis-0.0.13 - 2026-07-05
 
 - Added Sprint 13 requirements and ADR-0011 for the gateway JSON error response boundary.

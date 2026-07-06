@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Active
 - Phase: Genesis
-- Last updated: 2026-07-05
+- Last updated: 2026-07-06
 
 ## Purpose
 
@@ -27,6 +27,7 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 | ADR-0009 | 2026-07-04 | Accepted | Validate Gateway providers through offline contract tests | `.agentforge/adrs/0009-gateway-provider-contract-testing.md` |
 | ADR-0010 | 2026-07-05 | Accepted | Separate Gateway chat completion request validation | `.agentforge/adrs/0010-gateway-request-validation-boundary.md` |
 | ADR-0011 | 2026-07-05 | Accepted | Centralize Gateway JSON error responses | `.agentforge/adrs/0011-gateway-error-response-boundary.md` |
+| ADR-0012 | 2026-07-06 | Accepted | Normalize Gateway chat completion responses | `.agentforge/adrs/0012-gateway-response-normalization-boundary.md` |
 | DEC-0001 | 2026-06-28 | Accepted | Treat early gateway and CLI repos as pre-governance prototypes | `.agentforge/decisions/0001-pre-governance-prototypes.md` |
 | DEC-0002 | 2026-06-28 | Accepted | Keep prototype repositories public with canonical monorepo notices | `.agentforge/decisions/0002-prototype-repository-disposition.md` |
 | DEC-0003 | 2026-06-28 | Accepted | Build AICS validation CLI in the canonical monorepo | `.agentforge/decisions/0003-cli-path-for-aics-validation.md` |
@@ -34,6 +35,7 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 
 ## Revision History
 
+- 2026-07-06: Added ADR-0012.
 - 2026-07-05: Added ADR-0011.
 - 2026-07-05: Added ADR-0010.
 - 2026-07-04: Added ADR-0009.
