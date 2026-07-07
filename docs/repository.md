@@ -15,6 +15,14 @@ Core directories:
 
 See `.agentforge/repo-map.md` for the canonical repository map.
 
+## Product Foundation
+
+The durable product backlog and epic map live at `.agentforge/backlog.md`.
+
+Canonical engineering and documentation standards live under `.agentforge/standards/`. Human-facing docs may summarize those standards, but `.agentforge/standards/` is the source of truth.
+
+The repository baseline includes `.editorconfig` and `.gitattributes` so contributors and automation have explicit editor and Git text handling defaults.
+
 ## Prototype Repositories
 
 The public `agentforge-gateway` and `agentforge-cli` repositories are historical pre-governance prototypes.

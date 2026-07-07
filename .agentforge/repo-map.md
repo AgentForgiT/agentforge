@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Draft
 - Phase: Genesis
-- Last updated: 2026-07-02
+- Last updated: 2026-07-06
 
 ## Canonical Repositories
 
@@ -30,8 +30,20 @@ After migration, prototype repositories remain public historical references unti
 
 DEC-0004 confirms that `agentforge-gateway` and `agentforge-cli` remain public during Genesis and are no longer canonical development locations.
 
+## Product Foundation
+
+DEC-0005 makes these product-foundation artifacts part of the required canonical monorepo baseline:
+
+- `.agentforge/backlog.md`: durable product backlog and epic map
+- `.agentforge/standards/`: canonical engineering and documentation standards
+- `.editorconfig`: editor baseline
+- `.gitattributes`: Git text and line-ending baseline
+
+Public docs may summarize standards, but `.agentforge/standards/` is the canonical standards home.
+
 ## Revision History
 
+- 2026-07-06: Added DEC-0005 product foundation baseline.
 - 2026-07-02: Added DEC-0004 post-Sprint-8 prototype disposition status.
 - 2026-06-28: Added canonical CLI path for AICS validation.
 - 2026-06-28: Updated prototype repository disposition after gateway migration.

@@ -259,8 +259,27 @@ Exit criteria:
 - validation passes locally and in CI for issue #64
 - docs explain response normalization and release notes document `Genesis-0.0.14` for issue #62
 
+## Genesis-0.0.15: Product Foundation Hygiene MVP
+
+Scope:
+
+- define product foundation hygiene requirements
+- decide backlog and standards source-of-truth rules
+- add product backlog and canonical standards files
+- add repository hygiene files for editor and Git behavior
+- validate required product foundation artifacts
+
+Exit criteria:
+
+- requirements document exists for issue #68
+- DEC-0005 records backlog, standards, and repository hygiene ownership for issue #67
+- `.agentforge/backlog.md`, `.agentforge/standards/`, `.editorconfig`, and `.gitattributes` exist for issue #65
+- validation passes locally and in CI for issue #66
+- docs explain product foundation hygiene and release notes document `Genesis-0.0.15` for issue #69
+
 ## Revision History
 
+- 2026-07-06: Added Genesis-0.0.15 product foundation hygiene milestone.
 - 2026-07-06: Added Genesis-0.0.14 gateway response normalization milestone.
 - 2026-07-05: Added Genesis-0.0.13 gateway error contract milestone.
 - 2026-07-05: Added Genesis-0.0.12 gateway request validation milestone.

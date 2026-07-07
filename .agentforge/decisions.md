@@ -32,9 +32,11 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 | DEC-0002 | 2026-06-28 | Accepted | Keep prototype repositories public with canonical monorepo notices | `.agentforge/decisions/0002-prototype-repository-disposition.md` |
 | DEC-0003 | 2026-06-28 | Accepted | Build AICS validation CLI in the canonical monorepo | `.agentforge/decisions/0003-cli-path-for-aics-validation.md` |
 | DEC-0004 | 2026-07-02 | Accepted | Keep public prototype repositories as historical references after canonical gateway and CLI paths exist | `.agentforge/decisions/0004-post-sprint-8-prototype-disposition.md` |
+| DEC-0005 | 2026-07-06 | Accepted | Treat backlog, standards, and repository hygiene as required product foundation | `.agentforge/decisions/0005-product-foundation-hygiene.md` |
 
 ## Revision History
 
+- 2026-07-06: Added DEC-0005.
 - 2026-07-06: Added ADR-0012.
 - 2026-07-05: Added ADR-0011.
 - 2026-07-05: Added ADR-0010.

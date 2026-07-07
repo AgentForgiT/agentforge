@@ -176,8 +176,21 @@ Deliverables:
 - response normalization tests and CI validation for issue #64
 - response normalization docs and `Genesis-0.0.14` release for issue #62
 
+## Genesis Sprint 15: Product Foundation Hygiene MVP
+
+Goal: formalize product backlog, canonical standards, and repository hygiene files before expanding into heavier feature work.
+
+Deliverables:
+
+- product foundation hygiene requirements for issue #68
+- backlog and standards source-of-truth decision for issue #67
+- backlog, standards, `.editorconfig`, and `.gitattributes` implementation for issue #65
+- product foundation validation for issue #66
+- product foundation docs and `Genesis-0.0.15` release for issue #69
+
 ## Revision History
 
+- 2026-07-06: Added Sprint 15 product foundation hygiene deliverables.
 - 2026-07-06: Added Sprint 14 gateway response normalization deliverables.
 - 2026-07-05: Added Sprint 13 gateway error contract deliverables.
 - 2026-07-05: Added Sprint 12 gateway request validation deliverables.

@@ -34,6 +34,8 @@ Read and respect this hierarchy:
 
 If implementation conflicts with governance, governance wins until superseded by a newer accepted decision.
 
+Use `.agentforge/backlog.md` as strategic product planning context. It does not override accepted decisions.
+
 ## Engineering Philosophy
 
 Prefer:
@@ -56,6 +58,7 @@ Avoid:
 - undocumented behavior
 - premature repository fragmentation
 - implementation before requirements and architecture
+- treating backlog entries as approval to skip requirements
 
 ## Development Workflow
 

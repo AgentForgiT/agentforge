@@ -3,7 +3,13 @@
 Metadata:
 
 - Status: Draft
-- Last updated: 2026-06-28
+- Last updated: 2026-07-06
+
+## Source of Truth
+
+The canonical engineering standards live at `.agentforge/standards/engineering.md`.
+
+This document is a human-facing summary.
 
 ## Principles
 
@@ -15,4 +21,5 @@ Metadata:
 
 ## Revision History
 
+- 2026-07-06: Pointed to canonical standards under `.agentforge/standards/`.
 - 2026-06-28: Initial draft.

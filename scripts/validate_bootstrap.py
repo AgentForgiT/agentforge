@@ -7,6 +7,8 @@ from aics_validation import validate_aics
 
 
 REQUIRED_FILES = (
+    ".editorconfig",
+    ".gitattributes",
     "README.md",
     "CONTRIBUTING.md",
     "SECURITY.md",
@@ -14,6 +16,7 @@ REQUIRED_FILES = (
     "CHANGELOG.md",
     ".agentforge/constitution.md",
     ".agentforge/charter.md",
+    ".agentforge/backlog.md",
     ".agentforge/decisions.md",
     ".agentforge/architecture.md",
     ".agentforge/repo-map.md",
@@ -21,12 +24,16 @@ REQUIRED_FILES = (
     ".agentforge/adrs/0002-gateway-module-placement.md",
     ".agentforge/decisions/0002-prototype-repository-disposition.md",
     ".agentforge/decisions/0003-cli-path-for-aics-validation.md",
+    ".agentforge/decisions/0005-product-foundation-hygiene.md",
     ".agentforge/requirements/gateway-reconciliation.md",
     ".agentforge/requirements/canonical-cli-mvp.md",
+    ".agentforge/requirements/product-foundation-hygiene-mvp.md",
     ".agentforge/specs/aics-v0.1.md",
     ".agentforge/specs/aics-validation-v0.1.md",
     ".agentforge/rfcs/RFC_TEMPLATE.md",
     ".agentforge/adrs/ADR_TEMPLATE.md",
+    ".agentforge/standards/engineering.md",
+    ".agentforge/standards/documentation.md",
     ".agentforge/agents/AGENTS.md",
     ".agentforge/agents/CODEX.md",
     "apps/cli/README.md",

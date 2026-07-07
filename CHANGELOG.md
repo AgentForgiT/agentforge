@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Genesis-0.0.15 - 2026-07-06
+
+- Added Sprint 15 requirements and DEC-0005 for product foundation hygiene.
+- Added `.agentforge/backlog.md`, canonical standards under `.agentforge/standards/`, `.editorconfig`, and `.gitattributes`.
+- Updated bootstrap validation and repository documentation to require and explain product foundation artifacts.
+
 ## Genesis-0.0.14 - 2026-07-06
 
 - Added Sprint 14 requirements and ADR-0012 for the gateway response normalization boundary.
