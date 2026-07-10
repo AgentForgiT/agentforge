@@ -5,7 +5,7 @@ Metadata:
 - Status: Draft
 - Phase: Genesis
 - Related decisions: ADR-0001, DEC-0005
-- Last updated: 2026-07-06
+- Last updated: 2026-07-10
 
 ## Purpose
 
@@ -67,7 +67,6 @@ Current Genesis themes:
 Near-term work should remain small and releasable:
 
 - gateway model catalog contract hardening
-- gateway configuration validation boundary
 - gateway logging and observability requirements
 - gateway streaming requirements and ADR
 - AICS metadata structure refinement
@@ -135,4 +134,5 @@ Change line 42 in config.py to reject timeout_seconds <= 0.
 
 ## Revision History
 
+- 2026-07-10: Promoted gateway configuration validation boundary into Genesis Sprint 16.
 - 2026-07-06: Initial backlog for Genesis Sprint 15.

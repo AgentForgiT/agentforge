@@ -5,8 +5,8 @@ Metadata:
 - Status: Genesis MVP
 - Module: `apps/gateway`
 - Related requirements: `.agentforge/requirements/gateway-reconciliation.md`
-- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`, `.agentforge/adrs/0011-gateway-error-response-boundary.md`, `.agentforge/adrs/0012-gateway-response-normalization-boundary.md`
-- Last updated: 2026-07-06
+- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`, `.agentforge/adrs/0011-gateway-error-response-boundary.md`, `.agentforge/adrs/0012-gateway-response-normalization-boundary.md`, `.agentforge/adrs/0013-gateway-configuration-validation-boundary.md`
+- Last updated: 2026-07-10
 
 ## Purpose
 
@@ -26,6 +26,7 @@ The Genesis MVP includes:
 - internal request validation boundary
 - standard JSON error envelope
 - successful response normalization boundary
+- explicit configuration validation
 - JSON configuration
 - offline tests
 
@@ -47,6 +48,22 @@ python scripts/validate_bootstrap.py
 The default config at `apps/gateway/config.example.json` uses only the mock provider and requires no secrets.
 
 The OpenRouter example at `apps/gateway/config.openrouter.example.json` uses `OPENROUTER_API_KEY` from the environment.
+
+ADR-0013 defines the gateway configuration validation boundary.
+
+Configuration validation lives in `agentforge_gateway.config` and validates:
+
+- root JSON object shape
+- optional `server.host` and `server.port`
+- required model `provider` and `provider_model`
+- provider `type`
+- positive provider `timeout_seconds`
+- provider `headers`
+- model references to configured providers
+
+The parser preserves default host `127.0.0.1`, default port `8080`, and default mock provider behavior when provider config is omitted.
+
+Provider credentials remain runtime environment concerns owned by provider adapters, not config parsing. Live provider availability is intentionally excluded from default validation.
 
 ## Provider Boundary
 
@@ -134,6 +151,7 @@ Full OpenAI response schema validation and streaming response semantics remain d
 
 ## Revision History
 
+- 2026-07-10: Documented configuration validation boundary from ADR-0013.
 - 2026-07-06: Documented response normalization boundary from ADR-0012.
 - 2026-07-05: Documented JSON error contract from ADR-0011.
 - 2026-07-05: Documented internal request validation boundary from ADR-0010.

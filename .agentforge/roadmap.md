@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Draft
 - Phase: Genesis
-- Last updated: 2026-07-06
+- Last updated: 2026-07-10
 
 ## Genesis Sprint 1: Bootstrap Kit
 
@@ -188,8 +188,21 @@ Deliverables:
 - product foundation validation for issue #66
 - product foundation docs and `Genesis-0.0.15` release for issue #69
 
+## Genesis Sprint 16: Gateway Configuration Validation MVP
+
+Goal: make gateway configuration validation explicit and deterministic before adding heavier operational behavior.
+
+Deliverables:
+
+- configuration validation requirements for issue #73
+- configuration validation boundary ADR for issue #70
+- configuration validation helper implementation for issue #72
+- configuration validation tests and CI validation for issue #71
+- configuration validation docs and `Genesis-0.0.16` release for issue #74
+
 ## Revision History
 
+- 2026-07-10: Added Sprint 16 gateway configuration validation deliverables.
 - 2026-07-06: Added Sprint 15 product foundation hygiene deliverables.
 - 2026-07-06: Added Sprint 14 gateway response normalization deliverables.
 - 2026-07-05: Added Sprint 13 gateway error contract deliverables.

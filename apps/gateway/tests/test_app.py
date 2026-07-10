@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from agentforge_gateway.app import GatewayApp, create_handler
-from agentforge_gateway.config import DEFAULT_CONFIG, ModelConfig, ProviderConfig, parse_config
+from agentforge_gateway.config import DEFAULT_CONFIG, ModelConfig, ProviderConfig
 from agentforge_gateway.errors import ProviderConfigurationError, UpstreamProviderError
 from agentforge_gateway.providers import MockProvider, OpenRouterProvider, build_provider, supported_provider_types
 
@@ -99,47 +99,6 @@ class GatewayAppTests(unittest.TestCase):
             )
 
         self.assertIn("streaming", str(ctx.exception))
-
-
-class ConfigTests(unittest.TestCase):
-    def test_parse_openrouter_provider_config(self) -> None:
-        config = parse_config(
-            {
-                "models": {
-                    "openrouter-coder": {
-                        "provider": "openrouter",
-                        "provider_model": "qwen/qwen3-coder:free",
-                    }
-                },
-                "providers": {
-                    "openrouter": {
-                        "type": "openrouter",
-                        "base_url": "https://openrouter.ai/api/v1",
-                        "api_key_env": "OPENROUTER_API_KEY",
-                        "timeout_seconds": 10,
-                    }
-                },
-            }
-        )
-
-        self.assertEqual(config.models["openrouter-coder"].provider, "openrouter")
-        self.assertEqual(config.providers["openrouter"].type, "openrouter")
-        self.assertEqual(config.providers["openrouter"].timeout_seconds, 10)
-
-    def test_parse_config_rejects_unknown_provider_reference(self) -> None:
-        with self.assertRaises(ValueError) as ctx:
-            parse_config(
-                {
-                    "models": {
-                        "openrouter-coder": {
-                            "provider": "openrouter",
-                            "provider_model": "qwen/qwen3-coder:free",
-                        }
-                    }
-                }
-            )
-
-        self.assertIn("unknown provider", str(ctx.exception))
 
 
 class ProviderFactoryTests(unittest.TestCase):

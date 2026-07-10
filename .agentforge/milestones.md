@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Draft
 - Phase: Genesis
-- Last updated: 2026-07-06
+- Last updated: 2026-07-10
 
 ## Genesis-0.0.1: Bootstrap Kit
 
@@ -277,8 +277,27 @@ Exit criteria:
 - validation passes locally and in CI for issue #66
 - docs explain product foundation hygiene and release notes document `Genesis-0.0.15` for issue #69
 
+## Genesis-0.0.16: Gateway Configuration Validation MVP
+
+Scope:
+
+- define gateway configuration validation requirements
+- decide the gateway configuration validation boundary
+- add explicit config validation helpers
+- add focused config validation tests
+- document the configuration validation boundary and release limitations
+
+Exit criteria:
+
+- requirements document exists for issue #73
+- ADR-0013 records the configuration validation boundary for issue #70
+- config parsing rejects malformed server, model, provider, timeout, and header values for issue #72
+- validation passes locally and in CI for issue #71
+- docs explain configuration validation and release notes document `Genesis-0.0.16` for issue #74
+
 ## Revision History
 
+- 2026-07-10: Added Genesis-0.0.16 gateway configuration validation milestone.
 - 2026-07-06: Added Genesis-0.0.15 product foundation hygiene milestone.
 - 2026-07-06: Added Genesis-0.0.14 gateway response normalization milestone.
 - 2026-07-05: Added Genesis-0.0.13 gateway error contract milestone.

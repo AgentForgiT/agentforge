@@ -58,8 +58,11 @@ def load_config(path: str | Path | None = None) -> GatewayConfig:
     return parse_config(raw)
 
 
-def parse_config(raw: dict[str, Any]) -> GatewayConfig:
-    server = raw.get("server", {})
+def parse_config(raw: object) -> GatewayConfig:
+    if not isinstance(raw, dict):
+        raise ValueError("config must be a JSON object")
+
+    server = _object_field(raw.get("server", {}), "server")
     models = raw.get("models", {})
     providers = raw.get("providers", {})
 
@@ -71,14 +74,12 @@ def parse_config(raw: dict[str, Any]) -> GatewayConfig:
     for name, model in models.items():
         if not isinstance(model, dict):
             raise ValueError(f"model '{name}' must be an object")
-        provider = model.get("provider")
-        provider_model = model.get("provider_model")
-        if not provider or not provider_model:
-            raise ValueError(f"model '{name}' requires provider and provider_model")
+        provider = _required_str(model.get("provider"), f"model '{name}'.provider")
+        provider_model = _required_str(model.get("provider_model"), f"model '{name}'.provider_model")
         parsed_models[name] = ModelConfig(
             name=name,
-            provider=str(provider),
-            provider_model=str(provider_model),
+            provider=provider,
+            provider_model=provider_model,
         )
 
     for name, model in parsed_models.items():
@@ -86,8 +87,8 @@ def parse_config(raw: dict[str, Any]) -> GatewayConfig:
             raise ValueError(f"model '{name}' references unknown provider '{model.provider}'")
 
     return GatewayConfig(
-        host=str(server.get("host", "127.0.0.1")),
-        port=int(server.get("port", 8080)),
+        host=_server_host(server),
+        port=_port(server.get("port", 8080), "server.port"),
         models=parsed_models,
         providers=parsed_providers,
     )
@@ -110,24 +111,72 @@ def _parse_providers(providers: Any) -> dict[str, ProviderConfig]:
     for name, provider in providers.items():
         if not isinstance(provider, dict):
             raise ValueError(f"provider '{name}' must be an object")
-        provider_type = str(provider.get("type", name))
-        headers = provider.get("headers")
-        if headers is not None and not isinstance(headers, dict):
-            raise ValueError(f"provider '{name}' headers must be an object")
+        provider_type = _optional_str(provider.get("type", name), f"provider '{name}'.type")
+        if provider_type is None:
+            raise ValueError(f"provider '{name}'.type must be a non-empty string")
 
         parsed[name] = ProviderConfig(
             name=name,
             type=provider_type,
-            base_url=_optional_str(provider.get("base_url")),
-            api_key_env=_optional_str(provider.get("api_key_env")),
-            timeout_seconds=float(provider.get("timeout_seconds", 30.0)),
-            headers={str(key): str(value) for key, value in (headers or {}).items()},
+            base_url=_optional_str(provider.get("base_url"), f"provider '{name}'.base_url"),
+            api_key_env=_optional_str(provider.get("api_key_env"), f"provider '{name}'.api_key_env"),
+            timeout_seconds=_positive_number(provider.get("timeout_seconds", 30.0), f"provider '{name}'.timeout_seconds"),
+            headers=_headers(provider["headers"] if "headers" in provider else {}, f"provider '{name}'.headers"),
         )
 
     return parsed
 
 
-def _optional_str(value: Any) -> str | None:
+def _server_host(server: dict[str, Any]) -> str:
+    if "host" not in server:
+        return "127.0.0.1"
+    return _required_str(server["host"], "server.host")
+
+
+def _object_field(value: Any, field_name: str) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise ValueError(f"{field_name} must be an object")
+    return value
+
+
+def _required_str(value: Any, field_name: str) -> str:
+    parsed = _optional_str(value, field_name)
+    if parsed is None:
+        raise ValueError(f"{field_name} must be a non-empty string")
+    return parsed
+
+
+def _optional_str(value: Any, field_name: str) -> str | None:
     if value is None:
         return None
-    return str(value)
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"{field_name} must be a non-empty string")
+    return value
+
+
+def _port(value: Any, field_name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise ValueError(f"{field_name} must be an integer from 1 to 65535")
+    if value < 1 or value > 65535:
+        raise ValueError(f"{field_name} must be an integer from 1 to 65535")
+    return value
+
+
+def _positive_number(value: Any, field_name: str) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(f"{field_name} must be a positive number")
+    parsed = float(value)
+    if parsed <= 0:
+        raise ValueError(f"{field_name} must be a positive number")
+    return parsed
+
+
+def _headers(value: Any, field_name: str) -> dict[str, str]:
+    if not isinstance(value, dict):
+        raise ValueError(f"{field_name} must be an object")
+    headers: dict[str, str] = {}
+    for key, header_value in value.items():
+        if not isinstance(key, str) or not isinstance(header_value, str):
+            raise ValueError(f"{field_name} keys and values must be strings")
+        headers[key] = header_value
+    return headers

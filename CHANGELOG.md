@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Genesis-0.0.16 - 2026-07-10
+
+- Added Sprint 16 requirements and ADR-0013 for the gateway configuration validation boundary.
+- Hardened gateway config parsing for server, model, provider, timeout, and header fields while preserving default mock config behavior.
+- Added focused configuration validation tests and updated gateway documentation.
+
 ## Genesis-0.0.15 - 2026-07-06
 
 - Added Sprint 15 requirements and DEC-0005 for product foundation hygiene.

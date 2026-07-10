@@ -9,7 +9,7 @@ This module was migrated from the pre-governance `agentforge-gateway` prototype 
 - Module: `apps/gateway`
 - Status: Genesis MVP
 - Related requirements: `.agentforge/requirements/gateway-reconciliation.md`
-- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`, `.agentforge/adrs/0011-gateway-error-response-boundary.md`, `.agentforge/adrs/0012-gateway-response-normalization-boundary.md`
+- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`, `.agentforge/adrs/0011-gateway-error-response-boundary.md`, `.agentforge/adrs/0012-gateway-response-normalization-boundary.md`, `.agentforge/adrs/0013-gateway-configuration-validation-boundary.md`
 
 ## Features
 
@@ -24,6 +24,7 @@ This module was migrated from the pre-governance `agentforge-gateway` prototype 
 - internal request validation boundary
 - standard JSON error envelope
 - successful response normalization boundary
+- explicit configuration validation
 - JSON configuration
 - offline unit and endpoint tests
 
@@ -77,6 +78,14 @@ Successful chat-completion responses pass through `agentforge_gateway.responses`
 The normalizer preserves provider response fields, validates the minimal `chat.completion` shape expected by the gateway, and sets the response `model` field to the public gateway model alias. Malformed provider success responses are returned as upstream provider errors through the standard error envelope.
 
 Streaming and full OpenAI response schema validation remain deferred during Genesis.
+
+## Configuration Validation
+
+Gateway configuration parsing lives in `agentforge_gateway.config`.
+
+The parser validates root, server, model, and provider object shapes; required model and provider fields; server port range; positive provider timeouts; provider headers; and model references to configured providers. It preserves the default host, port, and mock provider behavior for local offline use.
+
+Provider API keys remain environment variables checked by provider adapters at runtime.
 
 ## Run Tests
 
