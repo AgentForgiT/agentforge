@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## Genesis-0.0.17 - 2026-07-24
+
+- Added Sprint 17 requirements and ADR-0014 for the gateway streaming boundary.
+- Added OpenAI-compatible SSE streaming to `/v1/chat/completions` with boolean `stream` validation.
+- Added deterministic mock provider streaming and OpenRouter SSE forwarding with upstream chunk translation.
+- Added gateway-owned streaming chunk normalization and mid-stream error termination.
+- Added focused streaming tests: request validation, mock and OpenRouter stream contracts, chunk normalization, and HTTP SSE delivery.
+
 ## Genesis-0.0.16 - 2026-07-10
 
 - Added Sprint 16 requirements and ADR-0013 for the gateway configuration validation boundary.

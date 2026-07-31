@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable, Iterator
+from typing import Any
 import json
 import os
 from urllib.error import HTTPError, URLError
@@ -23,14 +24,10 @@ class OpenRouterProvider:
         self._urlopen = urlopen_fn
 
     def chat_completion(self, model: ModelConfig, body: dict[str, Any]) -> dict[str, object]:
-        api_key_env = self.config.api_key_env or self.default_api_key_env
-        api_key = os.environ.get(api_key_env)
-        if not api_key:
-            raise ProviderConfigurationError(f"provider '{self.config.name}' requires ${api_key_env}")
-
+        api_key = self._require_api_key()
         payload = dict(body)
         payload["model"] = model.provider_model
-        url = f"{(self.config.base_url or self.default_base_url).rstrip('/')}/chat/completions"
+        url = self._chat_completions_url()
         request = Request(
             url,
             data=json.dumps(payload).encode("utf-8"),
@@ -55,6 +52,60 @@ class OpenRouterProvider:
         parsed["model"] = model.name
         return parsed
 
+    def chat_completion_stream(self, model: ModelConfig, body: dict[str, Any]) -> Iterator[dict[str, object]]:
+        api_key = self._require_api_key()
+        payload = dict(body)
+        payload["model"] = model.provider_model
+        payload["stream"] = True
+        url = self._chat_completions_url()
+        request = Request(
+            url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers=self._headers(api_key),
+            method="POST",
+        )
+
+        try:
+            response = self._urlopen(request, timeout=self.config.timeout_seconds)
+        except HTTPError as exc:
+            raise UpstreamProviderError(_http_error_message(self.config.name, exc)) from exc
+        except URLError as exc:
+            raise UpstreamProviderError(f"provider '{self.config.name}' request failed: {exc.reason}") from exc
+
+        try:
+            with response:
+                for line in response:
+                    data = _sse_data(line)
+                    if data is None:
+                        continue
+                    if data == "[DONE]":
+                        return
+                    try:
+                        chunk = json.loads(data)
+                    except json.JSONDecodeError as exc:
+                        raise UpstreamProviderError(
+                            f"provider '{self.config.name}' returned invalid stream JSON"
+                        ) from exc
+                    if not isinstance(chunk, dict):
+                        raise UpstreamProviderError(
+                            f"provider '{self.config.name}' returned a non-object stream chunk"
+                        )
+                    yield chunk
+        except URLError as exc:
+            raise UpstreamProviderError(f"provider '{self.config.name}' stream failed: {exc.reason}") from exc
+        except OSError as exc:
+            raise UpstreamProviderError(f"provider '{self.config.name}' stream failed: {exc}") from exc
+
+    def _require_api_key(self) -> str:
+        api_key_env = self.config.api_key_env or self.default_api_key_env
+        api_key = os.environ.get(api_key_env)
+        if not api_key:
+            raise ProviderConfigurationError(f"provider '{self.config.name}' requires ${api_key_env}")
+        return api_key
+
+    def _chat_completions_url(self) -> str:
+        return f"{(self.config.base_url or self.default_base_url).rstrip('/')}/chat/completions"
+
     def _headers(self, api_key: str) -> dict[str, str]:
         headers = {
             "Authorization": f"Bearer {api_key}",
@@ -62,6 +113,13 @@ class OpenRouterProvider:
         }
         headers.update(self.config.headers or {})
         return headers
+
+
+def _sse_data(line: bytes | str) -> str | None:
+    text = line.decode("utf-8").strip() if isinstance(line, bytes) else str(line).strip()
+    if not text or not text.startswith("data:"):
+        return None
+    return text[len("data:") :].strip()
 
 
 def _http_error_message(provider_name: str, exc: HTTPError) -> str:

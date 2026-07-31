@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from http.server import ThreadingHTTPServer
+import io
 import json
 import os
 import sys
@@ -88,17 +89,32 @@ class GatewayAppTests(unittest.TestCase):
 
         self.assertIn("messages", str(ctx.exception))
 
-    def test_streaming_is_rejected_until_supported(self) -> None:
-        with self.assertRaises(Exception) as ctx:
-            self.app.chat_completions(
-                {
-                    "model": "mock-coder",
-                    "stream": True,
-                    "messages": [{"role": "user", "content": "Hello"}],
-                }
-            )
+    def test_chat_completion_stream_returns_chunks(self) -> None:
+        chunks = list(self.app.chat_completion_stream(
+            {
+                "model": "mock-coder",
+                "stream": True,
+                "messages": [{"role": "user", "content": "Hello"}],
+            }
+        ))
 
-        self.assertIn("streaming", str(ctx.exception))
+        self.assertTrue(len(chunks) >= 3)
+        self.assertEqual(chunks[0]["choices"][0]["delta"], {"role": "assistant"})
+        self.assertEqual(chunks[-1]["choices"][0]["finish_reason"], "stop")
+
+    def test_chat_completion_stream_normalizes_chunk_model(self) -> None:
+        app = GatewayApp(DEFAULT_CONFIG, providers={"mock": StreamingUpstreamModelProvider()})
+
+        chunks = list(app.chat_completion_stream(
+            {
+                "model": "mock-coder",
+                "stream": True,
+                "messages": [{"role": "user", "content": "Hello"}],
+            }
+        ))
+
+        for chunk in chunks:
+            self.assertEqual(chunk["model"], "mock-coder")
 
 
 class ProviderFactoryTests(unittest.TestCase):
@@ -139,6 +155,46 @@ class MockProviderTests(unittest.TestCase):
         self.assertEqual(response["model"], "mock-coder")
         self.assertIn("usage", response)
         self.assertIn("Mock response from mock-coder: Hello", response["choices"][0]["message"]["content"])
+
+    def test_chat_completion_stream_assembles_to_full_content(self) -> None:
+        provider = MockProvider()
+        model = ModelConfig(
+            name="mock-coder",
+            provider="mock",
+            provider_model="mock-coder-v1",
+        )
+        body = {"messages": [{"role": "user", "content": "Hello"}]}
+
+        non_streaming = provider.chat_completion(model, body)
+        content = str(non_streaming["choices"][0]["message"]["content"])
+        chunks = list(provider.chat_completion_stream(model, body))
+
+        delta_text = "".join(
+            str(chunk["choices"][0]["delta"].get("content", ""))
+            for chunk in chunks
+        )
+        self.assertEqual(delta_text.strip(), content)
+        self.assertEqual(chunks[0]["choices"][0]["delta"], {"role": "assistant"})
+        self.assertEqual(chunks[-1]["choices"][0]["finish_reason"], "stop")
+        self.assertEqual(chunks[-1]["choices"][0]["delta"], {})
+
+    def test_chat_completion_stream_chunks_share_id_and_model(self) -> None:
+        provider = MockProvider()
+        model = ModelConfig(
+            name="mock-coder",
+            provider="mock",
+            provider_model="mock-coder-v1",
+        )
+
+        chunks = list(provider.chat_completion_stream(model, {"messages": [{"role": "user", "content": "Hi"}]}))
+
+        ids = {chunk["id"] for chunk in chunks}
+        self.assertEqual(len(ids), 1)
+        for chunk in chunks:
+            self.assertEqual(chunk["object"], "chat.completion.chunk")
+            self.assertEqual(chunk["model"], "mock-coder")
+            self.assertIn("delta", chunk["choices"][0])
+            self.assertIn("finish_reason", chunk["choices"][0])
 
 
 class OpenRouterProviderTests(unittest.TestCase):
@@ -216,6 +272,194 @@ class OpenRouterProviderTests(unittest.TestCase):
 
         self.assertIn("OPENROUTER_API_KEY", str(ctx.exception))
 
+    def test_chat_completion_stream_forwards_stream_payload(self) -> None:
+        calls: list[tuple[Request, float]] = []
+        upstream_chunks = [
+            {
+                "id": "chatcmpl-stream",
+                "object": "chat.completion.chunk",
+                "created": 123,
+                "model": "qwen/qwen3-coder:free",
+                "choices": [{"index": 0, "delta": {"role": "assistant"}, "finish_reason": None}],
+            },
+            {
+                "id": "chatcmpl-stream",
+                "object": "chat.completion.chunk",
+                "created": 123,
+                "model": "qwen/qwen3-coder:free",
+                "choices": [{"index": 0, "delta": {"content": "Hi"}, "finish_reason": None}],
+            },
+            {
+                "id": "chatcmpl-stream",
+                "object": "chat.completion.chunk",
+                "created": 123,
+                "model": "qwen/qwen3-coder:free",
+                "choices": [{"index": 0, "delta": {}, "finish_reason": "stop"}],
+            },
+        ]
+
+        def fake_urlopen(request: Request, timeout: float) -> FakeStreamResponse:
+            calls.append((request, timeout))
+            return FakeStreamResponse(sse_body(upstream_chunks))
+
+        provider = OpenRouterProvider(
+            ProviderConfig(
+                name="openrouter",
+                type="openrouter",
+                base_url="https://example.test/api/v1",
+                api_key_env="OPENROUTER_API_KEY",
+                timeout_seconds=12,
+            ),
+            urlopen_fn=fake_urlopen,
+        )
+
+        with patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}):
+            chunks = list(
+                provider.chat_completion_stream(
+                    ModelConfig(
+                        name="openrouter-coder",
+                        provider="openrouter",
+                        provider_model="qwen/qwen3-coder:free",
+                    ),
+                    {
+                        "model": "openrouter-coder",
+                        "messages": [{"role": "user", "content": "Write a test."}],
+                        "temperature": 0.2,
+                    },
+                )
+            )
+
+        request, timeout = calls[0]
+        payload = json.loads(request.data.decode("utf-8"))
+        self.assertEqual(payload["model"], "qwen/qwen3-coder:free")
+        self.assertIs(payload["stream"], True)
+        self.assertEqual(payload["temperature"], 0.2)
+        self.assertEqual(timeout, 12)
+        self.assertEqual(len(chunks), 3)
+        self.assertEqual(chunks[0]["choices"][0]["delta"], {"role": "assistant"})
+        self.assertEqual(chunks[-1]["choices"][0]["finish_reason"], "stop")
+
+    def test_chat_completion_stream_preserves_upstream_model(self) -> None:
+        # Provider adapters translate chunks as-is; alias normalization is the
+        # app layer's job (see GatewayAppTests.test_chat_completion_stream_normalizes_chunk_model).
+        upstream_chunks = [
+            {
+                "id": "chatcmpl-stream",
+                "object": "chat.completion.chunk",
+                "created": 123,
+                "model": "qwen/qwen3-coder:free",
+                "choices": [{"index": 0, "delta": {"content": "Hi"}, "finish_reason": None}],
+            },
+        ]
+
+        def fake_urlopen(request: Request, timeout: float) -> FakeStreamResponse:
+            return FakeStreamResponse(sse_body(upstream_chunks))
+
+        provider = OpenRouterProvider(
+            ProviderConfig(
+                name="openrouter",
+                type="openrouter",
+                base_url="https://example.test/api/v1",
+            ),
+            urlopen_fn=fake_urlopen,
+        )
+
+        with patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}):
+            chunks = list(
+                provider.chat_completion_stream(
+                    ModelConfig(
+                        name="openrouter-coder",
+                        provider="openrouter",
+                        provider_model="qwen/qwen3-coder:free",
+                    ),
+                    {"model": "openrouter-coder", "messages": [{"role": "user", "content": "Hi"}]},
+                )
+            )
+
+        for chunk in chunks:
+            self.assertEqual(chunk["model"], "qwen/qwen3-coder:free")
+
+    def test_chat_completion_stream_requires_api_key(self) -> None:
+        provider = OpenRouterProvider(ProviderConfig(name="openrouter", type="openrouter"))
+
+        with patch.dict(os.environ, {}, clear=True):
+            with self.assertRaises(ProviderConfigurationError) as ctx:
+                list(
+                    provider.chat_completion_stream(
+                        ModelConfig(
+                            name="openrouter-coder",
+                            provider="openrouter",
+                            provider_model="qwen/qwen3-coder:free",
+                        ),
+                        {"model": "openrouter-coder", "messages": [{"role": "user", "content": "Hi"}]},
+                    )
+                )
+
+        self.assertIn("OPENROUTER_API_KEY", str(ctx.exception))
+
+    def test_chat_completion_stream_translates_upstream_error_before_stream(self) -> None:
+        def fake_urlopen(request: Request, timeout: float) -> FakeStreamResponse:
+            raise HTTPError(
+                "https://example.test/api/v1/chat/completions",
+                401,
+                "Unauthorized",
+                {},
+                io.BytesIO(b'{"error": {"message": "invalid api key"}}'),
+            )
+
+        provider = OpenRouterProvider(
+            ProviderConfig(
+                name="openrouter",
+                type="openrouter",
+                base_url="https://example.test/api/v1",
+            ),
+            urlopen_fn=fake_urlopen,
+        )
+
+        with patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}):
+            with self.assertRaises(UpstreamProviderError) as ctx:
+                list(
+                    provider.chat_completion_stream(
+                        ModelConfig(
+                            name="openrouter-coder",
+                            provider="openrouter",
+                            provider_model="qwen/qwen3-coder:free",
+                        ),
+                        {"model": "openrouter-coder", "messages": [{"role": "user", "content": "Hi"}]},
+                    )
+                )
+
+        self.assertIn("401", str(ctx.exception))
+        self.assertIn("invalid api key", str(ctx.exception))
+
+    def test_chat_completion_stream_translates_invalid_stream_json(self) -> None:
+        def fake_urlopen(request: Request, timeout: float) -> FakeStreamResponse:
+            return FakeStreamResponse(b"data: {not json}\n\ndata: [DONE]\n\n")
+
+        provider = OpenRouterProvider(
+            ProviderConfig(
+                name="openrouter",
+                type="openrouter",
+                base_url="https://example.test/api/v1",
+            ),
+            urlopen_fn=fake_urlopen,
+        )
+
+        with patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}):
+            with self.assertRaises(UpstreamProviderError) as ctx:
+                list(
+                    provider.chat_completion_stream(
+                        ModelConfig(
+                            name="openrouter-coder",
+                            provider="openrouter",
+                            provider_model="qwen/qwen3-coder:free",
+                        ),
+                        {"model": "openrouter-coder", "messages": [{"role": "user", "content": "Hi"}]},
+                    )
+                )
+
+        self.assertIn("invalid stream JSON", str(ctx.exception))
+
 
 class FakeResponse:
     def __init__(self, body: dict[str, object]) -> None:
@@ -229,6 +473,36 @@ class FakeResponse:
 
     def read(self) -> bytes:
         return json.dumps(self.body).encode("utf-8")
+
+
+def sse_body(chunks: list[dict[str, object]]) -> bytes:
+    parts: list[bytes] = []
+    for chunk in chunks:
+        parts.append(b"data: " + json.dumps(chunk).encode("utf-8") + b"\n\n")
+    parts.append(b"data: [DONE]\n\n")
+    return b"".join(parts)
+
+
+class FakeStreamResponse:
+    def __init__(self, body: bytes) -> None:
+        self._lines = body.splitlines(keepends=True)
+        self._index = 0
+
+    def __enter__(self) -> FakeStreamResponse:
+        return self
+
+    def __exit__(self, *args: object) -> None:
+        return None
+
+    def __iter__(self) -> FakeStreamResponse:
+        return self
+
+    def __next__(self) -> bytes:
+        if self._index >= len(self._lines):
+            raise StopIteration
+        line = self._lines[self._index]
+        self._index += 1
+        return line
 
 
 class RecordingProvider:
@@ -342,6 +616,61 @@ class GatewayHttpTests(unittest.TestCase):
         self.assertEqual(body["error"]["type"], "bad_request")
         self.assertIn("messages", body["error"]["message"])
 
+    def test_chat_completions_streaming_endpoint(self) -> None:
+        request = Request(
+            f"{self.base_url}/v1/chat/completions",
+            data=json.dumps(
+                {
+                    "model": "mock-coder",
+                    "stream": True,
+                    "messages": [{"role": "user", "content": "Write a test."}],
+                }
+            ).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+
+        with urlopen(request) as response:
+            self.assertEqual(response.headers.get_content_type(), "text/event-stream")
+            raw = response.read().decode("utf-8")
+
+        events = [line for line in raw.splitlines() if line.startswith("data: ")]
+        self.assertTrue(events[-1].endswith("[DONE]"))
+        chunks = [json.loads(event[len("data: ") :]) for event in events[:-1]]
+        self.assertTrue(len(chunks) >= 3)
+        for chunk in chunks:
+            self.assertEqual(chunk["object"], "chat.completion.chunk")
+            self.assertEqual(chunk["model"], "mock-coder")
+        self.assertEqual(chunks[0]["choices"][0]["delta"], {"role": "assistant"})
+        self.assertEqual(chunks[-1]["choices"][0]["finish_reason"], "stop")
+
+    def test_streaming_validation_error_returns_error_envelope(self) -> None:
+        with self.assertRaises(HTTPError) as ctx:
+            self.post_json(
+                "/v1/chat/completions",
+                {"model": "missing", "stream": True, "messages": [{"role": "user", "content": "Hello"}]},
+            )
+
+        self.assertEqual(ctx.exception.code, 404)
+        body = self.error_json(ctx.exception)
+        self.assertEqual(body["error"]["type"], "model_not_found")
+
+    def test_streaming_non_boolean_stream_returns_error_envelope(self) -> None:
+        with self.assertRaises(HTTPError) as ctx:
+            self.post_json(
+                "/v1/chat/completions",
+                {
+                    "model": "mock-coder",
+                    "stream": "true",
+                    "messages": [{"role": "user", "content": "Hello"}],
+                },
+            )
+
+        self.assertEqual(ctx.exception.code, 400)
+        body = self.error_json(ctx.exception)
+        self.assertEqual(body["error"]["type"], "bad_request")
+        self.assertIn("stream must be a boolean", body["error"]["message"])
+
     def get_json(self, path: str) -> dict[str, object]:
         with urlopen(f"{self.base_url}{path}") as response:
             return json.loads(response.read().decode("utf-8"))
@@ -444,6 +773,26 @@ class UpstreamModelProvider:
                 }
             ],
         }
+
+
+class StreamingUpstreamModelProvider:
+    def chat_completion_stream(self, model: ModelConfig, body: dict[str, object]) -> list[dict[str, object]]:
+        return [
+            {
+                "id": "chatcmpl-upstream-stream",
+                "object": "chat.completion.chunk",
+                "created": 123,
+                "model": "upstream-model",
+                "choices": [{"index": 0, "delta": {"content": "Hi"}, "finish_reason": None}],
+            },
+            {
+                "id": "chatcmpl-upstream-stream",
+                "object": "chat.completion.chunk",
+                "created": 123,
+                "model": "upstream-model",
+                "choices": [{"index": 0, "delta": {}, "finish_reason": "stop"}],
+            },
+        ]
 
 
 class MalformedSuccessProvider:

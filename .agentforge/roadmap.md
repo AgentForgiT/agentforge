@@ -200,8 +200,21 @@ Deliverables:
 - configuration validation tests and CI validation for issue #71
 - configuration validation docs and `Genesis-0.0.16` release for issue #74
 
+## Genesis Sprint 17: Gateway Streaming MVP
+
+Goal: add OpenAI-compatible SSE streaming to the gateway so streaming-first clients can consume responses incrementally, without weakening the established provider, request, response, and error boundaries.
+
+Deliverables:
+
+- gateway streaming requirements for issue #75
+- gateway streaming boundary ADR for issue #76
+- gateway streaming implementation for issue #77
+- streaming tests and CI validation for issue #78
+- streaming docs and `Genesis-0.0.17` release for issue #79
+
 ## Revision History
 
+- 2026-07-24: Added Sprint 17 gateway streaming deliverables.
 - 2026-07-10: Added Sprint 16 gateway configuration validation deliverables.
 - 2026-07-06: Added Sprint 15 product foundation hygiene deliverables.
 - 2026-07-06: Added Sprint 14 gateway response normalization deliverables.

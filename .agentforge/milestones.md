@@ -295,8 +295,30 @@ Exit criteria:
 - validation passes locally and in CI for issue #71
 - docs explain configuration validation and release notes document `Genesis-0.0.16` for issue #74
 
+## Genesis-0.0.17: Gateway Streaming MVP
+
+Scope:
+
+- define gateway streaming requirements
+- decide the streaming boundary for providers, validation, normalization, and HTTP delivery
+- accept `stream: true` in request validation
+- implement mock and OpenRouter streaming
+- add streaming chunk normalization
+- deliver SSE responses with `[DONE]` termination
+- add focused streaming tests and CI validation
+- document the streaming contract and release limitations
+
+Exit criteria:
+
+- requirements document exists for issue #75
+- ADR-0014 records the streaming boundary for issue #76
+- `/v1/chat/completions` streams OpenAI-compatible chunks for issue #77
+- mock and OpenRouter streaming are covered by offline tests and CI validation for issue #78
+- docs explain the streaming contract and release notes document `Genesis-0.0.17` for issue #79
+
 ## Revision History
 
+- 2026-07-24: Added Genesis-0.0.17 gateway streaming milestone.
 - 2026-07-10: Added Genesis-0.0.16 gateway configuration validation milestone.
 - 2026-07-06: Added Genesis-0.0.15 product foundation hygiene milestone.
 - 2026-07-06: Added Genesis-0.0.14 gateway response normalization milestone.

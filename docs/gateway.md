@@ -4,9 +4,9 @@ Metadata:
 
 - Status: Genesis MVP
 - Module: `apps/gateway`
-- Related requirements: `.agentforge/requirements/gateway-reconciliation.md`
-- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`, `.agentforge/adrs/0011-gateway-error-response-boundary.md`, `.agentforge/adrs/0012-gateway-response-normalization-boundary.md`, `.agentforge/adrs/0013-gateway-configuration-validation-boundary.md`
-- Last updated: 2026-07-10
+- Related requirements: `.agentforge/requirements/gateway-reconciliation.md`, `.agentforge/requirements/gateway-streaming-mvp.md`
+- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`, `.agentforge/adrs/0011-gateway-error-response-boundary.md`, `.agentforge/adrs/0012-gateway-response-normalization-boundary.md`, `.agentforge/adrs/0013-gateway-configuration-validation-boundary.md`, `.agentforge/adrs/0014-gateway-streaming-boundary.md`
+- Last updated: 2026-07-24
 
 ## Purpose
 
@@ -21,11 +21,13 @@ The Genesis MVP includes:
 - `/v1/chat/completions`
 - deterministic mock provider
 - optional OpenRouter provider
+- OpenAI-compatible SSE streaming for chat completions
 - internal provider adapter boundary
 - offline provider contract tests
 - internal request validation boundary
 - standard JSON error envelope
 - successful response normalization boundary
+- streaming chunk normalization boundary
 - explicit configuration validation
 - JSON configuration
 - offline tests
@@ -100,7 +102,7 @@ Request validation lives in `agentforge_gateway.requests` and validates:
 
 - required `model`
 - non-empty `messages`
-- unsupported streaming requests
+- boolean `stream` flag
 - message `role` and `content` presence
 
 `GatewayApp` remains responsible for model lookup and provider dispatch after validation succeeds. The original request body is preserved so optional provider payload fields continue to pass through to provider adapters.
@@ -141,16 +143,39 @@ Response normalization lives in `agentforge_gateway.responses` and validates the
 
 Provider adapters still own provider-specific request mapping, authentication, transport behavior, upstream JSON parsing, and upstream error translation. Malformed provider success responses are treated as upstream provider errors and returned through the standard error envelope.
 
-Full OpenAI response schema validation and streaming response semantics remain deferred until explicit requirements and ADR coverage exist.
+Full OpenAI response schema validation remains deferred until explicit requirements and ADR coverage exist.
+
+## Streaming
+
+ADR-0014 adds OpenAI-compatible SSE streaming to the gateway.
+
+Requests with `stream: true` are delivered as an SSE event stream with `Content-Type: text/event-stream`. Streaming chunks follow the OpenAI chat completion chunk contract:
+
+- chunk objects use `object: "chat.completion.chunk"`
+- chunks carry the public gateway model alias
+- chunk choices contain `delta` objects
+- the first content chunk carries the assistant role delta
+- a final chunk carries an empty delta and `finish_reason: "stop"`
+- the stream terminates with `data: [DONE]`
+
+The mock provider produces deterministic chunks that assemble to the same content as its non-streaming response. The OpenRouter provider forwards `stream: true` upstream, translates upstream chunk events, and terminates when the upstream `[DONE]` event arrives; the gateway HTTP layer emits the client-facing `[DONE]`.
+
+Streaming chunks pass through the gateway-owned normalizer in `agentforge_gateway.responses`, which validates the minimal chunk shape and sets the public model alias on every chunk. Malformed provider chunks are translated to upstream provider errors.
+
+Errors detected before the first chunk is written use the standard JSON error envelope. Errors detected after streaming has started cannot change the HTTP status; the gateway terminates the stream safely without writing further chunks. Gateway error events inside a stream remain deferred.
+
+Streaming usage summaries, `stream_options`, and client disconnect handling beyond safe stream termination remain deferred.
 
 ## Risks
 
 - Provider adapters are still inside `apps/gateway`; ADR-0002 and ADR-0008 identify `packages/providers` as a later extraction target.
-- Streaming is explicitly unsupported in the Genesis MVP and requires later design work before implementation.
+- Mid-stream errors cannot use the JSON error envelope; the gateway terminates the stream safely and documents this limitation.
 - OpenRouter live testing is optional and must not be required in default CI.
+- Streaming usage summaries and error events remain deferred.
 
 ## Revision History
 
+- 2026-07-24: Documented streaming support from ADR-0014.
 - 2026-07-10: Documented configuration validation boundary from ADR-0013.
 - 2026-07-06: Documented response normalization boundary from ADR-0012.
 - 2026-07-05: Documented JSON error contract from ADR-0011.

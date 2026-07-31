@@ -5,7 +5,7 @@ Metadata:
 - Status: Draft
 - Phase: Genesis
 - Related decisions: ADR-0001, DEC-0005
-- Last updated: 2026-07-10
+- Last updated: 2026-07-24
 
 ## Purpose
 
@@ -68,7 +68,6 @@ Near-term work should remain small and releasable:
 
 - gateway model catalog contract hardening
 - gateway logging and observability requirements
-- gateway streaming requirements and ADR
 - AICS metadata structure refinement
 - standards expansion for release, security, and compatibility
 - public `0.1.0` scope definition
@@ -77,7 +76,7 @@ Near-term work should remain small and releasable:
 
 The following need explicit requirements and, where durable, ADR or RFC coverage before implementation:
 
-- streaming gateway responses
+- streaming usage summaries and error events
 - production authentication and rate limiting
 - provider package extraction
 - public package registry publishing

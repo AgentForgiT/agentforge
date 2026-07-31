@@ -56,17 +56,58 @@ class ChatCompletionRequestValidationTests(unittest.TestCase):
 
         self.assertIn("request requires non-empty messages", str(ctx.exception))
 
-    def test_rejects_streaming(self) -> None:
+    def test_accepts_stream_true(self) -> None:
+        request = validate_chat_completion_request(
+            {
+                "model": "mock-coder",
+                "stream": True,
+                "messages": [{"role": "user", "content": "Hello"}],
+            }
+        )
+
+        self.assertTrue(request.stream)
+
+    def test_stream_defaults_to_false(self) -> None:
+        request = validate_chat_completion_request(
+            {"model": "mock-coder", "messages": [{"role": "user", "content": "Hello"}]}
+        )
+
+        self.assertFalse(request.stream)
+
+    def test_accepts_stream_false(self) -> None:
+        request = validate_chat_completion_request(
+            {
+                "model": "mock-coder",
+                "stream": False,
+                "messages": [{"role": "user", "content": "Hello"}],
+            }
+        )
+
+        self.assertFalse(request.stream)
+
+    def test_rejects_non_boolean_stream(self) -> None:
         with self.assertRaises(BadRequestError) as ctx:
             validate_chat_completion_request(
                 {
                     "model": "mock-coder",
-                    "stream": True,
+                    "stream": "true",
                     "messages": [{"role": "user", "content": "Hello"}],
                 }
             )
 
-        self.assertIn("streaming responses are not supported yet", str(ctx.exception))
+        self.assertIn("stream must be a boolean", str(ctx.exception))
+
+    def test_rejects_numeric_stream(self) -> None:
+        with self.assertRaises(BadRequestError) as ctx:
+            validate_chat_completion_request(
+                {
+                    "model": "mock-coder",
+                    "stream": 1,
+                    "messages": [{"role": "user", "content": "Hello"}],
+                }
+            )
+
+        self.assertIn("stream must be a boolean", str(ctx.exception))
 
     def test_rejects_malformed_message(self) -> None:
         with self.assertRaises(BadRequestError) as ctx:

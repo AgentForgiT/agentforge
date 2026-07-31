@@ -11,6 +11,7 @@ class ChatCompletionRequest:
     model: str
     messages: list[dict[str, object]]
     body: dict[str, Any]
+    stream: bool = False
 
 
 def validate_chat_completion_request(body: dict[str, Any]) -> ChatCompletionRequest:
@@ -21,8 +22,10 @@ def validate_chat_completion_request(body: dict[str, Any]) -> ChatCompletionRequ
         raise BadRequestError("request requires a model")
     if not isinstance(messages, list) or not messages:
         raise BadRequestError("request requires non-empty messages")
-    if body.get("stream") is True:
-        raise BadRequestError("streaming responses are not supported yet")
+
+    stream = body.get("stream", False)
+    if not isinstance(stream, bool):
+        raise BadRequestError("stream must be a boolean")
 
     validated_messages: list[dict[str, object]] = []
     for message in messages:
@@ -34,4 +37,5 @@ def validate_chat_completion_request(body: dict[str, Any]) -> ChatCompletionRequ
         model=model,
         messages=validated_messages,
         body=body,
+        stream=stream,
     )
