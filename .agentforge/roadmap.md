@@ -212,8 +212,25 @@ Deliverables:
 - streaming tests and CI validation for issue #78
 - streaming docs and `Genesis-0.0.17` release for issue #79
 
+## Genesis Sprint 18: Gateway Logging and Observability MVP
+
+Goal: add structured access logging to the gateway so operators can observe request traffic, status, and timing through a configurable, privacy-safe log level, without weakening the established validation and error boundaries.
+
+Deliverables:
+
+- logging and observability requirements for issue #80
+- logging boundary decision ADR-0015 for issue #81
+- structured access records with method, path, status, and duration
+- chat-completion context records with model and stream flag
+- `server.log_level` configuration with strict enum validation for issue #82
+- logging tests and CI validation for issue #83
+- logging docs and `Genesis-0.0.18` release for issue #84
+
+Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
+
 ## Revision History
 
+- 2026-07-31: Added Sprint 18 gateway logging deliverables.
 - 2026-07-24: Added Sprint 17 gateway streaming deliverables.
 - 2026-07-10: Added Sprint 16 gateway configuration validation deliverables.
 - 2026-07-06: Added Sprint 15 product foundation hygiene deliverables.

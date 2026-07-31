@@ -5,6 +5,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .logger import SUPPORTED_LOG_LEVELS
+
 
 @dataclass(frozen=True)
 class ModelConfig:
@@ -29,6 +31,7 @@ class GatewayConfig:
     port: int
     models: dict[str, ModelConfig]
     providers: dict[str, ProviderConfig]
+    log_level: str = "INFO"
 
 
 DEFAULT_CONFIG = GatewayConfig(
@@ -89,6 +92,7 @@ def parse_config(raw: object) -> GatewayConfig:
     return GatewayConfig(
         host=_server_host(server),
         port=_port(server.get("port", 8080), "server.port"),
+        log_level=_log_level(server.get("log_level", "INFO"), "server.log_level"),
         models=parsed_models,
         providers=parsed_providers,
     )
@@ -160,6 +164,15 @@ def _port(value: Any, field_name: str) -> int:
     if value < 1 or value > 65535:
         raise ValueError(f"{field_name} must be an integer from 1 to 65535")
     return value
+
+
+def _log_level(value: Any, field_name: str) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"{field_name} must be one of {', '.join(SUPPORTED_LOG_LEVELS)}")
+    normalized = value.strip().upper()
+    if normalized not in SUPPORTED_LOG_LEVELS:
+        raise ValueError(f"{field_name} must be one of {', '.join(SUPPORTED_LOG_LEVELS)}")
+    return normalized
 
 
 def _positive_number(value: Any, field_name: str) -> float:

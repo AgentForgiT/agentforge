@@ -316,8 +316,28 @@ Exit criteria:
 - mock and OpenRouter streaming are covered by offline tests and CI validation for issue #78
 - docs explain the streaming contract and release notes document `Genesis-0.0.17` for issue #79
 
+## Genesis-0.0.18: Gateway Logging and Observability MVP
+
+Scope:
+
+- define gateway logging and observability requirements
+- decide the logging boundary for records, level configuration, and privacy rules
+- emit structured access records with method, path, status, and duration
+- emit chat-completion context records with model and stream flag
+- accept and validate `server.log_level` with default `INFO`
+- handle unexpected handler errors with `500` records and generic envelopes
+- never log request bodies, response bodies, headers, or credentials
+
+Exit criteria:
+
+- ADR-0015 records the logging boundary for issue #81
+- access records and context records are covered by tests for issue #82
+- CI Bootstrap Validate passes offline without credentials for issue #83
+- docs explain the logging contract, privacy rules, and limitations; release notes document `Genesis-0.0.18` for issue #84
+
 ## Revision History
 
+- 2026-07-31: Added Genesis-0.0.18 gateway logging milestone.
 - 2026-07-24: Added Genesis-0.0.17 gateway streaming milestone.
 - 2026-07-10: Added Genesis-0.0.16 gateway configuration validation milestone.
 - 2026-07-06: Added Genesis-0.0.15 product foundation hygiene milestone.

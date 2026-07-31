@@ -191,6 +191,28 @@ class GatewayConfigValidationTests(unittest.TestCase):
         with self.assert_config_error("base_url"):
             parse_config(raw)
 
+    def test_parse_config_default_log_level_is_info(self) -> None:
+        config = parse_config(minimal_config())
+
+        self.assertEqual(config.log_level, "INFO")
+
+    def test_parse_config_normalizes_lowercase_log_level(self) -> None:
+        raw = minimal_config()
+        raw["server"] = {"log_level": "debug"}
+
+        config = parse_config(raw)
+
+        self.assertEqual(config.log_level, "DEBUG")
+
+    def test_parse_config_rejects_invalid_log_level(self) -> None:
+        for level in ("TRACE", "verbose", "", 42, True, None):
+            raw = minimal_config()
+            raw["server"] = {"log_level": level}
+
+            with self.subTest(level=level):
+                with self.assert_config_error("server.log_level"):
+                    parse_config(raw)
+
     def assert_config_error(self, expected: str) -> object:
         return self.assertRaisesRegex(ValueError, expected)
 

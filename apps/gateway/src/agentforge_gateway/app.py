@@ -3,10 +3,18 @@ from __future__ import annotations
 from collections.abc import Iterator
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
+import time
 from typing import Any
 
 from .config import GatewayConfig, load_config
-from .errors import BadRequestError, GatewayError, invalid_json_response, not_found_response
+from .errors import (
+    BadRequestError,
+    GatewayError,
+    internal_error_response,
+    invalid_json_response,
+    not_found_response,
+)
+from .logger import configure_logging, get_logger
 from .models import ModelRegistry
 from .providers import ChatProvider, build_provider
 from .requests import validate_chat_completion_request
@@ -33,12 +41,14 @@ class GatewayApp:
 
     def chat_completions(self, body: dict[str, Any]) -> dict[str, object]:
         request = validate_chat_completion_request(body)
+        get_logger().info("chat_completion model=%s stream=false", request.model)
         model = self.registry.get(request.model)
         provider = self.providers[model.provider]
         return normalize_chat_completion_response(model, provider.chat_completion(model, request.body))
 
     def chat_completion_stream(self, body: dict[str, Any]) -> Iterator[dict[str, object]]:
         request = validate_chat_completion_request(body)
+        get_logger().info("chat_completion model=%s stream=true", request.model)
         model = self.registry.get(request.model)
         provider = self.providers[model.provider]
         for chunk in provider.chat_completion_stream(model, request.body):
@@ -53,7 +63,18 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
         def log_message(self, format: str, *args: object) -> None:
             return
 
+        def log_request(self, code: int | str = "-", size: int | str = "-") -> None:
+            started = getattr(self, "_request_started", None)
+            duration_ms = int((time.monotonic() - started) * 1000) if started is not None else 0
+            record = "method=%s path=%s status=%s duration_ms=%d"
+            values: tuple[object, ...] = (self.command, self.path, code, duration_ms)
+            if str(code).isdigit() and int(code) >= 500:
+                get_logger().error(record, *values)
+            else:
+                get_logger().info(record, *values)
+
         def do_GET(self) -> None:
+            self._request_started = time.monotonic()
             try:
                 if self.path == "/health":
                     self._send_json(200, app.health())
@@ -64,8 +85,12 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
                 self._send_json(404, not_found_response())
             except GatewayError as exc:
                 self._send_json(exc.status_code, exc.to_response())
+            except Exception:
+                get_logger().error("unhandled gateway error", exc_info=True)
+                self._send_json(500, internal_error_response())
 
         def do_POST(self) -> None:
+            self._request_started = time.monotonic()
             try:
                 if self.path == "/v1/chat/completions":
                     body = self._read_json()
@@ -79,13 +104,20 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
                 self._send_json(exc.status_code, exc.to_response())
             except json.JSONDecodeError:
                 self._send_json(400, invalid_json_response())
+            except Exception:
+                get_logger().error("unhandled gateway error", exc_info=True)
+                self._send_json(500, internal_error_response())
 
         def _handle_stream(self, body: dict[str, Any]) -> None:
-            stream = app.chat_completion_stream(body)
             try:
+                stream = app.chat_completion_stream(body)
                 first_chunk = next(stream)
             except GatewayError as exc:
                 self._send_json(exc.status_code, exc.to_response())
+                return
+            except Exception:
+                get_logger().error("unhandled gateway error", exc_info=True)
+                self._send_json(500, internal_error_response())
                 return
 
             self._send_stream_headers()
@@ -97,6 +129,9 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
             except GatewayError:
                 return
             except OSError:
+                return
+            except Exception:
+                get_logger().error("unhandled gateway error", exc_info=True)
                 return
 
         def _read_json(self) -> dict[str, Any]:
@@ -136,5 +171,6 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
 
 def create_server(config_path: str | None = None) -> ThreadingHTTPServer:
     config = load_config(config_path)
+    configure_logging(config.log_level)
     app = GatewayApp(config)
     return ThreadingHTTPServer((config.host, config.port), create_handler(app))

@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## Genesis-0.0.18 - 2026-07-31
+
+- Added Sprint 18 requirements and ADR-0015 for the gateway logging boundary.
+- Added structured access logging with method, path, status, and duration records; chat-completion context records with model and stream flag; and configurable `server.log_level` with strict enum validation.
+- Added explicit `500` internal error handling for unexpected handler exceptions with exception details logged at `ERROR` only.
+- Added logging tests (13) and configuration validation tests for the log level.
+- Documented the logging contract, privacy rules, and Sprint 18 limitations.
+
 ## Genesis-0.0.17 - 2026-07-24
 
 - Added Sprint 17 requirements and ADR-0014 for the gateway streaming boundary.

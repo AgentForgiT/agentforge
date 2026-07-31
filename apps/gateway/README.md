@@ -8,8 +8,8 @@ This module was migrated from the pre-governance `agentforge-gateway` prototype 
 
 - Module: `apps/gateway`
 - Status: Genesis MVP
-- Related requirements: `.agentforge/requirements/gateway-reconciliation.md`, `.agentforge/requirements/gateway-streaming-mvp.md`
-- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`, `.agentforge/adrs/0011-gateway-error-response-boundary.md`, `.agentforge/adrs/0012-gateway-response-normalization-boundary.md`, `.agentforge/adrs/0013-gateway-configuration-validation-boundary.md`, `.agentforge/adrs/0014-gateway-streaming-boundary.md`
+- Related requirements: `.agentforge/requirements/gateway-reconciliation.md`, `.agentforge/requirements/gateway-streaming-mvp.md`, `.agentforge/requirements/gateway-logging-observability-mvp.md`
+- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`, `.agentforge/adrs/0011-gateway-error-response-boundary.md`, `.agentforge/adrs/0012-gateway-response-normalization-boundary.md`, `.agentforge/adrs/0013-gateway-configuration-validation-boundary.md`, `.agentforge/adrs/0014-gateway-streaming-boundary.md`, `.agentforge/adrs/0015-gateway-logging-observability-boundary.md`
 
 ## Features
 
@@ -18,6 +18,7 @@ This module was migrated from the pre-governance `agentforge-gateway` prototype 
 - `GET /v1/models`
 - `POST /v1/chat/completions`
 - OpenAI-compatible SSE streaming for chat completions
+- structured access logging with configurable log level
 - deterministic mock provider
 - optional OpenRouter provider adapter
 - explicit internal provider adapter boundary
@@ -90,6 +91,26 @@ Every chunk passes through the gateway-owned normalizer in `agentforge_gateway.r
 
 Errors before the first chunk use the standard JSON error envelope. Errors after streaming has started terminate the stream safely; they cannot change the HTTP status. Streaming usage summaries, error events, and `stream_options` remain deferred.
 
+## Logging
+
+The gateway emits structured access records through the standard library `logging` module under the `agentforge.gateway` logger (ADR-0015):
+
+```text
+method=POST path=/v1/chat/completions status=200 duration_ms=3
+```
+
+Access records include HTTP method, request path, response status, and elapsed time in milliseconds. Chat-completion context records are emitted after successful request validation:
+
+```text
+chat_completion model=mock-coder stream=false
+```
+
+The log level is configurable through `server.log_level` with accepted values `DEBUG`, `INFO`, `WARNING`, and `ERROR` (case-insensitive), defaulting to `INFO`.
+
+Unexpected handler errors are logged at `ERROR` with a `500` status record and a generic `internal_error` JSON envelope; exception details are written to the log only.
+
+Request bodies, response bodies, headers, and credentials are never logged. Provider adapters do not emit gateway logs during Genesis; provider-side diagnostics, metrics endpoints, request IDs, and trace IDs remain deferred.
+
 ## Error Contract
 
 Gateway errors use a standard JSON envelope:
@@ -114,7 +135,7 @@ Full OpenAI response schema validation remains deferred during Genesis.
 
 Gateway configuration parsing lives in `agentforge_gateway.config`.
 
-The parser validates root, server, model, and provider object shapes; required model and provider fields; server port range; positive provider timeouts; provider headers; and model references to configured providers. It preserves the default host, port, and mock provider behavior for local offline use.
+The parser validates root, server, model, and provider object shapes; required model and provider fields; server port range; `server.log_level` against the supported levels; positive provider timeouts; provider headers; and model references to configured providers. It preserves the default host, port, log level, and mock provider behavior for local offline use.
 
 Provider API keys remain environment variables checked by provider adapters at runtime.
 

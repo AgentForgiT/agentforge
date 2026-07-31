@@ -18,6 +18,10 @@ def invalid_json_response() -> dict[str, object]:
     return error_response("invalid JSON body", "bad_request")
 
 
+def internal_error_response() -> dict[str, object]:
+    return error_response("internal server error", "internal_error")
+
+
 class GatewayError(Exception):
     status_code = 500
     error_type = "internal_error"

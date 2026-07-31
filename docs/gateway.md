@@ -4,9 +4,9 @@ Metadata:
 
 - Status: Genesis MVP
 - Module: `apps/gateway`
-- Related requirements: `.agentforge/requirements/gateway-reconciliation.md`, `.agentforge/requirements/gateway-streaming-mvp.md`
-- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`, `.agentforge/adrs/0011-gateway-error-response-boundary.md`, `.agentforge/adrs/0012-gateway-response-normalization-boundary.md`, `.agentforge/adrs/0013-gateway-configuration-validation-boundary.md`, `.agentforge/adrs/0014-gateway-streaming-boundary.md`
-- Last updated: 2026-07-24
+- Related requirements: `.agentforge/requirements/gateway-reconciliation.md`, `.agentforge/requirements/gateway-streaming-mvp.md`, `.agentforge/requirements/gateway-logging-observability-mvp.md`
+- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`, `.agentforge/adrs/0011-gateway-error-response-boundary.md`, `.agentforge/adrs/0012-gateway-response-normalization-boundary.md`, `.agentforge/adrs/0013-gateway-configuration-validation-boundary.md`, `.agentforge/adrs/0014-gateway-streaming-boundary.md`, `.agentforge/adrs/0015-gateway-logging-observability-boundary.md`
+- Last updated: 2026-07-31
 
 ## Purpose
 
@@ -22,6 +22,7 @@ The Genesis MVP includes:
 - deterministic mock provider
 - optional OpenRouter provider
 - OpenAI-compatible SSE streaming for chat completions
+- structured access logging with configurable log level
 - internal provider adapter boundary
 - offline provider contract tests
 - internal request validation boundary
@@ -57,13 +58,14 @@ Configuration validation lives in `agentforge_gateway.config` and validates:
 
 - root JSON object shape
 - optional `server.host` and `server.port`
+- optional `server.log_level`
 - required model `provider` and `provider_model`
 - provider `type`
 - positive provider `timeout_seconds`
 - provider `headers`
 - model references to configured providers
 
-The parser preserves default host `127.0.0.1`, default port `8080`, and default mock provider behavior when provider config is omitted.
+The parser preserves default host `127.0.0.1`, default port `8080`, default log level `INFO`, and default mock provider behavior when provider config is omitted.
 
 Provider credentials remain runtime environment concerns owned by provider adapters, not config parsing. Live provider availability is intentionally excluded from default validation.
 
@@ -166,15 +168,43 @@ Errors detected before the first chunk is written use the standard JSON error en
 
 Streaming usage summaries, `stream_options`, and client disconnect handling beyond safe stream termination remain deferred.
 
+## Logging
+
+ADR-0015 defines the gateway logging boundary.
+
+The gateway emits structured access records through the standard library `logging` module under the `agentforge.gateway` logger:
+
+```text
+method=POST path=/v1/chat/completions status=200 duration_ms=3
+```
+
+Access records include HTTP method, request path, response status, and elapsed time in milliseconds.
+
+Chat-completion context records are emitted after successful request validation:
+
+```text
+chat_completion model=mock-coder stream=false
+```
+
+The log level is configurable through `server.log_level` with accepted values `DEBUG`, `INFO`, `WARNING`, and `ERROR` (case-insensitive), defaulting to `INFO`.
+
+Unexpected handler errors are logged at `ERROR` with a `500` status record and a generic `internal_error` JSON envelope; exception details are written to the log only.
+
+Request bodies, response bodies, headers, and credentials are never logged.
+
+Provider adapters do not emit gateway logs during Genesis; provider-side diagnostics, metrics endpoints, request IDs, and trace IDs remain deferred.
+
 ## Risks
 
 - Provider adapters are still inside `apps/gateway`; ADR-0002 and ADR-0008 identify `packages/providers` as a later extraction target.
 - Mid-stream errors cannot use the JSON error envelope; the gateway terminates the stream safely and documents this limitation.
 - OpenRouter live testing is optional and must not be required in default CI.
 - Streaming usage summaries and error events remain deferred.
+- Provider-side diagnostics, metrics endpoints, request IDs, and trace IDs remain deferred beyond the Sprint 18 access record baseline.
 
 ## Revision History
 
+- 2026-07-31: Documented structured access logging from ADR-0015.
 - 2026-07-24: Documented streaming support from ADR-0014.
 - 2026-07-10: Documented configuration validation boundary from ADR-0013.
 - 2026-07-06: Documented response normalization boundary from ADR-0012.

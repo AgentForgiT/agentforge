@@ -5,7 +5,7 @@ Metadata:
 - Status: Draft
 - Phase: Genesis
 - Related decisions: ADR-0001, DEC-0005
-- Last updated: 2026-07-24
+- Last updated: 2026-07-31
 
 ## Purpose
 
@@ -67,7 +67,6 @@ Current Genesis themes:
 Near-term work should remain small and releasable:
 
 - gateway model catalog contract hardening
-- gateway logging and observability requirements
 - AICS metadata structure refinement
 - standards expansion for release, security, and compatibility
 - public `0.1.0` scope definition
