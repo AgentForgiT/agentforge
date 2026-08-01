@@ -242,9 +242,24 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
+## Genesis Sprint 20: Ollama / Local Provider Adapter
+
+Goal: add a keyless `ollama` provider targeting Ollama's OpenAI-compatible `/v1` surface so completions can run fully locally against open-weight models — completing the vendor-neutral promise with an offline, provable half.
+
+Deliverables:
+
+- Ollama/local provider requirements for issue #90
+- local-provider boundary decision ADR-0017 for issue #91
+- `OllamaProvider` adapter (non-streaming + streaming, keyless, connection-refused translation) for issue #92
+- provider contract, factory, and endpoint tests; CI validation for issue #93
+- Ollama provider docs and `Genesis-0.0.20` release for issue #94
+
+Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
+
 ## Revision History
 
-- 2026-08-01: Added Sprint 19 gateway reasoning-model deliverables.
+- 2026-08-01: Added Sprint 20 Ollama/local provider deliverables.
+- 2026-08-01: Added Sprint 19 gateway reasoning deliverables.
 - 2026-07-31: Added Sprint 18 gateway logging deliverables.
 - 2026-07-24: Added Sprint 17 gateway streaming deliverables.
 - 2026-07-10: Added Sprint 16 gateway configuration validation deliverables.

@@ -62,6 +62,16 @@ class GatewayConfigValidationTests(unittest.TestCase):
     def test_example_configs_parse(self) -> None:
         load_config(REPO_ROOT / "apps/gateway/config.example.json")
         load_config(REPO_ROOT / "apps/gateway/config.openrouter.example.json")
+        load_config(REPO_ROOT / "apps/gateway/config.ollama.example.json")
+
+    def test_ollama_example_config_uses_ollama_provider(self) -> None:
+        config = load_config(REPO_ROOT / "apps/gateway/config.ollama.example.json")
+
+        self.assertEqual(config.models["local-llama3"].provider, "ollama")
+        self.assertEqual(config.models["local-llama3"].provider_model, "llama3.2")
+        self.assertEqual(config.providers["ollama"].type, "ollama")
+        self.assertEqual(config.providers["ollama"].base_url, "http://127.0.0.1:11434/v1")
+        self.assertEqual(config.providers["ollama"].timeout_seconds, 120)
 
     def test_parse_config_rejects_non_object_root(self) -> None:
         with self.assert_config_error("JSON object"):

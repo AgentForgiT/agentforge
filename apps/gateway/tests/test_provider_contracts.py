@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Iterator
 from io import BytesIO
 import json
 import os
@@ -7,7 +8,7 @@ from pathlib import Path
 import sys
 import unittest
 from unittest.mock import patch
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 from urllib.request import Request
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,7 +16,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from agentforge_gateway.config import ModelConfig, ProviderConfig
 from agentforge_gateway.errors import UpstreamProviderError
-from agentforge_gateway.providers import MockProvider, OpenRouterProvider
+from agentforge_gateway.providers import MockProvider, OllamaProvider, OpenRouterProvider
 
 
 class ChatCompletionContract:
@@ -146,6 +147,148 @@ class OpenRouterProviderContractTests(ChatCompletionContract, unittest.TestCase)
         self.assertIn("rate limited", str(ctx.exception))
 
 
+class OllamaProviderContractTests(ChatCompletionContract, unittest.TestCase):
+    def test_ollama_provider_satisfies_chat_completion_contract_with_injected_transport(self) -> None:
+        calls: list[tuple[Request, float]] = []
+
+        def fake_urlopen(request: Request, timeout: float) -> FakeResponse:
+            calls.append((request, timeout))
+            return FakeResponse(
+                {
+                    "id": "chatcmpl-contract",
+                    "object": "chat.completion",
+                    "created": 123,
+                    "model": "llama3.2",
+                    "choices": [
+                        {
+                            "index": 0,
+                            "message": {"role": "assistant", "content": "Contract satisfied locally."},
+                            "finish_reason": "stop",
+                        }
+                    ],
+                    "usage": {"prompt_tokens": 5, "completion_tokens": 3, "total_tokens": 8},
+                }
+            )
+
+        provider = OllamaProvider(
+            ProviderConfig(
+                name="ollama",
+                type="ollama",
+                base_url="http://127.0.0.1:11434/v1",
+                timeout_seconds=7,
+            ),
+            urlopen_fn=fake_urlopen,
+        )
+
+        response = provider.chat_completion(
+            ModelConfig(name="local-llama3", provider="ollama", provider_model="llama3.2"),
+            {"model": "local-llama3", "messages": [{"role": "user", "content": "Check the contract."}]},
+        )
+
+        self.assert_chat_completion_contract(response, expected_model="local-llama3")
+        request, timeout = calls[0]
+        payload = json.loads(request.data.decode("utf-8"))
+        self.assertEqual(request.full_url, "http://127.0.0.1:11434/v1/chat/completions")
+        self.assertEqual(payload["model"], "llama3.2")
+        self.assertEqual(timeout, 7)
+
+    def test_ollama_provider_sends_no_authorization_header(self) -> None:
+        def fake_urlopen(request: Request, timeout: float) -> FakeResponse:
+            self.assertNotIn("Authorization", {k.lower(): v for k, v in request.header_items()})
+            return FakeResponse(
+                {
+                    "id": "chatcmpl-local",
+                    "object": "chat.completion",
+                    "created": 123,
+                    "model": "llama3.2",
+                    "choices": [
+                        {
+                            "index": 0,
+                            "message": {"role": "assistant", "content": "Keyless."},
+                            "finish_reason": "stop",
+                        }
+                    ],
+                }
+            )
+
+        provider = OllamaProvider(
+            ProviderConfig(name="ollama", type="ollama"),
+            urlopen_fn=fake_urlopen,
+        )
+        provider.chat_completion(
+            ModelConfig(name="local-llama3", provider="ollama", provider_model="llama3.2"),
+            {"model": "local-llama3", "messages": [{"role": "user", "content": "Hi"}]},
+        )
+
+    def test_ollama_provider_streams_chunks_and_stops_at_done(self) -> None:
+        def fake_urlopen(request: Request, timeout: float) -> StreamingFakeResponse:
+            self.assertEqual(json.loads(request.data.decode("utf-8"))["stream"], True)
+            return StreamingFakeResponse(
+                [
+                    {"id": "chatcmpl-local", "object": "chat.completion.chunk", "created": 123, "model": "llama3.2", "choices": [{"index": 0, "delta": {"role": "assistant"}, "finish_reason": None}]},
+                    {"id": "chatcmpl-local", "object": "chat.completion.chunk", "created": 123, "model": "llama3.2", "choices": [{"index": 0, "delta": {"content": "Hello"}, "finish_reason": None}]},
+                    {"id": "chatcmpl-local", "object": "chat.completion.chunk", "created": 123, "model": "llama3.2", "choices": [{"index": 0, "delta": {}, "finish_reason": "stop"}]},
+                ]
+            )
+
+        provider = OllamaProvider(
+            ProviderConfig(name="ollama", type="ollama"),
+            urlopen_fn=fake_urlopen,
+        )
+        chunks = list(
+            provider.chat_completion_stream(
+                ModelConfig(name="local-llama3", provider="ollama", provider_model="llama3.2"),
+                {"model": "local-llama3", "messages": [{"role": "user", "content": "Say hello."}]},
+            )
+        )
+
+        self.assertEqual(len(chunks), 3)
+        self.assertEqual(chunks[1]["choices"][0]["delta"]["content"], "Hello")
+        self.assertEqual(chunks[-1]["choices"][0]["finish_reason"], "stop")
+
+    def test_ollama_provider_translates_upstream_http_errors(self) -> None:
+        def fake_urlopen(request: Request, timeout: float) -> FakeResponse:
+            raise HTTPError(
+                url=request.full_url,
+                code=404,
+                msg="Not Found",
+                hdrs={},
+                fp=BytesIO(b'{"error":{"message":"model not found"}}'),
+            )
+
+        provider = OllamaProvider(
+            ProviderConfig(name="ollama", type="ollama"),
+            urlopen_fn=fake_urlopen,
+        )
+
+        with self.assertRaises(UpstreamProviderError) as ctx:
+            provider.chat_completion(
+                ModelConfig(name="local-llama3", provider="ollama", provider_model="llama3.2"),
+                {"model": "local-llama3", "messages": [{"role": "user", "content": "Hi"}]},
+            )
+
+        self.assertIn("status 404", str(ctx.exception))
+        self.assertIn("model not found", str(ctx.exception))
+
+    def test_ollama_provider_translates_connection_refused(self) -> None:
+        def fake_urlopen(request: Request, timeout: float) -> FakeResponse:
+            raise URLError(ConnectionRefusedError(111, "Connection refused"))
+
+        provider = OllamaProvider(
+            ProviderConfig(name="ollama", type="ollama"),
+            urlopen_fn=fake_urlopen,
+        )
+
+        with self.assertRaises(UpstreamProviderError) as ctx:
+            provider.chat_completion(
+                ModelConfig(name="local-llama3", provider="ollama", provider_model="llama3.2"),
+                {"model": "local-llama3", "messages": [{"role": "user", "content": "Hi"}]},
+            )
+
+        self.assertIn("provider 'ollama'", str(ctx.exception))
+        self.assertIn("Connection refused", str(ctx.exception))
+
+
 class FakeResponse:
     def __init__(self, body: dict[str, object]) -> None:
         self.body = body
@@ -158,6 +301,25 @@ class FakeResponse:
 
     def read(self) -> bytes:
         return json.dumps(self.body).encode("utf-8")
+
+
+class StreamingFakeResponse:
+    def __init__(self, chunks: list[dict[str, object]]) -> None:
+        self._chunks = chunks
+
+    def __enter__(self) -> StreamingFakeResponse:
+        return self
+
+    def __exit__(self, *args: object) -> None:
+        return None
+
+    def __iter__(self) -> Iterator[bytes]:
+        for chunk in self._chunks:
+            yield f"data: {json.dumps(chunk)}\n\n".encode("utf-8")
+        yield b"data: [DONE]\n\n"
+
+    def read(self) -> bytes:
+        return b""
 
 
 if __name__ == "__main__":

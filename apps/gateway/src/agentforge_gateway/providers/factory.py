@@ -6,6 +6,7 @@ from ..config import ProviderConfig
 from ..errors import ProviderConfigurationError
 from .base import ChatProvider
 from .mock import MockProvider
+from .ollama import OllamaProvider
 from .openrouter import OpenRouterProvider
 
 
@@ -18,6 +19,7 @@ def _build_mock_provider(config: ProviderConfig) -> ChatProvider:
 
 PROVIDER_BUILDERS: dict[str, ProviderBuilder] = {
     "mock": _build_mock_provider,
+    "ollama": OllamaProvider,
     "openrouter": OpenRouterProvider,
 }
 

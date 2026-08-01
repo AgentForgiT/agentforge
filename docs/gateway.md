@@ -78,9 +78,20 @@ ADR-0008 defines the internal provider package boundary:
 - provider protocol and factory are separated from concrete adapters
 - deterministic mock behavior lives in its own adapter module
 - OpenRouter payload mapping and upstream error handling live in their own adapter module
+- Ollama/local payload mapping and upstream error handling live in their own adapter module
 - gateway routing depends on the provider protocol and factory, not concrete adapters
 
 `packages/providers` remains a long-term extraction target from ADR-0002, but extraction is deferred until provider maturity, ownership, or release cadence justifies it.
+
+## Ollama / Local Provider
+
+ADR-0017 defines the local-provider boundary.
+
+The `ollama` provider talks to Ollama's OpenAI-compatible `/v1` surface (default `http://127.0.0.1:11434/v1`, overridable per provider config — any OpenAI-compatible local server works). It is keyless: no `api_key_env` is required or read, and no `Authorization` header is sent (local trust boundary).
+
+Non-streaming and streaming completions behave like the OpenRouter adapter: `provider_model` is substituted as the upstream `model`, responses/chunks get the public gateway alias, and HTTP/transport errors translate to the standard `UpstreamProviderError` envelope. A stopped local daemon surfaces as e.g. `provider 'ollama' request failed: ... Connection refused`.
+
+The adapter intentionally does NOT use Ollama's native `/api/chat` protocol; the gateway owns one OpenAI-compatible normalization path (ADR-0012, ADR-0014), and the native protocol would require a second one. Example config: `apps/gateway/config.ollama.example.json`.
 
 ## Provider Contract Tests
 
@@ -94,7 +105,7 @@ The contract tests verify that gateway providers return the minimal OpenAI-compa
 - assistant message role and string content
 - finish reason
 
-The current suite covers the deterministic mock provider and the OpenRouter provider through injected offline transport. Live upstream calls and provider credentials are intentionally excluded from default validation.
+The current suite covers the deterministic mock provider, the OpenRouter provider, and the Ollama provider through injected offline transport. Live upstream calls and provider credentials are intentionally excluded from default validation.
 
 ## Request Validation
 
@@ -219,6 +230,7 @@ Provider adapters do not emit gateway logs during Genesis; provider-side diagnos
 
 ## Revision History
 
+- 2026-08-01: Documented Ollama/local provider boundary from ADR-0017.
 - 2026-08-01: Documented reasoning-model response contract from ADR-0016 and live OpenRouter verification.
 - 2026-07-31: Documented logging boundary from ADR-0015.
 - 2026-07-24: Documented streaming boundary from ADR-0014.

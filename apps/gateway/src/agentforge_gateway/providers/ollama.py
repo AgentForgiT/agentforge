@@ -3,18 +3,16 @@ from __future__ import annotations
 from collections.abc import Callable, Iterator
 from typing import Any
 import json
-import os
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from ..config import ModelConfig, ProviderConfig
-from ..errors import ProviderConfigurationError, UpstreamProviderError
+from ..errors import UpstreamProviderError
 from .http import http_error_message, sse_data
 
 
-class OpenRouterProvider:
-    default_base_url = "https://openrouter.ai/api/v1"
-    default_api_key_env = "OPENROUTER_API_KEY"
+class OllamaProvider:
+    default_base_url = "http://127.0.0.1:11434/v1"
 
     def __init__(
         self,
@@ -25,14 +23,13 @@ class OpenRouterProvider:
         self._urlopen = urlopen_fn
 
     def chat_completion(self, model: ModelConfig, body: dict[str, Any]) -> dict[str, object]:
-        api_key = self._require_api_key()
         payload = dict(body)
         payload["model"] = model.provider_model
         url = self._chat_completions_url()
         request = Request(
             url,
             data=json.dumps(payload).encode("utf-8"),
-            headers=self._headers(api_key),
+            headers=self._headers(),
             method="POST",
         )
 
@@ -54,7 +51,6 @@ class OpenRouterProvider:
         return parsed
 
     def chat_completion_stream(self, model: ModelConfig, body: dict[str, Any]) -> Iterator[dict[str, object]]:
-        api_key = self._require_api_key()
         payload = dict(body)
         payload["model"] = model.provider_model
         payload["stream"] = True
@@ -62,7 +58,7 @@ class OpenRouterProvider:
         request = Request(
             url,
             data=json.dumps(payload).encode("utf-8"),
-            headers=self._headers(api_key),
+            headers=self._headers(),
             method="POST",
         )
 
@@ -97,19 +93,11 @@ class OpenRouterProvider:
         except OSError as exc:
             raise UpstreamProviderError(f"provider '{self.config.name}' stream failed: {exc}") from exc
 
-    def _require_api_key(self) -> str:
-        api_key_env = self.config.api_key_env or self.default_api_key_env
-        api_key = os.environ.get(api_key_env)
-        if not api_key:
-            raise ProviderConfigurationError(f"provider '{self.config.name}' requires ${api_key_env}")
-        return api_key
-
     def _chat_completions_url(self) -> str:
         return f"{(self.config.base_url or self.default_base_url).rstrip('/')}/chat/completions"
 
-    def _headers(self, api_key: str) -> dict[str, str]:
+    def _headers(self) -> dict[str, str]:
         headers = {
-            "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
         }
         headers.update(self.config.headers or {})

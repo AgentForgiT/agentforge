@@ -34,7 +34,7 @@ The draft AgentForge AI Context Specification is available at `.agentforge/specs
 
 ## Current Priority
 
-Genesis Sprint 19 formalizes the reasoning-model response contract: the gateway accepts `content: null` from reasoning models (verified live against OpenRouter), preserves `reasoning` and `reasoning_details` fields through normalization, and anchors the behavior with live-derived fixtures.
+Genesis Sprint 20 adds the Ollama / local provider adapter: keyless completions from local open-weight models through the gateway's OpenAI-compatible surface, completing the "my keys, my models, everywhere" story with an offline half. ADR-0017 records the local-provider boundary.
 
 Gateway provider adapters live behind explicit internal modules under `agentforge_gateway.providers`, chat-completion request validation lives under `agentforge_gateway.requests`, gateway errors use a standard JSON envelope, successful chat-completion responses and streaming chunks pass through `agentforge_gateway.responses`, JSON configuration is validated by `agentforge_gateway.config`, and structured access records are emitted through `agentforge_gateway.logger`. Product backlog and epics live in `.agentforge/backlog.md`, canonical standards live in `.agentforge/standards/`, and repository hygiene is anchored by `.editorconfig` and `.gitattributes`. The public `agentforge-gateway` and `agentforge-cli` repositories remain historical pre-governance prototypes; new canonical gateway and CLI work belongs in this repository under `apps/gateway` and `apps/cli`.
 

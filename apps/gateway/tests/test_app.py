@@ -16,9 +16,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from agentforge_gateway.app import GatewayApp, create_handler
-from agentforge_gateway.config import DEFAULT_CONFIG, ModelConfig, ProviderConfig
+from agentforge_gateway.config import DEFAULT_CONFIG, GatewayConfig, ModelConfig, ProviderConfig
 from agentforge_gateway.errors import ProviderConfigurationError, UpstreamProviderError
-from agentforge_gateway.providers import MockProvider, OpenRouterProvider, build_provider, supported_provider_types
+from agentforge_gateway.providers import MockProvider, OllamaProvider, OpenRouterProvider, build_provider, supported_provider_types
 
 
 class GatewayAppTests(unittest.TestCase):
@@ -71,6 +71,45 @@ class GatewayAppTests(unittest.TestCase):
         )
 
         self.assertEqual(response["model"], "mock-coder")
+
+    def test_chat_completion_with_ollama_provider_endpoint(self) -> None:
+        config = GatewayConfig(
+            host="127.0.0.1",
+            port=8080,
+            models={
+                "local-llama3": ModelConfig(name="local-llama3", provider="ollama", provider_model="llama3.2")
+            },
+            providers={"ollama": ProviderConfig(name="ollama", type="ollama")},
+        )
+        provider = OllamaProvider(
+            config.providers["ollama"],
+            urlopen_fn=lambda request, timeout: FakeEndpointResponse(
+                {
+                    "id": "chatcmpl-local",
+                    "object": "chat.completion",
+                    "created": 123,
+                    "model": "llama3.2",
+                    "choices": [
+                        {
+                            "index": 0,
+                            "message": {"role": "assistant", "content": "Local endpoint response."},
+                            "finish_reason": "stop",
+                        }
+                    ],
+                }
+            ),
+        )
+        app = GatewayApp(config, providers={"ollama": provider})
+
+        response = app.chat_completions(
+            {
+                "model": "local-llama3",
+                "messages": [{"role": "user", "content": "Hello locally"}],
+            }
+        )
+
+        self.assertEqual(response["model"], "local-llama3")
+        self.assertEqual(response["choices"][0]["message"]["content"], "Local endpoint response.")
 
     def test_unknown_model(self) -> None:
         with self.assertRaises(Exception) as ctx:
@@ -128,6 +167,11 @@ class ProviderFactoryTests(unittest.TestCase):
 
         self.assertIsInstance(provider, OpenRouterProvider)
 
+    def test_build_provider_returns_ollama_provider(self) -> None:
+        provider = build_provider(ProviderConfig(name="ollama", type="ollama"))
+
+        self.assertIsInstance(provider, OllamaProvider)
+
     def test_build_provider_rejects_unsupported_provider_type(self) -> None:
         with self.assertRaises(ProviderConfigurationError) as ctx:
             build_provider(ProviderConfig(name="custom", type="custom"))
@@ -135,7 +179,7 @@ class ProviderFactoryTests(unittest.TestCase):
         self.assertIn("unsupported provider type: custom", str(ctx.exception))
 
     def test_supported_provider_types_are_explicit(self) -> None:
-        self.assertEqual(supported_provider_types(), ("mock", "openrouter"))
+        self.assertEqual(supported_provider_types(), ("mock", "ollama", "openrouter"))
 
 
 class MockProviderTests(unittest.TestCase):
@@ -756,6 +800,22 @@ class RaisingProvider:
 
     def chat_completion(self, model: ModelConfig, body: dict[str, object]) -> dict[str, object]:
         raise self.error
+
+
+class FakeEndpointResponse:
+    def __init__(self, body: dict[str, object]) -> None:
+        self.body = body
+
+    def __enter__(self) -> FakeEndpointResponse:
+        return self
+
+    def __exit__(self, *args: object) -> None:
+        return None
+
+    def read(self) -> bytes:
+        import json
+
+        return json.dumps(self.body).encode("utf-8")
 
 
 class UpstreamModelProvider:

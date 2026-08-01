@@ -73,6 +73,7 @@ Near-term work should remain small and releasable:
 
 ## Done and Removed
 
+- Ollama / local provider adapter (Genesis Sprint 20, 2026-08-01): keyless `ollama` provider over Ollama's OpenAI-compatible `/v1` surface; ADR-0017.
 - gateway reasoning-model response contract (Genesis Sprint 19, 2026-08-01): live OpenRouter verification surfaced `content: null` from reasoning models; the boundary is now contract, tests, and docs.
 - gateway structured access logging (Genesis Sprint 18, 2026-07-31).
 - gateway streaming support (Genesis Sprint 17, 2026-07-24).

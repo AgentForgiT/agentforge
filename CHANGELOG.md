@@ -1,5 +1,14 @@
 # Changelog
 
+## Genesis-0.0.20 - 2026-08-01
+
+- Added the `ollama` provider adapter: keyless chat completions (non-streaming + SSE streaming) from local open-weight models via Ollama's OpenAI-compatible `/v1` surface. Default `base_url` is `http://127.0.0.1:11434/v1`, overridable per provider config; no API key required or read (ADR-0017).
+- Connection-refused and transport failures translate to clear `UpstreamProviderError`s naming the provider (e.g. a stopped local daemon).
+- Extracted shared SSE framing and HTTP-error translation to `providers/http.py`, used by both `openrouter` and `ollama` adapters.
+- Registered `ollama` in the provider factory; `supported_provider_types()` now returns `("mock", "ollama", "openrouter")`.
+- Shipped `config.ollama.example.json` (mock + `local-llama3` → `llama3.2`).
+- Added 8 offline tests: provider contract (success, keyless headers, streaming, HTTP 404, connection-refused), factory, config parse, and a `GatewayApp` endpoint test with an injected Ollama provider. Suite now 122 tests.
+
 ## Genesis-0.0.19 - 2026-08-01
 
 - Live-verified the gateway against the OpenRouter API (non-streaming and streaming completions, alias normalization, reasoning passthrough, `[DONE]` termination).
