@@ -82,3 +82,10 @@ Authority flows in this order:
 6. Code
 
 If code conflicts with governance, governance wins until superseded by a newer approved decision.
+
+## Links
+
+- **Docs site:** <https://agentforgit.github.io/agentforge-docs-site/>
+- **Handbook:** <https://github.com/AgentForgiT/agentforge-handbook>
+- **Community:** <https://github.com/AgentForgiT/agentforge-community>
+- **Organization:** <https://github.com/AgentForgiT>
