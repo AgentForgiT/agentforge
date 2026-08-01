@@ -335,8 +335,28 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #83
 - docs explain the logging contract, privacy rules, and limitations; release notes document `Genesis-0.0.18` for issue #84
 
+## Genesis-0.0.19: Gateway Reasoning-Model Response Contract
+
+Scope:
+
+- define the reasoning-model response contract requirements
+- decide the reasoning boundary for null content and passthrough fields
+- accept `message.content: null` in non-streaming completions
+- preserve `reasoning`, `reasoning_details`, and provider extras through normalization
+- keep rejecting non-string non-null content
+- accept streaming reasoning deltas with empty or null content
+- anchor the behavior with fixtures captured from the live OpenRouter exchange
+
+Exit criteria:
+
+- ADR-0016 records the reasoning boundary for issue #86
+- null-content acceptance and reasoning passthrough are covered by tests for issue #87
+- CI Bootstrap Validate passes offline without credentials for issue #88
+- docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
+
 ## Revision History
 
+- 2026-08-01: Added Genesis-0.0.19 gateway reasoning milestone.
 - 2026-07-31: Added Genesis-0.0.18 gateway logging milestone.
 - 2026-07-24: Added Genesis-0.0.17 gateway streaming milestone.
 - 2026-07-10: Added Genesis-0.0.16 gateway configuration validation milestone.

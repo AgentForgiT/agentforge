@@ -71,6 +71,12 @@ Near-term work should remain small and releasable:
 - standards expansion for release, security, and compatibility
 - public `0.1.0` scope definition
 
+## Done and Removed
+
+- gateway reasoning-model response contract (Genesis Sprint 19, 2026-08-01): live OpenRouter verification surfaced `content: null` from reasoning models; the boundary is now contract, tests, and docs.
+- gateway structured access logging (Genesis Sprint 18, 2026-07-31).
+- gateway streaming support (Genesis Sprint 17, 2026-07-24).
+
 ## Deferred Work
 
 The following need explicit requirements and, where durable, ADR or RFC coverage before implementation:

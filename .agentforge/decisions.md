@@ -4,7 +4,7 @@ Metadata:
 
 - Status: Active
 - Phase: Genesis
-- Last updated: 2026-07-10
+- Last updated: 2026-08-01
 
 ## Purpose
 
@@ -31,6 +31,7 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 | ADR-0013 | 2026-07-10 | Accepted | Validate Gateway configuration explicitly | `.agentforge/adrs/0013-gateway-configuration-validation-boundary.md` |
 | ADR-0014 | 2026-07-24 | Accepted | Add OpenAI-compatible SSE streaming with gateway-owned chunk normalization | `.agentforge/adrs/0014-gateway-streaming-boundary.md` |
 | ADR-0015 | 2026-07-31 | Accepted | Add structured access logging with configurable log level | `.agentforge/adrs/0015-gateway-logging-observability-boundary.md` |
+| ADR-0016 | 2026-08-01 | Accepted | Accept null content from reasoning models with field passthrough | `.agentforge/adrs/0016-reasoning-model-response-boundary.md` |
 | DEC-0001 | 2026-06-28 | Accepted | Treat early gateway and CLI repos as pre-governance prototypes | `.agentforge/decisions/0001-pre-governance-prototypes.md` |
 | DEC-0002 | 2026-06-28 | Accepted | Keep prototype repositories public with canonical monorepo notices | `.agentforge/decisions/0002-prototype-repository-disposition.md` |
 | DEC-0003 | 2026-06-28 | Accepted | Build AICS validation CLI in the canonical monorepo | `.agentforge/decisions/0003-cli-path-for-aics-validation.md` |
@@ -39,6 +40,7 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 
 ## Revision History
 
+- 2026-08-01: Added ADR-0016.
 - 2026-07-31: Added ADR-0015.
 - 2026-07-24: Added ADR-0014.
 - 2026-07-10: Added ADR-0013.

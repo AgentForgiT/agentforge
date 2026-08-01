@@ -156,6 +156,48 @@ class ChatCompletionResponseTests(unittest.TestCase):
 
         self.assertIn("content", str(ctx.exception))
 
+    def test_accepts_live_reasoning_model_response_shape(self) -> None:
+        # Captured from the live OpenRouter exchange (2026-08-01):
+        # model openai/gpt-oss-20b:free, provider "Darkbloom".
+        response = {
+            "id": "gen-1785575446-LRXyfb1EsnREEpteuFUK",
+            "object": "chat.completion",
+            "created": 1785575446,
+            "model": "openai/gpt-oss-20b:free",
+            "provider": "Darkbloom",
+            "choices": [{
+                "index": 0,
+                "logprobs": None,
+                "finish_reason": "length",
+                "native_finish_reason": "length",
+                "message": {
+                    "role": "assistant",
+                    "content": None,
+                    "refusal": None,
+                    "reasoning": "The user says: \"Reply with exactly: AGENTFORGE_LIVE_OK\".",
+                    "reasoning_details": [{
+                        "type": "reasoning.text",
+                        "text": "The user says: \"Reply with exactly: AGENTFORGE_LIVE_OK\".",
+                        "format": "unknown",
+                        "index": 0,
+                    }],
+                },
+            }],
+            "usage": {"prompt_tokens": 78, "completion_tokens": 20, "total_tokens": 98},
+        }
+
+        normalized = normalize_chat_completion_response(MODEL, response)
+
+        message = normalized["choices"][0]["message"]
+        self.assertIsNone(message["content"])
+        self.assertEqual(message["reasoning"], 'The user says: "Reply with exactly: AGENTFORGE_LIVE_OK".')
+        self.assertEqual(message["reasoning_details"][0]["type"], "reasoning.text")
+        self.assertEqual(message["reasoning_details"][0]["index"], 0)
+        # public alias replaces upstream model id; everything else passes through
+        self.assertEqual(normalized["model"], "public-coder")
+        self.assertEqual(normalized["provider"], "Darkbloom")
+        self.assertEqual(normalized["id"], "gen-1785575446-LRXyfb1EsnREEpteuFUK")
+
 
 class StreamChunkNormalizationTests(unittest.TestCase):
     def test_normalizes_public_model_alias_and_preserves_chunk_fields(self) -> None:
@@ -225,6 +267,67 @@ class StreamChunkNormalizationTests(unittest.TestCase):
             normalize_stream_chunk(MODEL, chunk)
 
         self.assertIn("finish reason", str(ctx.exception))
+
+    def test_accepts_streaming_reasoning_delta_empty_content(self) -> None:
+        # Captured from the live OpenRouter exchange (2026-08-01):
+        # reasoning models stream delta.content="" with reasoning fields.
+        chunk = {
+            "id": "gen-1785575555-2HAntMe39OSiIm0c2kQb",
+            "object": "chat.completion.chunk",
+            "created": 1785575555,
+            "model": "openai/gpt-oss-20b:free",
+            "provider": "Darkbloom",
+            "choices": [{
+                "index": 0,
+                "delta": {
+                    "content": "",
+                    "role": "assistant",
+                    "reasoning": "The user wants",
+                    "reasoning_details": [{
+                        "type": "reasoning.text",
+                        "text": "The user wants",
+                        "format": "unknown",
+                        "index": 0,
+                    }],
+                },
+                "finish_reason": None,
+                "native_finish_reason": None,
+            }],
+        }
+
+        normalized = normalize_stream_chunk(MODEL, chunk)
+
+        delta = normalized["choices"][0]["delta"]
+        self.assertEqual(delta["content"], "")
+        self.assertEqual(delta["reasoning"], "The user wants")
+        self.assertEqual(delta["reasoning_details"][0]["type"], "reasoning.text")
+        self.assertEqual(normalized["model"], "public-coder")
+        self.assertEqual(normalized["provider"], "Darkbloom")
+
+    def test_accepts_streaming_reasoning_delta_null_content(self) -> None:
+        chunk = valid_chunk()
+        chunk["choices"] = [{
+            "index": 0,
+            "delta": {"content": None, "role": "assistant", "reasoning": "thinking"},
+            "finish_reason": None,
+        }]
+
+        normalized = normalize_stream_chunk(MODEL, chunk)
+
+        self.assertIsNone(normalized["choices"][0]["delta"]["content"])
+        self.assertEqual(normalized["choices"][0]["delta"]["reasoning"], "thinking")
+
+    def test_accepts_streaming_finish_stop_with_reasoning(self) -> None:
+        chunk = valid_chunk()
+        chunk["choices"] = [{
+            "index": 0,
+            "delta": {"content": "", "role": "assistant"},
+            "finish_reason": "stop",
+        }]
+
+        normalized = normalize_stream_chunk(MODEL, chunk)
+
+        self.assertEqual(normalized["choices"][0]["finish_reason"], "stop")
 
 
 if __name__ == "__main__":

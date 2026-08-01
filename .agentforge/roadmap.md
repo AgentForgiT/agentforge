@@ -228,8 +228,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
+## Genesis Sprint 19: Gateway Reasoning-Model Response Contract
+
+Goal: formalize the reasoning-model response boundary discovered during live OpenRouter verification — `message.content: null` is valid and passes through, reasoning fields are preserved, invalid content types stay rejected, and the behavior is pinned by live-derived fixtures.
+
+Deliverables:
+
+- reasoning-model contract requirements for issue #85
+- reasoning boundary decision ADR-0016 for issue #86
+- null-content acceptance and reasoning passthrough hardening for issue #87
+- reasoning fixtures and CI validation for issue #88
+- reasoning contract docs and `Genesis-0.0.19` release for issue #89
+
+Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
+
 ## Revision History
 
+- 2026-08-01: Added Sprint 19 gateway reasoning-model deliverables.
 - 2026-07-31: Added Sprint 18 gateway logging deliverables.
 - 2026-07-24: Added Sprint 17 gateway streaming deliverables.
 - 2026-07-10: Added Sprint 16 gateway configuration validation deliverables.

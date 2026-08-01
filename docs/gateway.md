@@ -168,6 +168,21 @@ Errors detected before the first chunk is written use the standard JSON error en
 
 Streaming usage summaries, `stream_options`, and client disconnect handling beyond safe stream termination remain deferred.
 
+## Reasoning-Model Responses
+
+ADR-0016 defines the reasoning-model response contract, discovered through live verification against the OpenRouter API (2026-08-01).
+
+Reasoning models — OpenAI o-series, DeepSeek R1-style, and OpenRouter reasoning endpoints such as `openai/gpt-oss-20b:free` — legally return `message.content: null` in non-streaming completions, emitting their output in `reasoning` and `reasoning_details` fields. The OpenAI-compatible specification permits null content; the gateway accepts it:
+
+- non-streaming `message.content` may be `str` or `null`; any other type is still rejected with an upstream provider error
+- `reasoning`, `reasoning_details`, and provider-specific extras pass through normalization untouched (the gateway normalizes shape, not semantics)
+- streaming deltas with empty-string or null `delta.content` alongside `delta.reasoning` fields stream through without error
+- `finish_reason: "stop"` and the `[DONE]` terminator are still delivered
+
+Consumers asking for reasoning output read the `reasoning` fields themselves; the gateway does not synthesize `content` from them. The public model alias still replaces the upstream `model` field on responses and chunks.
+
+The test suite pins these behaviors with fixtures captured from the live OpenRouter exchange (`gpt-oss-20b:free`, provider "Darkbloom").
+
 ## Logging
 
 ADR-0015 defines the gateway logging boundary.
@@ -204,8 +219,9 @@ Provider adapters do not emit gateway logs during Genesis; provider-side diagnos
 
 ## Revision History
 
-- 2026-07-31: Documented structured access logging from ADR-0015.
-- 2026-07-24: Documented streaming support from ADR-0014.
+- 2026-08-01: Documented reasoning-model response contract from ADR-0016 and live OpenRouter verification.
+- 2026-07-31: Documented logging boundary from ADR-0015.
+- 2026-07-24: Documented streaming boundary from ADR-0014.
 - 2026-07-10: Documented configuration validation boundary from ADR-0013.
 - 2026-07-06: Documented response normalization boundary from ADR-0012.
 - 2026-07-05: Documented JSON error contract from ADR-0011.
