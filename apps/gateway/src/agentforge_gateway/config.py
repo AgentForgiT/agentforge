@@ -32,6 +32,7 @@ class GatewayConfig:
     models: dict[str, ModelConfig]
     providers: dict[str, ProviderConfig]
     log_level: str = "INFO"
+    cors_origin: str | None = None
 
 
 DEFAULT_CONFIG = GatewayConfig(
@@ -93,9 +94,27 @@ def parse_config(raw: object) -> GatewayConfig:
         host=_server_host(server),
         port=_port(server.get("port", 8080), "server.port"),
         log_level=_log_level(server.get("log_level", "INFO"), "server.log_level"),
+        cors_origin=_cors_origin(server.get("cors_origin")),
         models=parsed_models,
         providers=parsed_providers,
     )
+
+
+def _cors_origin(value: Any) -> str | None:
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise ValueError("server.cors_origin must be a string")
+    origin = value.strip()
+    if not origin:
+        return None
+    if origin == "*":
+        return origin
+    if any(char.isspace() for char in origin):
+        raise ValueError("server.cors_origin must not contain whitespace")
+    if not (origin.startswith("https://") or origin.startswith("http://")):
+        raise ValueError("server.cors_origin must be '*' or an http(s) origin")
+    return origin
 
 
 def _parse_providers(providers: Any) -> dict[str, ProviderConfig]:

@@ -73,6 +73,27 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
             else:
                 get_logger().info(record, *values)
 
+        def _cors_headers(self) -> dict[str, str]:
+            origin = app.config.cors_origin
+            if origin is None:
+                return {}
+            return {"Access-Control-Allow-Origin": origin}
+
+        def do_OPTIONS(self) -> None:
+            self._request_started = time.monotonic()
+            if app.config.cors_origin is None:
+                self._send_json(404, not_found_response())
+                return
+            self.send_response(204)
+            for name, value in self._cors_headers().items():
+                self.send_header(name, value)
+            self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type")
+            self.send_header("Access-Control-Max-Age", "86400")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            self.wfile.flush()
+
         def do_GET(self) -> None:
             self._request_started = time.monotonic()
             try:
@@ -147,6 +168,8 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
             self.send_header("Content-Type", "text/event-stream")
             self.send_header("Cache-Control", "no-cache")
             self.send_header("Connection", "close")
+            for name, value in self._cors_headers().items():
+                self.send_header(name, value)
             self.end_headers()
             self.wfile.flush()
 
@@ -163,6 +186,8 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
             self.send_response(status_code)
             self.send_header("Content-Type", "application/json")
             self.send_header("Content-Length", str(len(payload)))
+            for name, value in self._cors_headers().items():
+                self.send_header(name, value)
             self.end_headers()
             self.wfile.write(payload)
 

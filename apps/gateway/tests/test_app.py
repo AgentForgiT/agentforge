@@ -865,6 +865,87 @@ class MalformedSuccessProvider:
         }
 
 
+class CorsHttpTests(unittest.TestCase):
+    def test_preflight_returns_204_with_cors_headers(self) -> None:
+        config = GatewayConfig(
+            host="127.0.0.1",
+            port=8080,
+            cors_origin="https://example.com",
+            models=DEFAULT_CONFIG.models,
+            providers=DEFAULT_CONFIG.providers,
+        )
+        server = LocalServer(GatewayApp(config))
+        try:
+            request = Request(f"{server.base_url}/v1/chat/completions", method="OPTIONS")
+            with urlopen(request) as response:
+                self.assertEqual(response.status, 204)
+                self.assertEqual(response.headers["Access-Control-Allow-Origin"], "https://example.com")
+                self.assertEqual(response.headers["Access-Control-Allow-Methods"], "GET, POST, OPTIONS")
+                self.assertEqual(response.headers["Access-Control-Allow-Headers"], "Content-Type")
+                self.assertEqual(response.headers["Access-Control-Max-Age"], "86400")
+        finally:
+            server.close()
+
+    def test_preflight_disabled_returns_404_without_cors_headers(self) -> None:
+        server = LocalServer(GatewayApp(DEFAULT_CONFIG))
+        try:
+            request = Request(f"{server.base_url}/v1/chat/completions", method="OPTIONS")
+            with self.assertRaises(HTTPError) as ctx:
+                urlopen(request)
+            self.assertEqual(ctx.exception.code, 404)
+            self.assertIsNone(ctx.exception.headers.get("Access-Control-Allow-Origin"))
+        finally:
+            server.close()
+
+    def test_json_responses_carry_cors_header_when_enabled(self) -> None:
+        config = GatewayConfig(
+            host="127.0.0.1",
+            port=8080,
+            cors_origin="https://example.com",
+            models=DEFAULT_CONFIG.models,
+            providers=DEFAULT_CONFIG.providers,
+        )
+        server = LocalServer(GatewayApp(config))
+        try:
+            with urlopen(f"{server.base_url}/health") as response:
+                self.assertEqual(response.headers["Access-Control-Allow-Origin"], "https://example.com")
+            body = server.post_json(
+                "/v1/chat/completions",
+                {"model": "mock-coder", "messages": [{"role": "user", "content": "Hello"}]},
+            )
+            self.assertEqual(body["choices"][0]["message"]["role"], "assistant")
+            with urlopen(f"{server.base_url}/v1/nope") as response:
+                pass
+        except HTTPError as exc:
+            self.assertEqual(exc.code, 404)
+            self.assertEqual(exc.headers["Access-Control-Allow-Origin"], "https://example.com")
+        finally:
+            server.close()
+
+    def test_no_cors_headers_when_disabled(self) -> None:
+        server = LocalServer(GatewayApp(DEFAULT_CONFIG))
+        try:
+            with urlopen(f"{server.base_url}/health") as response:
+                self.assertIsNone(response.headers.get("Access-Control-Allow-Origin"))
+        finally:
+            server.close()
+
+    def test_wildcard_origin(self) -> None:
+        config = GatewayConfig(
+            host="127.0.0.1",
+            port=8080,
+            cors_origin="*",
+            models=DEFAULT_CONFIG.models,
+            providers=DEFAULT_CONFIG.providers,
+        )
+        server = LocalServer(GatewayApp(config))
+        try:
+            with urlopen(f"{server.base_url}/health") as response:
+                self.assertEqual(response.headers["Access-Control-Allow-Origin"], "*")
+        finally:
+            server.close()
+
+
 class LocalServer:
     def __init__(self, app: GatewayApp) -> None:
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), create_handler(app))

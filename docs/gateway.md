@@ -220,6 +220,23 @@ Request bodies, response bodies, headers, and credentials are never logged.
 
 Provider adapters do not emit gateway logs during Genesis; provider-side diagnostics, metrics endpoints, request IDs, and trace IDs remain deferred.
 
+## CORS
+
+ADR-0018 defines the gateway CORS boundary.
+
+CORS is opt-in through `server.cors_origin` in the gateway configuration:
+
+- absent or empty → CORS disabled; no `Access-Control-Allow-*` headers are emitted and `OPTIONS` requests fall through to the normal 404 path
+- `"*"` → `Access-Control-Allow-Origin: *` on every response
+- a single `https://` or `http://` origin → that exact origin is echoed on every response
+- any other value (non-http(s) scheme, embedded whitespace) → configuration load error
+
+When CORS is enabled, the gateway answers `OPTIONS` with HTTP 204 and `Access-Control-Allow-Methods: GET, POST, OPTIONS`, `Access-Control-Allow-Headers: Content-Type`, and `Access-Control-Max-Age: 86400`, and emits `Access-Control-Allow-Origin` on all JSON responses (including error envelopes) and in the SSE header block of streaming responses.
+
+`Access-Control-Allow-Credentials` is never emitted; the gateway has no cookie/session auth.
+
+The shipped `config.example.json` sets `cors_origin` to the public docs-site origin so the web playground works out of the box.
+
 ## Risks
 
 - Provider adapters are still inside `apps/gateway`; ADR-0002 and ADR-0008 identify `packages/providers` as a later extraction target.
@@ -227,9 +244,11 @@ Provider adapters do not emit gateway logs during Genesis; provider-side diagnos
 - OpenRouter live testing is optional and must not be required in default CI.
 - Streaming usage summaries and error events remain deferred.
 - Provider-side diagnostics, metrics endpoints, request IDs, and trace IDs remain deferred beyond the Sprint 18 access record baseline.
+- CORS supports a single configured origin (or `*`); a multi-origin allow-list is deferred per ADR-0018.
 
 ## Revision History
 
+- 2026-08-01: Documented CORS boundary from ADR-0018.
 - 2026-08-01: Documented Ollama/local provider boundary from ADR-0017.
 - 2026-08-01: Documented reasoning-model response contract from ADR-0016 and live OpenRouter verification.
 - 2026-07-31: Documented logging boundary from ADR-0015.

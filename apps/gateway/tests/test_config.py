@@ -64,6 +64,42 @@ class GatewayConfigValidationTests(unittest.TestCase):
         load_config(REPO_ROOT / "apps/gateway/config.openrouter.example.json")
         load_config(REPO_ROOT / "apps/gateway/config.ollama.example.json")
 
+    def test_cors_origin_absent_defaults_to_none(self) -> None:
+        config = parse_config(minimal_config())
+        self.assertIsNone(config.cors_origin)
+
+    def test_cors_origin_wildcard(self) -> None:
+        config = parse_config({**minimal_config(), "server": {"cors_origin": "*"}})
+        self.assertEqual(config.cors_origin, "*")
+
+    def test_cors_origin_https_origin(self) -> None:
+        config = parse_config({**minimal_config(), "server": {"cors_origin": "https://example.com"}})
+        self.assertEqual(config.cors_origin, "https://example.com")
+
+    def test_cors_origin_http_origin(self) -> None:
+        config = parse_config({**minimal_config(), "server": {"cors_origin": "http://127.0.0.1:8080"}})
+        self.assertEqual(config.cors_origin, "http://127.0.0.1:8080")
+
+    def test_cors_origin_empty_string_disables(self) -> None:
+        config = parse_config({**minimal_config(), "server": {"cors_origin": "  "}})
+        self.assertIsNone(config.cors_origin)
+
+    def test_cors_origin_rejects_embedded_whitespace(self) -> None:
+        with self.assertRaises(ValueError):
+            parse_config({**minimal_config(), "server": {"cors_origin": "https://exa mple.com"}})
+
+    def test_cors_origin_strips_surrounding_whitespace(self) -> None:
+        config = parse_config({**minimal_config(), "server": {"cors_origin": "  https://example.com  "}})
+        self.assertEqual(config.cors_origin, "https://example.com")
+
+    def test_cors_origin_rejects_non_http_scheme(self) -> None:
+        with self.assertRaises(ValueError):
+            parse_config({**minimal_config(), "server": {"cors_origin": "ftp://example.com"}})
+
+    def test_cors_origin_rejects_non_string(self) -> None:
+        with self.assertRaises(ValueError):
+            parse_config({**minimal_config(), "server": {"cors_origin": 42}})
+
     def test_ollama_example_config_uses_ollama_provider(self) -> None:
         config = load_config(REPO_ROOT / "apps/gateway/config.ollama.example.json")
 

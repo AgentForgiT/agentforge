@@ -1,5 +1,11 @@
 # Changelog
 
+## Genesis-0.0.21 - 2026-08-01
+
+- Added opt-in CORS support: `server.cors_origin` config (`*` or a single http(s) origin, validated, disabled by default), `OPTIONS` preflight answering 204 with `Access-Control-Allow-*` headers, and `Access-Control-Allow-Origin` on all JSON responses and SSE streams (ADR-0018).
+- Added 14 CORS tests (config parsing, preflight enabled/disabled, header presence on JSON/error responses, wildcard, disabled default). Suite now 136 tests.
+- `config.example.json` now ships with `cors_origin` set to the docs-site origin so the web playground works out of the box.
+
 ## Genesis-0.0.20 - 2026-08-01
 
 - Added the `ollama` provider adapter: keyless chat completions (non-streaming + SSE streaming) from local open-weight models via Ollama's OpenAI-compatible `/v1` surface. Default `base_url` is `http://127.0.0.1:11434/v1`, overridable per provider config; no API key required or read (ADR-0017).

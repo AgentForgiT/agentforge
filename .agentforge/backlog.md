@@ -73,6 +73,7 @@ Near-term work should remain small and releasable:
 
 ## Done and Removed
 
+- Gateway CORS support (Genesis Sprint 21, 2026-08-01): opt-in `server.cors_origin`, preflight handling, and `Access-Control-Allow-*` headers on JSON and SSE responses; ADR-0018.
 - Ollama / local provider adapter (Genesis Sprint 20, 2026-08-01): keyless `ollama` provider over Ollama's OpenAI-compatible `/v1` surface; ADR-0017.
 - gateway reasoning-model response contract (Genesis Sprint 19, 2026-08-01): live OpenRouter verification surfaced `content: null` from reasoning models; the boundary is now contract, tests, and docs.
 - gateway structured access logging (Genesis Sprint 18, 2026-07-31).
@@ -139,5 +140,6 @@ Change line 42 in config.py to reject timeout_seconds <= 0.
 
 ## Revision History
 
+- 2026-08-01: Promoted gateway CORS support into Genesis Sprint 21.
 - 2026-07-10: Promoted gateway configuration validation boundary into Genesis Sprint 16.
 - 2026-07-06: Initial backlog for Genesis Sprint 15.

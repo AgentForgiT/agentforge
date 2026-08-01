@@ -8,8 +8,8 @@ This module was migrated from the pre-governance `agentforge-gateway` prototype 
 
 - Module: `apps/gateway`
 - Status: Genesis MVP
-- Related requirements: `.agentforge/requirements/gateway-reconciliation.md`, `.agentforge/requirements/gateway-streaming-mvp.md`, `.agentforge/requirements/gateway-logging-observability-mvp.md`, `.agentforge/requirements/gateway-reasoning-model-contract.md`, `.agentforge/requirements/gateway-ollama-local-provider.md`
-- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`, `.agentforge/adrs/0011-gateway-error-response-boundary.md`, `.agentforge/adrs/0012-gateway-response-normalization-boundary.md`, `.agentforge/adrs/0013-gateway-configuration-validation-boundary.md`, `.agentforge/adrs/0014-gateway-streaming-boundary.md`, `.agentforge/adrs/0015-gateway-logging-observability-boundary.md`, `.agentforge/adrs/0016-reasoning-model-response-boundary.md`, `.agentforge/adrs/0017-ollama-local-provider-boundary.md`
+- Related requirements: `.agentforge/requirements/gateway-reconciliation.md`, `.agentforge/requirements/gateway-streaming-mvp.md`, `.agentforge/requirements/gateway-logging-observability-mvp.md`, `.agentforge/requirements/gateway-reasoning-model-contract.md`, `.agentforge/requirements/gateway-ollama-local-provider.md`, `.agentforge/requirements/gateway-cors-support.md`
+- Related ADRs: `.agentforge/adrs/0002-gateway-module-placement.md`, `.agentforge/adrs/0008-gateway-provider-boundary.md`, `.agentforge/adrs/0009-gateway-provider-contract-testing.md`, `.agentforge/adrs/0010-gateway-request-validation-boundary.md`, `.agentforge/adrs/0011-gateway-error-response-boundary.md`, `.agentforge/adrs/0012-gateway-response-normalization-boundary.md`, `.agentforge/adrs/0013-gateway-configuration-validation-boundary.md`, `.agentforge/adrs/0014-gateway-streaming-boundary.md`, `.agentforge/adrs/0015-gateway-logging-observability-boundary.md`, `.agentforge/adrs/0016-reasoning-model-response-boundary.md`, `.agentforge/adrs/0017-ollama-local-provider-boundary.md`, `.agentforge/adrs/0018-cors-browser-boundary.md`
 
 ## Features
 
@@ -19,6 +19,7 @@ This module was migrated from the pre-governance `agentforge-gateway` prototype 
 - `POST /v1/chat/completions`
 - OpenAI-compatible SSE streaming for chat completions
 - reasoning-model support with null-content acceptance and field passthrough
+- opt-in CORS support for browser clients (`server.cors_origin`, ADR-0018)
 - structured access logging with configurable log level
 - deterministic mock provider
 - keyless Ollama / local provider adapter (OpenAI-compatible surface)

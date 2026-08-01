@@ -2,7 +2,8 @@
   "server": {
     "host": "127.0.0.1",
     "port": 8080,
-    "log_level": "INFO"
+    "log_level": "INFO",
+    "cors_origin": "https://agentforgit.github.io"
   },
   "models": {
     "mock-coder": {

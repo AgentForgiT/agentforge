@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Genesis Sprint 20: Ollama / Local Provider Adapter
+## Genesis Sprint 21: Gateway CORS Support
 
-Goal: add a keyless `ollama` provider targeting Ollama's OpenAI-compatible `/v1` surface so completions can run fully locally against open-weight models — completing the vendor-neutral promise with an offline, provable half.
+Goal: make the gateway callable from the web playground (docs-site quick-wins) via opt-in `server.cors_origin` — preflight handling plus `Access-Control-Allow-*` headers on JSON and SSE responses, disabled by default (ADR-0018).
 
 Deliverables:
 
-- Ollama/local provider requirements for issue #90
-- local-provider boundary decision ADR-0017 for issue #91
-- `OllamaProvider` adapter (non-streaming + streaming, keyless, connection-refused translation) for issue #92
-- provider contract, factory, and endpoint tests; CI validation for issue #93
-- Ollama provider docs and `Genesis-0.0.20` release for issue #94
+- CORS requirements doc for issue #95
+- CORS browser-boundary decision ADR-0018 for issue #96
+- `server.cors_origin` config + validation, `OPTIONS` preflight handler, CORS headers on JSON and SSE responses for issue #97
+- CORS config and HTTP tests; CI validation for issue #98
+- CORS docs and `Genesis-0.0.21` release for issue #99
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 21 gateway CORS deliverables.
 - 2026-08-01: Added Sprint 20 Ollama/local provider deliverables.
 - 2026-08-01: Added Sprint 19 gateway reasoning deliverables.
 - 2026-07-31: Added Sprint 18 gateway logging deliverables.

@@ -354,27 +354,27 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## Genesis-0.0.20: Ollama / Local Provider Adapter
+## Genesis-0.0.21: Gateway CORS Support
 
 Scope:
 
-- define the Ollama/local provider contract requirements
-- decide the local-provider boundary (OpenAI-compatible `/v1` surface, keyless, no native `/api/chat`)
-- implement `OllamaProvider` with non-streaming and streaming chat completions
-- register the provider in the factory and exports
-- translate HTTP errors and connection-refused to `UpstreamProviderError`
-- cover the adapter with offline contract, factory, config, and endpoint tests
-- ship `config.ollama.example.json` and docs
+- define the CORS browser-boundary requirements
+- decide the opt-in boundary (`server.cors_origin`, disabled by default)
+- implement `server.cors_origin` config + validation, `OPTIONS` preflight handler
+- emit `Access-Control-Allow-*` headers on JSON responses and SSE streams
+- cover config parsing, preflight, header presence, and the disabled default in tests
+- ship docs
 
 Exit criteria:
 
-- ADR-0017 records the local-provider boundary for issue #91
-- adapter and registration land for issue #92
-- CI Bootstrap Validate passes offline without credentials for issue #93
-- docs explain the Ollama provider; release notes document `Genesis-0.0.20` for issue #94
+- ADR-0018 records the CORS browser boundary for issue #96
+- config and handler land for issue #97
+- CI Bootstrap Validate passes offline for issue #98
+- docs explain CORS; release notes document `Genesis-0.0.21` for issue #99
 
 ## Revision History
 
+- 2026-08-01: Added Genesis-0.0.21 gateway CORS milestone.
 - 2026-08-01: Added Genesis-0.0.20 Ollama/local provider milestone.
 - 2026-08-01: Added Genesis-0.0.19 gateway reasoning milestone.
 - 2026-07-31: Added Genesis-0.0.18 gateway logging milestone.
