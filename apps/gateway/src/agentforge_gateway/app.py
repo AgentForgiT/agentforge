@@ -7,6 +7,12 @@ import time
 from typing import Any
 
 from .config import GatewayConfig, load_config
+from .anthropic import (
+    anthropic_sse_events,
+    normalize_anthropic_response,
+    to_openai_body,
+    validate_anthropic_messages_request,
+)
 from .errors import (
     BadRequestError,
     GatewayError,
@@ -53,6 +59,26 @@ class GatewayApp:
         provider = self.providers[model.provider]
         for chunk in provider.chat_completion_stream(model, request.body):
             yield normalize_stream_chunk(model, chunk)
+
+    def anthropic_messages(self, body: dict[str, Any]) -> dict[str, object]:
+        request = validate_anthropic_messages_request(body)
+        get_logger().info("anthropic_message model=%s stream=false", request.model)
+        model = self.registry.get(request.model)
+        provider = self.providers[model.provider]
+        openai_body = to_openai_body(request)
+        response = provider.chat_completion(model, openai_body)
+        normalized = normalize_chat_completion_response(model, response)
+        return normalize_anthropic_response(model, normalized)
+
+    def anthropic_messages_stream(self, body: dict[str, Any]) -> Iterator[tuple[str, dict[str, object]]]:
+        request = validate_anthropic_messages_request(body)
+        get_logger().info("anthropic_message model=%s stream=true", request.model)
+        model = self.registry.get(request.model)
+        provider = self.providers[model.provider]
+        openai_body = to_openai_body(request)
+        stream = provider.chat_completion_stream(model, openai_body)
+        for event in anthropic_sse_events(model, stream):
+            yield event
 
 
 def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
@@ -112,6 +138,7 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
 
         def do_POST(self) -> None:
             self._request_started = time.monotonic()
+            is_anthropic = self.path == "/v1/messages"
             try:
                 if self.path == "/v1/chat/completions":
                     body = self._read_json()
@@ -120,14 +147,27 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
                     else:
                         self._send_json(200, app.chat_completions(body))
                     return
+                if is_anthropic:
+                    body = self._read_json()
+                    if body.get("stream") is True:
+                        self._handle_anthropic_stream(body)
+                    else:
+                        self._send_json(200, app.anthropic_messages(body))
+                    return
                 self._send_json(404, not_found_response())
             except GatewayError as exc:
-                self._send_json(exc.status_code, exc.to_response())
+                self._send_json(exc.status_code, exc.to_anthropic_response() if is_anthropic else exc.to_response())
             except json.JSONDecodeError:
-                self._send_json(400, invalid_json_response())
+                if is_anthropic:
+                    self._send_json(400, BadRequestError("invalid JSON body").to_anthropic_response())
+                else:
+                    self._send_json(400, invalid_json_response())
             except Exception:
                 get_logger().error("unhandled gateway error", exc_info=True)
-                self._send_json(500, internal_error_response())
+                if is_anthropic:
+                    self._send_json(500, GatewayError("internal server error").to_anthropic_response())
+                else:
+                    self._send_json(500, internal_error_response())
 
         def _handle_stream(self, body: dict[str, Any]) -> None:
             try:
@@ -147,6 +187,31 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
                 for chunk in stream:
                     self._send_sse_event(chunk)
                 self._send_sse_event(None)
+            except GatewayError:
+                return
+            except OSError:
+                return
+            except Exception:
+                get_logger().error("unhandled gateway error", exc_info=True)
+                return
+
+        def _handle_anthropic_stream(self, body: dict[str, Any]) -> None:
+            try:
+                events = app.anthropic_messages_stream(body)
+                first_event = next(events)
+            except GatewayError as exc:
+                self._send_json(exc.status_code, exc.to_anthropic_response())
+                return
+            except Exception:
+                get_logger().error("unhandled gateway error", exc_info=True)
+                self._send_json(500, GatewayError("internal server error").to_anthropic_response())
+                return
+
+            self._send_stream_headers()
+            try:
+                self._send_anthropic_sse_event(first_event)
+                for event in events:
+                    self._send_anthropic_sse_event(event)
             except GatewayError:
                 return
             except OSError:
@@ -178,6 +243,18 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
                 payload = b"data: [DONE]\n\n"
             else:
                 payload = b"data: " + json.dumps(chunk).encode("utf-8") + b"\n\n"
+            self.wfile.write(payload)
+            self.wfile.flush()
+
+        def _send_anthropic_sse_event(self, event: tuple[str, dict[str, object]]) -> None:
+            name, data = event
+            payload = (
+                b"event: "
+                + name.encode("utf-8")
+                + b"\ndata: "
+                + json.dumps(data).encode("utf-8")
+                + b"\n\n"
+            )
             self.wfile.write(payload)
             self.wfile.flush()
 

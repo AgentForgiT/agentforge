@@ -34,6 +34,7 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 | ADR-0016 | 2026-08-01 | Accepted | Accept null content from reasoning models with field passthrough | `.agentforge/adrs/0016-reasoning-model-response-boundary.md` |
 | ADR-0017 | 2026-08-01 | Accepted | Add keyless Ollama provider over the OpenAI-compatible local surface | `.agentforge/adrs/0017-ollama-local-provider-boundary.md` |
 | ADR-0018 | 2026-08-01 | Accepted | Add opt-in CORS support for browser clients | `.agentforge/adrs/0018-cors-browser-boundary.md` |
+| ADR-0019 | 2026-08-01 | Accepted | Translate Anthropic Messages at the inbound boundary | `.agentforge/adrs/0019-anthropic-messages-inbound-boundary.md` |
 | DEC-0001 | 2026-06-28 | Accepted | Treat early gateway and CLI repos as pre-governance prototypes | `.agentforge/decisions/0001-pre-governance-prototypes.md` |
 | DEC-0002 | 2026-06-28 | Accepted | Keep prototype repositories public with canonical monorepo notices | `.agentforge/decisions/0002-prototype-repository-disposition.md` |
 | DEC-0003 | 2026-06-28 | Accepted | Build AICS validation CLI in the canonical monorepo | `.agentforge/decisions/0003-cli-path-for-aics-validation.md` |
@@ -42,6 +43,7 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 
 ## Revision History
 
+- 2026-08-01: Added ADR-0019.
 - 2026-08-01: Added ADR-0018.
 - 2026-08-01: Added ADR-0017.
 - 2026-08-01: Added ADR-0016.

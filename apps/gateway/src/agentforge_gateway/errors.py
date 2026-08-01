@@ -35,6 +35,17 @@ class GatewayError(Exception):
     def to_response(self) -> dict[str, object]:
         return error_response(self.message, self.error_type)
 
+    def to_anthropic_response(self) -> dict[str, object]:
+        # Anthropic error envelope (ADR-0019, R5): same status mapping,
+        # different shape — {"type": "error", "error": {...}}
+        return {
+            "type": "error",
+            "error": {
+                "type": self.error_type,
+                "message": self.message,
+            },
+        }
+
 
 class BadRequestError(GatewayError):
     status_code = 400

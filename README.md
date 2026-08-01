@@ -34,7 +34,7 @@ The draft AgentForge AI Context Specification is available at `.agentforge/specs
 
 ## Current Priority
 
-Genesis Sprint 21 adds opt-in CORS support (`server.cors_origin`) so the web playground on the public docs site can call a local gateway from the browser — JSON, SSE streams, and preflight all covered (ADR-0018).
+Genesis Sprint 23 adds an Anthropic Messages inbound surface (`POST /v1/messages`) — Anthropic-protocol clients (Claude Code, Anthropic SDK users) can now point their base URL at the gateway and reach the same providers behind one governance story (ADR-0019).
 
 Gateway provider adapters live behind explicit internal modules under `agentforge_gateway.providers`, chat-completion request validation lives under `agentforge_gateway.requests`, gateway errors use a standard JSON envelope, successful chat-completion responses and streaming chunks pass through `agentforge_gateway.responses`, JSON configuration is validated by `agentforge_gateway.config`, and structured access records are emitted through `agentforge_gateway.logger`. Product backlog and epics live in `.agentforge/backlog.md`, canonical standards live in `.agentforge/standards/`, and repository hygiene is anchored by `.editorconfig` and `.gitattributes`. The public `agentforge-gateway` and `agentforge-cli` repositories remain historical pre-governance prototypes; new canonical gateway and CLI work belongs in this repository under `apps/gateway` and `apps/cli`.
 

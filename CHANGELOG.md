@@ -1,5 +1,14 @@
 # Changelog
 
+## Genesis-0.0.22 - 2026-08-01
+
+- Added the Anthropic Messages inbound surface (`POST /v1/messages`): Anthropic-protocol clients (Claude Code, Anthropic SDK) can now point their base URL at the gateway and reach the same providers (ADR-0019).
+- Translation-at-the-edge: Anthropic request → internal OpenAI-compatible dispatch → Anthropic-shaped response; provider adapters untouched.
+- Anthropic SSE streaming events: `message_start`, `content_block_start`, `content_block_delta`, `content_block_stop`, `message_delta`, `message_stop` (no `[DONE]` sentinel).
+- Anthropic error envelope (`{"type": "error", "error": {...}}`) with the same status mapping as the OpenAI surface.
+- Keyless: `x-api-key` accepted but not required and never forwarded upstream (ADR-0017 consistency).
+- Added 21 tests (validation, translation, response normalization, streaming events, endpoints incl. wire format). Suite now 157 tests.
+
 ## Genesis-0.0.21 - 2026-08-01
 
 - Added opt-in CORS support: `server.cors_origin` config (`*` or a single http(s) origin, validated, disabled by default), `OPTIONS` preflight answering 204 with `Access-Control-Allow-*` headers, and `Access-Control-Allow-Origin` on all JSON responses and SSE streams (ADR-0018).

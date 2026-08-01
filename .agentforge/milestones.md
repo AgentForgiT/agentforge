@@ -354,26 +354,27 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## Genesis-0.0.21: Gateway CORS Support
+## Genesis-0.0.22: Anthropic Messages Inbound
 
 Scope:
 
-- define the CORS browser-boundary requirements
-- decide the opt-in boundary (`server.cors_origin`, disabled by default)
-- implement `server.cors_origin` config + validation, `OPTIONS` preflight handler
-- emit `Access-Control-Allow-*` headers on JSON responses and SSE streams
-- cover config parsing, preflight, header presence, and the disabled default in tests
+- define the Anthropic Messages inbound requirements
+- decide the inbound translation boundary (translation-at-the-edge)
+- implement `POST /v1/messages` with validation, translation, Anthropic-shaped responses, and Anthropic SSE events
+- implement the Anthropic error envelope
+- cover validation, translation, streaming, and endpoints in tests
 - ship docs
 
 Exit criteria:
 
-- ADR-0018 records the CORS browser boundary for issue #96
-- config and handler land for issue #97
-- CI Bootstrap Validate passes offline for issue #98
-- docs explain CORS; release notes document `Genesis-0.0.21` for issue #99
+- ADR-0019 records the inbound translation boundary for issue #101
+- `/v1/messages` route lands for issue #102
+- CI Bootstrap Validate passes offline for issue #103
+- docs explain the Anthropic inbound surface; release notes document `Genesis-0.0.22` for issue #104
 
 ## Revision History
 
+- 2026-08-01: Added Genesis-0.0.22 Anthropic Messages inbound milestone.
 - 2026-08-01: Added Genesis-0.0.21 gateway CORS milestone.
 - 2026-08-01: Added Genesis-0.0.20 Ollama/local provider milestone.
 - 2026-08-01: Added Genesis-0.0.19 gateway reasoning milestone.

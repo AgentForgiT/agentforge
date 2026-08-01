@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Genesis Sprint 21: Gateway CORS Support
+## Genesis Sprint 23: Anthropic Messages Inbound
 
-Goal: make the gateway callable from the web playground (docs-site quick-wins) via opt-in `server.cors_origin` — preflight handling plus `Access-Control-Allow-*` headers on JSON and SSE responses, disabled by default (ADR-0018).
+Goal: add `POST /v1/messages` so Anthropic-protocol clients can route through the gateway — request validation, translation-at-the-edge to the OpenAI-compatible provider protocol, Anthropic-shaped responses, and Anthropic SSE events (ADR-0019).
 
 Deliverables:
 
-- CORS requirements doc for issue #95
-- CORS browser-boundary decision ADR-0018 for issue #96
-- `server.cors_origin` config + validation, `OPTIONS` preflight handler, CORS headers on JSON and SSE responses for issue #97
-- CORS config and HTTP tests; CI validation for issue #98
-- CORS docs and `Genesis-0.0.21` release for issue #99
+- Anthropic Messages inbound requirements for issue #100
+- inbound translation boundary decision ADR-0019 for issue #101
+- `anthropic.py` translation module + `/v1/messages` route + Anthropic error envelope for issue #102
+- validation, translation, streaming, and endpoint tests; CI validation for issue #103
+- Anthropic inbound docs and `Genesis-0.0.22` release for issue #104
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 23 Anthropic Messages inbound deliverables.
 - 2026-08-01: Added Sprint 21 gateway CORS deliverables.
 - 2026-08-01: Added Sprint 20 Ollama/local provider deliverables.
 - 2026-08-01: Added Sprint 19 gateway reasoning deliverables.
