@@ -46,7 +46,11 @@ def _validate_chat_completion_response(response: dict[str, object]) -> None:
     if message.get("role") != "assistant":
         raise UpstreamProviderError("provider returned invalid chat completion message role")
 
-    if not isinstance(message.get("content"), str):
+    content = message.get("content")
+    # OpenAI-compatible spec: content may be null for reasoning models that
+    # emit their output in `reasoning` fields (e.g. OpenAI o-series, DeepSeek
+    # R1-style, OpenRouter reasoning models). Pass null through untouched.
+    if content is not None and not isinstance(content, str):
         raise UpstreamProviderError("provider returned invalid chat completion message content")
 
 

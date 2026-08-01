@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Live-verified the gateway against the OpenRouter API (non-streaming and streaming completions, alias normalization, reasoning passthrough, `[DONE]` termination).
+- Fixed reasoning-model response validation: `message.content: null` is now accepted per the OpenAI-compatible spec (reasoning models emit output in `reasoning` fields), instead of a 502. Non-string non-null content is still rejected.
+- Updated `config.openrouter.example.json` to a currently-available free model (`openai/gpt-oss-20b:free`).
+
 ## Genesis-0.0.18 - 2026-07-31
 
 - Added Sprint 18 requirements and ADR-0015 for the gateway logging boundary.

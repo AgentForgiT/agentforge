@@ -131,9 +131,25 @@ class ChatCompletionResponseTests(unittest.TestCase):
 
         self.assertIn("role", str(ctx.exception))
 
-    def test_rejects_non_string_message_content(self) -> None:
+    def test_accepts_null_message_content_for_reasoning_models(self) -> None:
         response = valid_response()
-        response["choices"] = [{"message": {"role": "assistant", "content": None}}]
+        response["choices"] = [{"message": {
+            "role": "assistant",
+            "content": None,
+            "reasoning": "reasoning trace emitted by upstream model",
+        }}]
+
+        normalized = normalize_chat_completion_response(MODEL, response)
+
+        self.assertIsNone(normalized["choices"][0]["message"]["content"])
+        self.assertEqual(
+            normalized["choices"][0]["message"]["reasoning"],
+            "reasoning trace emitted by upstream model",
+        )
+
+    def test_rejects_non_string_non_null_message_content(self) -> None:
+        response = valid_response()
+        response["choices"] = [{"message": {"role": "assistant", "content": 42}}]
 
         with self.assertRaises(UpstreamProviderError) as ctx:
             normalize_chat_completion_response(MODEL, response)

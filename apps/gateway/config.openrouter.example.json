@@ -11,7 +11,7 @@
     },
     "openrouter-coder": {
       "provider": "openrouter",
-      "provider_model": "qwen/qwen3-coder:free"
+      "provider_model": "openai/gpt-oss-20b:free"
     }
   },
   "providers": {
