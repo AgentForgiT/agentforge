@@ -8,6 +8,7 @@
 - Registered `ollama` in the provider factory; `supported_provider_types()` now returns `("mock", "ollama", "openrouter")`.
 - Shipped `config.ollama.example.json` (mock + `local-llama3` → `llama3.2`).
 - Added 8 offline tests: provider contract (success, keyless headers, streaming, HTTP 404, connection-refused), factory, config parse, and a `GatewayApp` endpoint test with an injected Ollama provider. Suite now 122 tests.
+- Live-verified against Ollama 0.32.5 with `llama3.2:1b` through the gateway: non-streaming completion returned normalized `local-llama3` output (`finish: stop`), and SSE streaming produced 9 chunks ending with `[DONE]`; all gateway log lines `status=200`.
 
 ## Genesis-0.0.19 - 2026-08-01
 
