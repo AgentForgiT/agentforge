@@ -354,26 +354,27 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## Genesis-0.0.22: Anthropic Messages Inbound
+## Genesis-0.0.23: Anthropic Thinking + Tool-Use Mapping
 
 Scope:
 
-- define the Anthropic Messages inbound requirements
-- decide the inbound translation boundary (translation-at-the-edge)
-- implement `POST /v1/messages` with validation, translation, Anthropic-shaped responses, and Anthropic SSE events
-- implement the Anthropic error envelope
-- cover validation, translation, streaming, and endpoints in tests
+- define thinking/tool-use mapping requirements
+- decide the tool-use mapping boundary (edge translation, ADR-0020)
+- map `tools`, `tool_use`, `tool_result`, response `tool_calls` → `tool_use` blocks, streaming `input_json_delta`
+- accept (and log) Anthropic `thinking` without mapping
+- cover request, response, and streaming mapping in tests
 - ship docs
 
 Exit criteria:
 
-- ADR-0019 records the inbound translation boundary for issue #101
-- `/v1/messages` route lands for issue #102
-- CI Bootstrap Validate passes offline for issue #103
-- docs explain the Anthropic inbound surface; release notes document `Genesis-0.0.22` for issue #104
+- ADR-0020 records the mapping boundary for issue #106
+- mapping lands for issue #107
+- CI Bootstrap Validate passes offline for issue #108
+- docs explain the mapping; release notes document `Genesis-0.0.23` for issue #109
 
 ## Revision History
 
+- 2026-08-01: Added Genesis-0.0.23 thinking/tool-use mapping milestone.
 - 2026-08-01: Added Genesis-0.0.22 Anthropic Messages inbound milestone.
 - 2026-08-01: Added Genesis-0.0.21 gateway CORS milestone.
 - 2026-08-01: Added Genesis-0.0.20 Ollama/local provider milestone.

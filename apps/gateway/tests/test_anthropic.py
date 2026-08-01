@@ -115,12 +115,22 @@ class AnthropicTranslationTests(unittest.TestCase):
         body = {
             "model": "mock-coder",
             "messages": [
-                {"role": "user", "content": [{"type": "tool_result", "content": "42"}]}
+                {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "t1", "content": "42"}]}
             ],
         }
         request = validate_anthropic_messages_request(body)
         openai_body = to_openai_body(request)
+        self.assertEqual(openai_body["messages"][0]["role"], "tool")
         self.assertEqual(openai_body["messages"][0]["content"], "42")
+
+    def test_to_openai_body_rejects_tool_result_without_id(self) -> None:
+        body = {
+            "model": "mock-coder",
+            "messages": [{"role": "user", "content": [{"type": "tool_result", "content": "42"}]}],
+        }
+        request = validate_anthropic_messages_request(body)
+        with self.assertRaises(BadRequestError):
+            to_openai_body(request)
 
 
 class AnthropicResponseTests(unittest.TestCase):
@@ -201,6 +211,263 @@ class AnthropicSseTests(unittest.TestCase):
 
         msg_delta = [d for n, d in events if n == "message_delta"][0]
         self.assertEqual(msg_delta["delta"]["stop_reason"], "end_turn")
+
+
+class AnthropicToolMappingTests(unittest.TestCase):
+    def test_tools_parameter_translates_to_openai_functions(self) -> None:
+        body = {
+            "model": "mock-coder",
+            "tools": [
+                {
+                    "name": "get_weather",
+                    "description": "Get weather for a city",
+                    "input_schema": {
+                        "type": "object",
+                        "properties": {"city": {"type": "string"}},
+                        "required": ["city"],
+                    },
+                }
+            ],
+            "messages": [{"role": "user", "content": "Weather in Lagos?"}],
+        }
+        request = validate_anthropic_messages_request(body)
+        openai_body = to_openai_body(request)
+        self.assertEqual(openai_body["tools"][0]["type"], "function")
+        self.assertEqual(openai_body["tools"][0]["function"]["name"], "get_weather")
+        self.assertEqual(openai_body["tools"][0]["function"]["parameters"]["required"], ["city"])
+
+    def test_tools_missing_name_rejected(self) -> None:
+        body = {
+            "model": "mock-coder",
+            "tools": [{"description": "no name"}],
+            "messages": [{"role": "user", "content": "Hi"}],
+        }
+        request = validate_anthropic_messages_request(body)
+        with self.assertRaises(BadRequestError):
+            to_openai_body(request)
+
+    def test_assistant_tool_use_block_translates_to_tool_calls(self) -> None:
+        body = {
+            "model": "mock-coder",
+            "messages": [
+                {"role": "user", "content": "Use the tool"},
+                {
+                    "role": "assistant",
+                    "content": [
+                        {"type": "text", "text": "Let me check."},
+                        {
+                            "type": "tool_use",
+                            "id": "toolu_01",
+                            "name": "get_weather",
+                            "input": {"city": "Abuja"},
+                        },
+                    ],
+                },
+                {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "toolu_01", "content": "32C"}]},
+            ],
+        }
+        request = validate_anthropic_messages_request(body)
+        openai_body = to_openai_body(request)
+
+        assistant = openai_body["messages"][1]
+        self.assertEqual(assistant["role"], "assistant")
+        self.assertEqual(assistant["content"], "Let me check.")
+        self.assertEqual(assistant["tool_calls"][0]["id"], "toolu_01")
+        self.assertEqual(assistant["tool_calls"][0]["type"], "function")
+        self.assertEqual(assistant["tool_calls"][0]["function"]["name"], "get_weather")
+        self.assertEqual(assistant["tool_calls"][0]["function"]["arguments"], '{"city": "Abuja"}')
+
+        tool_msg = openai_body["messages"][2]
+        self.assertEqual(tool_msg["role"], "tool")
+        self.assertEqual(tool_msg["tool_call_id"], "toolu_01")
+        self.assertEqual(tool_msg["content"], "32C")
+
+    def test_tool_result_structured_content_surfaces_text(self) -> None:
+        body = {
+            "model": "mock-coder",
+            "messages": [
+                {"role": "user", "content": "Check"},
+                {"role": "assistant", "content": [{"type": "tool_use", "id": "t1", "name": "f", "input": {}}]},
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "tool_result", "tool_use_id": "t1", "content": [{"type": "text", "text": "42"}]}
+                    ],
+                },
+            ],
+        }
+        request = validate_anthropic_messages_request(body)
+        openai_body = to_openai_body(request)
+        tool_msg = openai_body["messages"][2]
+        self.assertEqual(tool_msg["role"], "tool")
+        self.assertEqual(tool_msg["content"], "42")
+
+    def test_thinking_param_accepted_and_passed_through(self) -> None:
+        body = {
+            "model": "mock-coder",
+            "thinking": {"type": "enabled", "budget_tokens": 1024},
+            "messages": [{"role": "user", "content": "Think hard"}],
+        }
+        request = validate_anthropic_messages_request(body)
+        openai_body = to_openai_body(request)
+        self.assertEqual(openai_body["thinking"]["type"], "enabled")
+
+
+class AnthropicToolResponseTests(unittest.TestCase):
+    def test_response_tool_calls_render_as_tool_use_blocks(self) -> None:
+        model = DEFAULT_CONFIG.models["mock-coder"]
+        openai_response = {
+            "object": "chat.completion",
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {
+                        "role": "assistant",
+                        "content": "Checking the weather.",
+                        "tool_calls": [
+                            {
+                                "id": "call_1",
+                                "type": "function",
+                                "function": {"name": "get_weather", "arguments": '{"city": "Lagos"}'},
+                            }
+                        ],
+                    },
+                    "finish_reason": "tool_calls",
+                }
+            ],
+            "usage": {"prompt_tokens": 5, "completion_tokens": 3},
+        }
+        result = normalize_anthropic_response(model, openai_response)
+        self.assertEqual(result["content"][0], {"type": "text", "text": "Checking the weather."})
+        self.assertEqual(result["content"][1]["type"], "tool_use")
+        self.assertEqual(result["content"][1]["id"], "call_1")
+        self.assertEqual(result["content"][1]["name"], "get_weather")
+        self.assertEqual(result["content"][1]["input"], {"city": "Lagos"})
+        self.assertEqual(result["stop_reason"], "tool_use")
+
+    def test_response_tool_calls_malformed_arguments_tolerated(self) -> None:
+        model = DEFAULT_CONFIG.models["mock-coder"]
+        openai_response = {
+            "object": "chat.completion",
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {
+                        "role": "assistant",
+                        "content": None,
+                        "tool_calls": [
+                            {"id": "c1", "type": "function", "function": {"name": "f", "arguments": "{bad json"}}
+                        ],
+                    },
+                    "finish_reason": "tool_calls",
+                }
+            ],
+            "usage": {"prompt_tokens": 1, "completion_tokens": 1},
+        }
+        result = normalize_anthropic_response(model, openai_response)
+        self.assertEqual(result["content"][0]["input"], {})
+
+
+class AnthropicToolSseTests(unittest.TestCase):
+    def test_stream_tool_calls_emit_input_json_delta(self) -> None:
+        from agentforge_gateway.anthropic import anthropic_sse_events
+
+        model = DEFAULT_CONFIG.models["mock-coder"]
+
+        def fake_stream():
+            yield {"object": "chat.completion.chunk", "choices": [{"index": 0, "delta": {}, "finish_reason": None}]}
+            yield {
+                "object": "chat.completion.chunk",
+                "choices": [
+                    {
+                        "index": 0,
+                        "delta": {
+                            "tool_calls": [
+                                {
+                                    "index": 0,
+                                    "id": "call_1",
+                                    "type": "function",
+                                    "function": {"name": "get_weather", "arguments": ""},
+                                }
+                            ]
+                        },
+                        "finish_reason": None,
+                    }
+                ],
+            }
+            yield {
+                "object": "chat.completion.chunk",
+                "choices": [
+                    {
+                        "index": 0,
+                        "delta": {
+                            "tool_calls": [
+                                {"index": 0, "function": {"arguments": '{"city": "Abuja"}'}}
+                            ]
+                        },
+                        "finish_reason": None,
+                    }
+                ],
+            }
+            yield {
+                "object": "chat.completion.chunk",
+                "choices": [{"index": 0, "delta": {}, "finish_reason": "tool_calls"}],
+            }
+
+        events = list(anthropic_sse_events(model, fake_stream()))
+        names = [n for n, _ in events]
+
+        # tool-use block starts at index 1 (no text block emitted)
+        start_events = [d for n, d in events if n == "content_block_start"]
+        self.assertEqual(len(start_events), 1)
+        self.assertEqual(start_events[0]["index"], 1)
+        self.assertEqual(start_events[0]["content_block"]["type"], "tool_use")
+        self.assertEqual(start_events[0]["content_block"]["name"], "get_weather")
+
+        delta_events = [d for n, d in events if n == "content_block_delta"]
+        self.assertEqual(len(delta_events), 1)
+        self.assertEqual(delta_events[0]["delta"]["type"], "input_json_delta")
+        self.assertEqual(delta_events[0]["delta"]["partial_json"], '{"city": "Abuja"}')
+
+        stop_events = [d for n, d in events if n == "content_block_stop"]
+        self.assertEqual(len(stop_events), 1)
+        self.assertEqual(stop_events[0]["index"], 1)
+
+        # tail is standard
+        self.assertEqual(names[-2], "message_delta")
+        self.assertEqual(names[-1], "message_stop")
+
+    def test_stream_text_and_tool_blocks_coexist(self) -> None:
+        from agentforge_gateway.anthropic import anthropic_sse_events
+
+        model = DEFAULT_CONFIG.models["mock-coder"]
+
+        def fake_stream():
+            yield {"object": "chat.completion.chunk", "choices": [{"index": 0, "delta": {"content": "Sure,"}, "finish_reason": None}]}
+            yield {
+                "object": "chat.completion.chunk",
+                "choices": [
+                    {
+                        "index": 0,
+                        "delta": {
+                            "tool_calls": [
+                                {"index": 0, "id": "c1", "function": {"name": "f", "arguments": "{}"}}
+                            ]
+                        },
+                        "finish_reason": None,
+                    }
+                ],
+            }
+            yield {"object": "chat.completion.chunk", "choices": [{"index": 0, "delta": {}, "finish_reason": "tool_calls"}]}
+
+        events = list(anthropic_sse_events(model, fake_stream()))
+        starts = [d for n, d in events if n == "content_block_start"]
+        # text block index 0, tool block index 1
+        self.assertEqual([s["index"] for s in starts], [0, 1])
+        self.assertEqual(starts[0]["content_block"]["type"], "text")
+        self.assertEqual(starts[1]["content_block"]["type"], "tool_use")
+        stops = [d for n, d in events if n == "content_block_stop"]
+        self.assertEqual([s["index"] for s in stops], [0, 1])
 
 
 class AnthropicEndpointTests(unittest.TestCase):

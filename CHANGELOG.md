@@ -1,5 +1,16 @@
 # Changelog
 
+## Genesis-0.0.23 - 2026-08-01
+
+- Added Anthropic thinking + tool-use mapping at the inbound boundary (ADR-0020), closing ADR-0019's deferred items:
+  - `tools` parameter → OpenAI function tools
+  - assistant `tool_use` blocks → OpenAI `tool_calls`
+  - user `tool_result` blocks → OpenAI `tool` role messages (one per result, with `tool_call_id`)
+  - provider response `tool_calls` → Anthropic `tool_use` content blocks (`stop_reason: "tool_use"`)
+  - streaming `delta.tool_calls` → `content_block_start` (tool_use) + `content_block_delta` (`input_json_delta`) events
+  - Anthropic `thinking` accepted and passed through (not mapped; logged per ADR-0020)
+- Added 10 tests (tools param, block translation, response mapping, streaming events). Suite now 167.
+
 ## Genesis-0.0.22 - 2026-08-01
 
 - Added the Anthropic Messages inbound surface (`POST /v1/messages`): Anthropic-protocol clients (Claude Code, Anthropic SDK) can now point their base URL at the gateway and reach the same providers (ADR-0019).

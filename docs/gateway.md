@@ -196,7 +196,7 @@ The test suite pins these behaviors with fixtures captured from the live OpenRou
 
 ## Anthropic Messages Inbound
 
-ADR-0019 defines the Anthropic inbound boundary.
+ADR-0019 defines the Anthropic inbound boundary; ADR-0020 extends it with thinking and tool-use mapping.
 
 The gateway exposes `POST /v1/messages` — the Anthropic Messages API — alongside the OpenAI Chat Completions surface. Anthropic-protocol clients (Claude Code, Anthropic SDK users) point their base URL at the gateway:
 
@@ -207,13 +207,23 @@ ANTHROPIC_BASE_URL=http://127.0.0.1:8080 curl http://127.0.0.1:8080/v1/messages 
   -d '{"model": "mock-coder", "max_tokens": 1024, "messages": [{"role": "user", "content": "Hello"}]}'
 ```
 
-Request validation accepts the Messages shape (`model`, `messages` with role/content, optional `system`, `max_tokens`, `stream`). Translation happens at the edge (ADR-0019): the request becomes the internal OpenAI-compatible dispatch, provider adapters are untouched, and responses are rendered in the Anthropic shape (`type: "message"`, content text blocks, `stop_reason`, `usage`).
+Request validation accepts the Messages shape (`model`, `messages` with role/content, optional `system`, `max_tokens`, `stream`, `tools`, `thinking`). Translation happens at the edge (ADR-0019/0020): the request becomes the internal OpenAI-compatible dispatch, provider adapters are untouched, and responses are rendered in the Anthropic shape (`type: "message"`, content text blocks, `stop_reason`, `usage`).
 
-Streaming emits Anthropic SSE events (`message_start` → `content_block_start` → `content_block_delta`* → `content_block_stop` → `message_delta` → `message_stop`) with no `[DONE]` sentinel.
+Tool-use mapping (ADR-0020):
+
+- Anthropic `tools` → OpenAI function tools (`type: "function"`, `function.parameters` from `input_schema`).
+- Assistant `tool_use` blocks → OpenAI `tool_calls`; `input` is JSON-stringified into `arguments`.
+- User `tool_result` blocks → OpenAI `tool` role messages carrying `tool_call_id` and text content.
+- Provider `tool_calls` responses → Anthropic `tool_use` content blocks with parsed `input`; `finish_reason: "tool_calls"` maps to `stop_reason: "tool_use"`.
+- Streaming tool calls → `content_block_start` (tool_use, index 1 when a text block precedes) + `content_block_delta` (`input_json_delta`/`partial_json`), then the standard tail.
+
+Anthropic `thinking` is accepted and passed through in the raw body but not mapped to provider reasoning fields (ADR-0020 defers that mapping until a concrete consumer needs it).
+
+Streaming emits Anthropic SSE events (`message_start` → `content_block_start`* → `content_block_delta`* → `content_block_stop`* → `message_delta` → `message_stop`) with no `[DONE]` sentinel.
 
 Errors use the Anthropic envelope (`{"type": "error", "error": {...}}`) with the same status mapping as the OpenAI surface. `x-api-key` is accepted but not required and never forwarded upstream (keyless local trust, ADR-0017).
 
-Image, thinking, and tool-use content blocks are rejected with a clear bad-request error; text and tool_result blocks are supported. Thinking-block and tool-use mapping remain deferred per ADR-0019.
+Image blocks are rejected with a clear bad-request error. Computer/web-search tool types and tool-result images remain deferred per ADR-0020.
 
 ## Logging
 
@@ -269,6 +279,7 @@ The shipped `config.example.json` sets `cors_origin` to the public docs-site ori
 
 ## Revision History
 
+- 2026-08-01: Documented thinking/tool-use mapping from ADR-0020.
 - 2026-08-01: Documented Anthropic Messages inbound surface from ADR-0019.
 - 2026-08-01: Documented CORS boundary from ADR-0018.
 - 2026-08-01: Documented Ollama/local provider boundary from ADR-0017.

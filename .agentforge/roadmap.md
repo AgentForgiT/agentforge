@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Genesis Sprint 23: Anthropic Messages Inbound
+## Genesis Sprint 24: Anthropic Thinking + Tool-Use Mapping
 
-Goal: add `POST /v1/messages` so Anthropic-protocol clients can route through the gateway — request validation, translation-at-the-edge to the OpenAI-compatible provider protocol, Anthropic-shaped responses, and Anthropic SSE events (ADR-0019).
+Goal: close ADR-0019's deferred items — map Anthropic `tools`, assistant `tool_use` blocks, user `tool_result` blocks, and `thinking` at the inbound boundary so Claude Code can run agentic loops through the gateway (ADR-0020).
 
 Deliverables:
 
-- Anthropic Messages inbound requirements for issue #100
-- inbound translation boundary decision ADR-0019 for issue #101
-- `anthropic.py` translation module + `/v1/messages` route + Anthropic error envelope for issue #102
-- validation, translation, streaming, and endpoint tests; CI validation for issue #103
-- Anthropic inbound docs and `Genesis-0.0.22` release for issue #104
+- thinking/tool-use mapping requirements for issue #105
+- tool-use mapping boundary decision ADR-0020 for issue #106
+- `tools` → OpenAI function tools, `tool_use` → `tool_calls`, `tool_result` → `tool` role, response `tool_calls` → `tool_use` blocks, streaming `input_json_delta`, thinking acceptance for issue #107
+- mapping tests (request, response, streaming); CI validation for issue #108
+- mapping docs and `Genesis-0.0.23` release for issue #109
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 24 thinking/tool-use mapping deliverables.
 - 2026-08-01: Added Sprint 23 Anthropic Messages inbound deliverables.
 - 2026-08-01: Added Sprint 21 gateway CORS deliverables.
 - 2026-08-01: Added Sprint 20 Ollama/local provider deliverables.

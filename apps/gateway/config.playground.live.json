@@ -1,0 +1,28 @@
+{
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8080,
+    "log_level": "INFO",
+    "cors_origin": "https://agentforgit.github.io"
+  },
+  "models": {
+    "mock-coder": {
+      "provider": "mock",
+      "provider_model": "mock-coder-v1"
+    },
+    "local-llama3": {
+      "provider": "ollama",
+      "provider_model": "llama3.2:1b"
+    }
+  },
+  "providers": {
+    "mock": {
+      "type": "mock"
+    },
+    "ollama": {
+      "type": "ollama",
+      "base_url": "http://127.0.0.1:11434/v1",
+      "timeout_seconds": 120
+    }
+  }
+}

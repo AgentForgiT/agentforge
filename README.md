@@ -34,7 +34,7 @@ The draft AgentForge AI Context Specification is available at `.agentforge/specs
 
 ## Current Priority
 
-Genesis Sprint 23 adds an Anthropic Messages inbound surface (`POST /v1/messages`) — Anthropic-protocol clients (Claude Code, Anthropic SDK users) can now point their base URL at the gateway and reach the same providers behind one governance story (ADR-0019).
+Genesis Sprint 24 maps Anthropic thinking + tool-use at the inbound boundary (ADR-0020): Claude Code can declare tools, receive `tool_use` blocks, and send `tool_result` blocks back through the gateway — closing ADR-0019's deferred items.
 
 Gateway provider adapters live behind explicit internal modules under `agentforge_gateway.providers`, chat-completion request validation lives under `agentforge_gateway.requests`, gateway errors use a standard JSON envelope, successful chat-completion responses and streaming chunks pass through `agentforge_gateway.responses`, JSON configuration is validated by `agentforge_gateway.config`, and structured access records are emitted through `agentforge_gateway.logger`. Product backlog and epics live in `.agentforge/backlog.md`, canonical standards live in `.agentforge/standards/`, and repository hygiene is anchored by `.editorconfig` and `.gitattributes`. The public `agentforge-gateway` and `agentforge-cli` repositories remain historical pre-governance prototypes; new canonical gateway and CLI work belongs in this repository under `apps/gateway` and `apps/cli`.
 
