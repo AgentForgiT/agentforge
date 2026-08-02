@@ -1,0 +1,65 @@
+name: Publish to PyPI and Attach Release Assets
+
+on:
+  push:
+    tags:
+      - "Genesis-*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install build tooling
+        run: pip install build twine
+      - name: Build CLI package
+        run: python -m build --outdir dist-cli apps/cli
+      - name: Build SDK package
+        run: python -m build --outdir dist-sdk apps/sdk
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: |
+            dist-cli/
+            dist-sdk/
+          retention-days: 7
+
+  publish-pypi:
+    needs: build
+    runs-on: ubuntu-latest
+    if: env.PYPI_TOKEN != ''
+    env:
+      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - name: Publish to PyPI
+        run: |
+          pip install twine
+          find dist -name '*.whl' -o -name '*.tar.gz' | xargs twine upload -u __token__ -p "$PYPI_TOKEN" --non-interactive
+
+  attach-release-assets:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - name: Attach wheels to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          find dist -name '*.whl' -o -name '*.tar.gz' | while read -r f; do
+            gh release upload "$TAG" "$f" --clobber
+          done

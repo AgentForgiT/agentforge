@@ -1,5 +1,12 @@
 # Changelog
 
+## Genesis-0.0.30 - 2026-08-01
+
+- Added SDK distribution (ADR-0027):
+  - `agentforge-sdk` builds clean sdist + wheel (verified locally).
+  - `.github/workflows/publish.yml`: on `Genesis-0.0.x` tags, builds `agentforge-cli` + `agentforge-sdk`, publishes to PyPI gated on `PYPI_TOKEN` (dry-run-safe when absent), and attaches both wheels as release assets.
+  - `docs/mcp.md`: canonical MCP registration — Claude Code `claude mcp add agentforge --transport http --url http://127.0.0.1:8080/mcp`, `.mcp.json` project scope, and the auth env note.
+
 ## Genesis-0.0.29 - 2026-08-01
 
 - Added the gateway MCP server surface (ADR-0026): `POST /mcp` speaks stdlib JSON-RPC 2.0 with `initialize`, `tools/list`, `tools/call`, and empty `resources/list`/`prompts/list`.

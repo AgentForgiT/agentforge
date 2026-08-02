@@ -354,25 +354,26 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## Genesis-0.0.29: Gateway MCP Surface
+## Genesis-0.0.30: SDK Distribution + MCP Registration
 
 Scope:
 
-- define MCP surface requirements
-- decide the MCP boundary (stdlib JSON-RPC 2.0 server over existing capabilities, ADR-0026)
-- implement `mcp.py` + `/mcp` route with auth + CORS
-- cover handshake, tool schemas, routing, and protocol errors in tests
+- define distribution requirements
+- decide the distribution boundary (tag-gated PyPI publish, token-gated and dry-run-safe, release assets, ADR-0027)
+- implement `publish.yml` + `docs/mcp.md`
+- cover SDK build smoke and workflow validation
 - ship docs
 
 Exit criteria:
 
-- ADR-0026 records the MCP boundary for issue #136
-- `/mcp` surface lands for issue #137
-- CI Bootstrap Validate passes offline for issue #138
-- docs explain the MCP surface; release notes document `Genesis-0.0.29` for issue #139
+- ADR-0027 records the distribution boundary for issue #141
+- `publish.yml` + `docs/mcp.md` land for issue #142
+- CI Bootstrap Validate passes offline; SDK builds for issue #143
+- docs explain distribution/registration; release notes document `Genesis-0.0.30` for issue #144
 
 ## Revision History
 
+- 2026-08-01: Added Genesis-0.0.30 distribution milestone.
 - 2026-08-01: Added Genesis-0.0.29 gateway MCP milestone.
 - 2026-08-01: Added Genesis-0.0.28 gateway SDK milestone.
 - 2026-08-01: Added Genesis-0.0.27 AICS v0.3 tooling milestone.

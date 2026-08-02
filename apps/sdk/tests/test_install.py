@@ -28,6 +28,26 @@ class SdkInstallSmokeTests(unittest.TestCase):
             self.assertEqual(import_result.returncode, 0, import_result.stderr)
             self.assertIn("sdk import ok", import_result.stdout)
 
+    def test_sdist_and_wheel_build(self) -> None:
+        import importlib.util
+        import tempfile
+
+        if importlib.util.find_spec("build") is None:
+            self.skipTest("python -m build not available in this interpreter")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            outdir = Path(tmp) / "dist"
+            build = subprocess.run(
+                [sys.executable, "-m", "build", "--outdir", str(outdir), str(ROOT)],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(build.returncode, 0, build.stderr)
+            wheels = list(outdir.glob("*.whl"))
+            sdists = list(outdir.glob("*.tar.gz"))
+            self.assertEqual(len(wheels), 1, f"expected one wheel, got {[w.name for w in wheels]}")
+            self.assertEqual(len(sdists), 1, f"expected one sdist, got {[s.name for s in sdists]}")
+
 
 class temp_virtualenv:
     def __enter__(self):

@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Genesis Sprint 30: Gateway MCP Surface
+## Genesis Sprint 31: SDK Distribution + MCP Registration
 
-Goal: expose the gateway's capabilities as MCP tools over stdlib JSON-RPC 2.0 at `POST /mcp` — initialize, tools/list, tools/call — so MCP clients can drive the gateway's providers as tools (ADR-0026).
+Goal: make the SDK installable and the gateway registerable — clean sdist/wheel, tag-gated PyPI publish + release assets, and canonical MCP registration docs (ADR-0027).
 
 Deliverables:
 
-- MCP surface requirements for issue #135
-- MCP boundary decision ADR-0026 for issue #136
-- `mcp.py` (JSON-RPC 2.0 dispatch, initialize, tools/list, tools/call, error shapes) + `/mcp` route with auth + CORS for issue #137
-- handshake, tool-schema, routing, and protocol-error tests; CI validation for issue #138
-- MCP docs and `Genesis-0.0.29` release for issue #139
+- distribution requirements for issue #140
+- distribution boundary decision ADR-0027 for issue #141
+- `publish.yml` (build both packages, token-gated PyPI publish, release-asset upload) + `docs/mcp.md` (Claude Code `claude mcp add` + `.mcp.json`) for issue #142
+- SDK build smoke + workflow validation; CI green for issue #143
+- distribution docs and `Genesis-0.0.30` release for issue #144
 
-Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, and `git diff --check`.
+Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, SDK build, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 31 distribution deliverables.
 - 2026-08-01: Added Sprint 30 MCP surface deliverables.
 - 2026-08-01: Added Sprint 29 SDK deliverables.
 - 2026-08-01: Added Sprint 28 AICS v0.3 tooling deliverables.

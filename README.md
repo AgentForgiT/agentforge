@@ -34,7 +34,7 @@ The draft AgentForge AI Context Specification is available at `.agentforge/specs
 
 ## Current Priority
 
-Genesis Sprint 30 ships the gateway's MCP server surface (ADR-0026): `POST /mcp` exposes health, model registry, and both chat surfaces as MCP tools over stdlib JSON-RPC 2.0 — MCP clients can drive the gateway's providers as tools.
+Genesis Sprint 31 ships SDK distribution (ADR-0027): `agentforge-sdk` builds clean sdist/wheel, a tag-gated `publish.yml` pushes to PyPI (token-gated, dry-run-safe) and attaches wheels to releases, and `docs/mcp.md` documents MCP clients registering the gateway (Claude Code one-liner).
 
 Gateway provider adapters live behind explicit internal modules under `agentforge_gateway.providers`, chat-completion request validation lives under `agentforge_gateway.requests`, gateway errors use a standard JSON envelope, successful chat-completion responses and streaming chunks pass through `agentforge_gateway.responses`, JSON configuration is validated by `agentforge_gateway.config`, and structured access records are emitted through `agentforge_gateway.logger`. Product backlog and epics live in `.agentforge/backlog.md`, canonical standards live in `.agentforge/standards/`, and repository hygiene is anchored by `.editorconfig` and `.gitattributes`. The public `agentforge-gateway` and `agentforge-cli` repositories remain historical pre-governance prototypes; new canonical gateway and CLI work belongs in this repository under `apps/gateway` and `apps/cli`.
 
