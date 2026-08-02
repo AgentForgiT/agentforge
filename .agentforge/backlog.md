@@ -73,6 +73,7 @@ Near-term work should remain small and releasable:
 
 ## Done and Removed
 
+- Public 0.1.0 release scope (Genesis Sprint 35, 2026-08-01): scope requirements, release-gate checklist, DEC-0006; Genesis ends at 0.0.32 and 0.1.x follows under semver.
 - Engineering twin profile (Genesis Sprint 33, 2026-08-01): `agentforge build-twin` writes read-only, schema-validated `context/twin.json` (AICS governance, decisions, gateway surface); ADR-0028.
 - SDK distribution + MCP registration (Genesis Sprint 31, 2026-08-01): clean sdist/wheel, tag-gated `publish.yml` (token-gated PyPI, release assets), `docs/mcp.md` Claude Code registration; ADR-0027.
 - Gateway MCP surface (Genesis Sprint 30, 2026-08-01): `POST /mcp` — stdlib JSON-RPC 2.0 server exposing health, models, and both chat surfaces as MCP tools; ADR-0026.
@@ -150,6 +151,7 @@ Change line 42 in config.py to reject timeout_seconds <= 0.
 
 ## Revision History
 
+- 2026-08-01: Promoted public 0.1.0 scope into Genesis Sprint 35.
 - 2026-08-01: Promoted engineering-twin profile into Genesis Sprint 33.
 - 2026-08-01: Promoted SDK distribution into Genesis Sprint 31.
 - 2026-08-01: Promoted gateway MCP surface into Genesis Sprint 30.

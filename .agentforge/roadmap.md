@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Genesis Sprint 33: Engineering Twin Profile
+## Genesis Sprint 35: Public 0.1.0 Scope
 
-Goal: kick off the Engineering Twin (ADR-0028) with its data layer — `agentforge build-twin` writes a read-only, schema-validated `context/twin.json` consolidating AICS governance, decisions, and the gateway surface.
+Goal: define the public `0.1.0` line — scope, exit criteria, and release gate (DEC-0006) — closing the Genesis era with a defined, auditable transition.
 
 Deliverables:
 
-- engineering-twin requirements for issue #145
-- twin boundary decision ADR-0028 for issue #146
-- `build-twin` command + `twin.py` + `twin.schema.json` for issue #147
-- twin build, schema, idempotency, and read-only tests; CI validation for issue #148
-- twin docs and `Genesis-0.0.31` release for issue #149
+- 0.1.0 scope requirements for issue #150
+- release-scope decision DEC-0006 for issue #151
+- scope requirements + release-gate checklist + roadmap/milestones updates for issue #152
+- governance consistency checks; CI green for issue #153
+- scope docs and `Genesis-0.0.32` release for issue #154
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 35 public 0.1.0 scope deliverables.
 - 2026-08-01: Added Sprint 33 engineering-twin deliverables.
 - 2026-08-01: Added Sprint 31 distribution deliverables.
 - 2026-08-01: Added Sprint 30 MCP surface deliverables.

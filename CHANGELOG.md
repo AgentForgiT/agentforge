@@ -1,5 +1,12 @@
 # Changelog
 
+## Genesis-0.0.32 - 2026-08-01
+
+- Defined the public 0.1.0 release scope (DEC-0006):
+  - `requirements/public-0.1.0-scope.md` — what's in/out of 0.1.0, six exit criteria, semver policy after 0.1.0.
+  - `requirements/0.1.0-release-gate-checklist.md` — the auditable gate (each box needs verifiable evidence).
+  - Genesis ends at this release; `0.1.x` follows under semantic versioning.
+
 ## Genesis-0.0.31 - 2026-08-01
 
 - Kicked off the Engineering Twin (ADR-0028):

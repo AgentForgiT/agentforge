@@ -354,25 +354,26 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## Genesis-0.0.31: Engineering Twin Profile
+## Genesis-0.0.32: Public 0.1.0 Scope
 
 Scope:
 
-- define engineering-twin requirements
-- decide the twin boundary (generated, read-only, schema-validated profile; repo is the source of truth, ADR-0028)
-- implement `build-twin` + `twin.py` + `twin.schema.json`
-- cover build, schema, idempotency, and read-only behavior in tests
+- define the public 0.1.0 line (scope, exit criteria, release gate)
+- decide the transition (DEC-0006; Genesis stops at this release, 0.1.x follows under semver)
+- implement scope requirements + release-gate checklist + roadmap/milestones updates
+- verify governance consistency
 - ship docs
 
 Exit criteria:
 
-- ADR-0028 records the twin boundary for issue #146
-- `build-twin` lands for issue #147
-- CI Bootstrap Validate passes offline for issue #148
-- docs explain the twin; release notes document `Genesis-0.0.31` for issue #149
+- DEC-0006 records the scope decision for issue #151
+- scope + gate artifacts land for issue #152
+- CI Bootstrap Validate passes offline for issue #153
+- docs explain the 0.1.0 gate; release notes document `Genesis-0.0.32` for issue #154
 
 ## Revision History
 
+- 2026-08-01: Added Genesis-0.0.32 public 0.1.0 scope milestone.
 - 2026-08-01: Added Genesis-0.0.31 engineering-twin milestone.
 - 2026-08-01: Added Genesis-0.0.30 distribution milestone.
 - 2026-08-01: Added Genesis-0.0.29 gateway MCP milestone.
