@@ -34,7 +34,6 @@ jobs:
   publish-pypi:
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ secrets.PYPI_TOKEN != '' }}
     env:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
     steps:
@@ -43,6 +42,7 @@ jobs:
           name: dist
           path: dist
       - name: Publish to PyPI
+        if: env.PYPI_TOKEN != ''
         run: |
           pip install twine
           find dist -name '*.whl' -o -name '*.tar.gz' | xargs twine upload -u __token__ -p "$PYPI_TOKEN" --non-interactive
