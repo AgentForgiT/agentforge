@@ -2,6 +2,7 @@ __pycache__/
 *.egg-info/
 context/
 benchmarks/results.json
+benchmarks/history.json
 .agentforge/auth-keys.json
 *.py[cod]
 .pytest_cache/
