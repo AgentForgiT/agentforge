@@ -58,17 +58,24 @@ jobs:
       - name: Attach wheels to release
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
           TAG="${GITHUB_REF#refs/tags/}"
+          # debug: show what the API actually returns
+          curl -sS -o /tmp/release.json -w "api_status=%{http_code}\n" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/$GH_REPO/releases/tags/$TAG" || true
+          head -c 300 /tmp/release.json || true
+          echo ""
           # wait for the release to exist (it may be created after the tag push)
           for i in $(seq 1 30); do
-            if gh release view "$TAG" >/dev/null 2>&1; then
+            if gh release view "$TAG" --repo "$GH_REPO" >/dev/null 2>&1; then
               break
             fi
             echo "waiting for release $TAG (attempt $i)..."
             sleep 10
           done
-          gh release view "$TAG" >/dev/null 2>&1 || { echo "release $TAG not found after waiting"; exit 1; }
+          gh release view "$TAG" --repo "$GH_REPO" >/dev/null 2>&1 || { echo "release $TAG not found after waiting"; exit 1; }
           find dist -name '*.whl' -o -name '*.tar.gz' | while read -r f; do
-            gh release upload "$TAG" "$f" --clobber
+            gh release upload "$TAG" "$f" --repo "$GH_REPO" --clobber
           done
