@@ -10,7 +10,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "benchmarks"))
 
-from check_regressions import check_regressions, load_thresholds
+from check_regressions import check_regressions, load_thresholds, welch_t_pvalue
 
 
 def make_results(benchmarks: list[dict[str, object]]) -> dict[str, object]:
@@ -156,6 +156,68 @@ class ThresholdConfigTests(unittest.TestCase):
             )
             self.assertEqual(proc.returncode, 2)
             self.assertIn("error:", proc.stderr)
+
+
+class WelchTPvalueTests(unittest.TestCase):
+    def test_identical_samples_p_high(self) -> None:
+        p = welch_t_pvalue([10.0] * 5, [10.0] * 5)
+        self.assertIsNotNone(p)
+        self.assertGreater(p, 0.05)
+
+    def test_well_separated_samples_p_low(self) -> None:
+        p = welch_t_pvalue([10.0] * 5, [12.0] * 5)
+        self.assertIsNotNone(p)
+        self.assertLess(p, 0.05)
+
+    def test_noisy_overlap_p_high(self) -> None:
+        # high variance, overlapping: not significant
+        p = welch_t_pvalue([10.0, 10.5, 9.5, 10.2, 9.8], [10.6, 10.9, 9.9, 10.3, 10.1])
+        self.assertIsNotNone(p)
+        self.assertGreater(p, 0.05)
+
+    def test_insufficient_samples_none(self) -> None:
+        self.assertIsNone(welch_t_pvalue([10.0], [12.0]))  # 1 sample each
+        self.assertIsNone(welch_t_pvalue([], [12.0, 13.0]))
+
+
+class VarianceAwareGateTests(unittest.TestCase):
+    def test_low_variance_regression_flags(self) -> None:
+        # +25% with tight samples: significant -> REGRESSED
+        prev = make_results([dict(VALIDATE, samples=[10.0] * 5)])
+        curr = make_results([dict(VALIDATE, value=12.5, samples=[12.5] * 5)])
+        verdicts, has_regression = check_regressions(prev, curr, 10.0, significance=0.05)
+        self.assertTrue(has_regression)
+        self.assertTrue(verdicts[0].regressed)
+        self.assertTrue(verdicts[0].significant)
+        self.assertLess(verdicts[0].p_value, 0.05)
+
+    def test_high_variance_jitter_does_not_flag(self) -> None:
+        # +25% median but samples overlap heavily (jittery): not significant -> OK
+        prev = make_results([dict(VALIDATE, samples=[8.0, 13.0, 9.0, 12.0, 10.0, 8.5, 11.5])])
+        curr = make_results([dict(VALIDATE, value=12.5, samples=[9.0, 14.0, 10.0, 13.0, 11.0, 9.5, 12.5])])
+        verdicts, has_regression = check_regressions(prev, curr, 10.0, significance=0.05)
+        self.assertFalse(has_regression)
+        self.assertFalse(verdicts[0].regressed)
+        self.assertIsNotNone(verdicts[0].p_value)
+        self.assertFalse(verdicts[0].significant)
+
+    def test_significance_disabled_flags_threshold_only(self) -> None:
+        # significance=1.0 disables stats: jitter that crossed threshold flags
+        prev = make_results([dict(VALIDATE, samples=[9.0, 11.0, 9.5, 10.5, 10.0])])
+        curr = make_results([dict(VALIDATE, value=12.5, samples=[11.0, 13.5, 12.0, 12.8, 13.2])])
+        verdicts, has_regression = check_regressions(prev, curr, 10.0, significance=1.0)
+        self.assertTrue(has_regression)
+        self.assertTrue(verdicts[0].regressed)
+
+    def test_insufficient_samples_threshold_only_fallback(self) -> None:
+        # no samples: falls back to threshold-only (still flags)
+        prev = make_results([dict(VALIDATE, samples=[])])
+        curr = make_results([dict(VALIDATE, value=12.0, samples=[])])
+        verdicts, has_regression = check_regressions(prev, curr, 10.0, significance=0.05)
+        self.assertTrue(has_regression)
+        self.assertTrue(verdicts[0].regressed)
+        self.assertIsNone(verdicts[0].p_value)
+        self.assertIsNone(verdicts[0].significant)
 
 
 class CheckRegressionsCliTests(unittest.TestCase):

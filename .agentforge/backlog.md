@@ -73,6 +73,7 @@ Near-term work should remain small and releasable:
 
 ## Done and Removed
 
+- Variance-aware regression gate (Sprint 46, 2026-08-01): Welch's t-test significance (stdlib betai) gates every threshold breach — jittery benchmarks no longer false-flag; `--significance` flag; ADR-0038; released as 0.11.0.
 - MCP resources and prompts (Sprint 45, 2026-08-01): resources/list + read (model registry, redacted config), prompts/list + get (request-builder, config-review, error-diagnosis); ADR-0037; released as 0.10.0.
 - Key store encryption at rest (Sprint 44, 2026-08-01): PBKDF2-CTR + HMAC-SHA256 encrypt-then-MAC envelope (stdlib primitives), `auth-key --encrypt`, gateway `AGENTFORGE_AUTH_KEYS_PASSPHRASE`, plaintext stores still supported; ADR-0036; released as 0.9.0.
 - Per-benchmark thresholds (Sprint 43, 2026-08-01): `thresholds.json` (default + per-name overrides), `--thresholds` flag, resolution per-name > config default > inline > 10; ADR-0035; released as 0.8.0.
@@ -161,6 +162,7 @@ Change line 42 in config.py to reject timeout_seconds <= 0.
 
 ## Revision History
 
+- 2026-08-01: Promoted variance-aware gate into Sprint 46.
 - 2026-08-01: Promoted MCP resources/prompts into Sprint 45.
 - 2026-08-01: Promoted key store encryption into Sprint 44.
 - 2026-08-01: Promoted per-benchmark thresholds into Sprint 43.

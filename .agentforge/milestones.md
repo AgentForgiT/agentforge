@@ -354,25 +354,26 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## 0.10.0: MCP Resources and Prompts
+## 0.11.0: Variance-Aware Regression Gate
 
 Scope:
 
-- define MCP content requirements
-- decide the boundary (read-only gateway-owned resources, redacted config, static templates with substitution, ADR-0037)
-- implement resources/list + read and prompts/list + get
-- cover list/read/get shapes, redaction, argument substitution, and error cases in tests
+- define variance-aware gate requirements
+- decide the boundary (threshold AND significance both required; stdlib Welch t-test via betai; insufficient samples fall back to threshold-only; ADR-0038)
+- implement `welch_t_pvalue` + significance integration + `--significance` flag
+- cover significant/low-variance, jittery/high-variance, fallback, and disabled cases in tests
 - ship docs
 
 Exit criteria:
 
-- ADR-0037 records the content boundary for issue #201
-- resources + prompts land for issue #202/#203
-- CI Bootstrap Validate passes offline for issue #203
-- docs explain MCP content; release notes document `0.10.0` for issue #204
+- ADR-0038 records the variance-aware boundary for issue #206
+- statistical gate lands for issue #207
+- CI Bootstrap Validate passes offline for issue #208
+- docs explain significance; release notes document `0.11.0` for issue #209
 
 ## Revision History
 
+- 2026-08-01: Added 0.11.0 variance-aware gate milestone.
 - 2026-08-01: Added 0.10.0 MCP content milestone.
 - 2026-08-01: Added 0.9.0 store encryption milestone.
 - 2026-08-01: Added 0.8.0 per-benchmark thresholds milestone.

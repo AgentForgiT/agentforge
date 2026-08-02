@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Sprint 45: MCP Resources and Prompts
+## Sprint 46: Variance-Aware Regression Gate
 
-Goal: fill the MCP surface's deferred content — read-only resources (registry, redacted config) and static prompt templates (ADR-0037).
+Goal: stop the gate false-flagging jittery benchmarks — statistical significance (Welch's t-test, stdlib) gates every threshold breach (ADR-0038).
 
 Deliverables:
 
-- MCP content requirements for issue #200
-- MCP content boundary decision ADR-0037 for issue #201
-- `resources/list` + `resources/read` (registry, redacted config) for issue #202
-- `prompts/list` + `prompts/get` (request-builder, config-review, error-diagnosis) for issue #203
-- content tests + `0.10.0` release for issue #204
+- variance-aware gate requirements for issue #205
+- variance-aware boundary decision ADR-0038 for issue #206
+- `welch_t_pvalue` (stdlib lgamma + betai continued fraction) + significance integration for issue #207
+- significance/jitter/fallback tests + `--significance` flag for issue #208
+- docs + `0.11.0` release for issue #209
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, benchmark tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 46 variance-aware gate deliverables.
 - 2026-08-01: Added Sprint 45 MCP content deliverables.
 - 2026-08-01: Added Sprint 44 encryption deliverables.
 - 2026-08-01: Added Sprint 43 per-benchmark thresholds deliverables.

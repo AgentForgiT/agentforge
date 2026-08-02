@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.11.0 - 2026-08-01
+
+- Added the variance-aware regression gate (ADR-0038):
+  - `welch_t_pvalue`: two-tailed Welch's t-test, stdlib only — `math.lgamma` + regularized incomplete beta via continued fraction (Numerical Recipes betai); Satterthwaite degrees of freedom.
+  - Flag rule: a benchmark is REGRESSED only when the threshold is exceeded **and** the sample difference is significant (`p < 0.05` default; `--significance 1.0` disables). Insufficient samples (< 2) fall back to threshold-only.
+  - Verdicts report `p_value` and `significant`/`threshold-only` for auditability.
+- Added 8 variance tests (identical→p=1, separated→p≈0, noisy overlap→ns, n=2 df≈2 non-significant, low-variance flags, jittery passes, disabled, fallback). Gate suite now 24. p-values verified against known scipy behavior.
+
 ## 0.10.0 - 2026-08-01
 
 - Added MCP resources and prompts (ADR-0037), filling ADR-0026's deferred content:

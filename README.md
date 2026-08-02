@@ -34,7 +34,7 @@ The draft AgentForge AI Context Specification is available at `.agentforge/specs
 
 ## Current Priority
 
-Sprint 45 fills the MCP surface's deferred content (ADR-0037): `resources/list` + `resources/read` expose the model registry and a redacted config; `prompts/list` + `prompts/get` ship request-builder, config-review, and error-diagnosis templates. Release 0.10.0.
+Sprint 46 ships the variance-aware regression gate (ADR-0038): a regression is flagged only when the threshold is exceeded **and** the sample difference is statistically significant (Welch's t-test, stdlib-only betai) — jittery CLI timings stop false-flagging. Release 0.11.0.
 
 Gateway provider adapters live behind explicit internal modules under `agentforge_gateway.providers`, chat-completion request validation lives under `agentforge_gateway.requests`, gateway errors use a standard JSON envelope, successful chat-completion responses and streaming chunks pass through `agentforge_gateway.responses`, JSON configuration is validated by `agentforge_gateway.config`, and structured access records are emitted through `agentforge_gateway.logger`. Product backlog and epics live in `.agentforge/backlog.md`, canonical standards live in `.agentforge/standards/`, and repository hygiene is anchored by `.editorconfig` and `.gitattributes`. The public `agentforge-gateway` and `agentforge-cli` repositories remain historical pre-governance prototypes; new canonical gateway and CLI work belongs in this repository under `apps/gateway` and `apps/cli`.
 
