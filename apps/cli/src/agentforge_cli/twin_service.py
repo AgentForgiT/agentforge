@@ -3,10 +3,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 import json
+import os
 import threading
 import urllib.parse
+import urllib.request
 
 
 @dataclass(frozen=True)
@@ -20,28 +22,54 @@ class ServeTwinResult:
         return not self.errors
 
 
-def serve_twin(project_path: Path, port: int = 8737, host: str = "127.0.0.1") -> ServeTwinResult:
-    """Serve the twin profile read-only over HTTP (ADR-0029).
+@dataclass(frozen=True)
+class GeneratorConfig:
+    url: str = "http://127.0.0.1:8080/v1/chat/completions"
+    model: str = "mock-coder"
+    api_key: str | None = None
 
-    Endpoints: GET /twin.json, GET /search?q=<terms>, GET /.
+
+def resolve_generator_config(
+    url: str | None = None,
+    model: str | None = None,
+    api_key: str | None = None,
+) -> GeneratorConfig:
+    """Resolve generator config from flags then env (ADR-0032)."""
+    return GeneratorConfig(
+        url=url or os.environ.get("AGENTFORGE_GENERATOR_URL", "http://127.0.0.1:8080/v1/chat/completions"),
+        model=model or os.environ.get("AGENTFORGE_GENERATOR_MODEL", "mock-coder"),
+        api_key=api_key or os.environ.get("AGENTFORGE_GENERATOR_KEY"),
+    )
+
+
+def serve_twin(
+    project_path: Path,
+    port: int = 8737,
+    host: str = "127.0.0.1",
+    generator: GeneratorConfig | None = None,
+) -> ServeTwinResult:
+    """Serve the twin profile read-only over HTTP (ADR-0029, ADR-0032).
+
+    Endpoints: GET /twin.json, GET /search?q=<terms>, GET /ask?q=<question>, GET /.
     Stdlib only; never writes; binds 127.0.0.1 by default.
     """
     root = project_path.resolve()
     if not root.is_dir():
         return ServeTwinResult(root=root, port=port, errors=(f"project path is not a directory: {project_path}",))
 
-    handler = make_handler(root)
+    handler = make_handler(root, generator=generator)
     server = ThreadingHTTPServer((host, port), handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     return ServeTwinResult(root=root, port=port)
 
 
-def make_handler(root: Path) -> type[BaseHTTPRequestHandler]:
+def make_handler(root: Path, generator: GeneratorConfig | None = None) -> type[BaseHTTPRequestHandler]:
     twin_path = root / "context" / "twin.json"
+    gen = generator if generator is not None else resolve_generator_config()
 
     class TwinHandler(BaseHTTPRequestHandler):
-        server_version = "AgentForgeTwin/0.1"
+        server_version = "AgentForgeTwin/0.2"
 
         def log_message(self, format: str, *args: object) -> None:
             return
@@ -53,6 +81,8 @@ def make_handler(root: Path) -> type[BaseHTTPRequestHandler]:
                     self._serve_twin()
                 elif parsed.path == "/search":
                     self._serve_search(parsed.query)
+                elif parsed.path == "/ask":
+                    self._serve_ask(parsed.query)
                 elif parsed.path == "/":
                     self._serve_index()
                 else:
@@ -82,6 +112,14 @@ def make_handler(root: Path) -> type[BaseHTTPRequestHandler]:
                 return
             results = search_twin(root, q)
             self._send_json(200, {"query": q, "results": results})
+
+        def _serve_ask(self, query: str) -> None:
+            params = urllib.parse.parse_qs(query)
+            q = (params.get("q") or [""])[0].strip()
+            if not q:
+                self._send_json(400, {"error": "query parameter 'q' is required"})
+                return
+            self._send_json(200, ask_twin(root, q, gen))
 
         def _serve_index(self) -> None:
             html = _index_html(root)
@@ -180,6 +218,133 @@ def _adr_title(path: Path) -> str:
 def _score(text: str, terms: list[str]) -> int:
     lowered = text.lower()
     return sum(1 for term in terms if term in lowered)
+
+
+def ask_twin(
+    root: Path,
+    question: str,
+    generator: GeneratorConfig,
+    top_k: int = 5,
+    urlopen_fn: Callable[..., object] | None = None,
+) -> dict[str, Any]:
+    """Answer a question over the twin corpus (ADR-0032).
+
+    Retrieval is deterministic (search_twin). Generation is attempted
+    through the configured generator; on any failure (unreachable,
+    non-2xx, bad JSON) the response falls back to a faithful extractive
+    answer. The twin never fabricates: `source: "empty"` when retrieval
+    finds nothing.
+    """
+    results = search_twin(root, question)[:top_k]
+    excerpts = [
+        {"id": r["id"], "title": r["title"], "excerpt": _excerpt_for(root, r)}
+        for r in results
+    ]
+
+    if not excerpts:
+        return {
+            "query": question,
+            "source": "empty",
+            "answer": "No matching declarations found in this project's twin.",
+            "excerpts": [],
+        }
+
+    try:
+        answer = generate(
+            question,
+            excerpts,
+            generator,
+            urlopen_fn=urlopen_fn or urllib.request.urlopen,
+        )
+        return {
+            "query": question,
+            "source": "generated",
+            "answer": answer,
+            "excerpts": excerpts,
+        }
+    except Exception:
+        lines = []
+        for e in excerpts:
+            snippet = e["excerpt"][:240]
+            lines.append(f"[{e['id']}] {e['title']}: {snippet}")
+        return {
+            "query": question,
+            "source": "extractive",
+            "answer": "No model was reachable, so the twin answers from its declarations directly:\n\n"
+            + "\n\n".join(lines)
+            + "\n\n(extractive answer — no generation was used)",
+            "excerpts": excerpts,
+        }
+
+
+def _excerpt_for(root: Path, result: dict[str, Any]) -> str:
+    """Pull a text excerpt from the matched artifact (ADR-0032)."""
+    try:
+        path = root / result["path"]
+        if not path.is_file():
+            return result["title"]
+        text = path.read_text(encoding="utf-8")
+        # find the first non-empty line after the title
+        for line in text.splitlines():
+            stripped = line.strip()
+            if stripped and not stripped.startswith("#") and not stripped.startswith("---"):
+                return stripped[:240]
+        return text[:240].strip()
+    except (OSError, ValueError):
+        return result["title"]
+
+
+def generate(
+    question: str,
+    excerpts: list[dict[str, Any]],
+    generator: GeneratorConfig,
+    urlopen_fn: Callable[..., object],
+) -> str:
+    """Call an OpenAI-compatible chat-completions generator (stdlib).
+
+    Raises on any failure so ask_twin can fall back to extractive.
+    """
+    context = "\n\n".join(
+        f"[{e['id']}] {e['title']}\n{e['excerpt']}" for e in excerpts
+    )
+    payload = {
+        "model": generator.model,
+        "messages": [
+            {
+                "role": "system",
+                "content": (
+                    "You are the engineering twin of a project. Answer the question "
+                    "using ONLY the provided excerpts. If the excerpts do not contain "
+                    "the answer, say exactly: not found in the twin. Cite excerpts by "
+                    "their [id]. Do not invent facts."
+                ),
+            },
+            {
+                "role": "user",
+                "content": f"Question: {question}\n\nExcerpts:\n{context}",
+            },
+        ],
+        "stream": False,
+    }
+    headers = {"Content-Type": "application/json"}
+    if generator.api_key:
+        headers["Authorization"] = f"Bearer {generator.api_key}"
+    request = urllib.request.Request(
+        generator.url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers=headers,
+        method="POST",
+    )
+    with urlopen_fn(request, timeout=30) as response:  # type: ignore[operator]
+        body = json.loads(response.read().decode("utf-8"))
+    choices = body.get("choices") if isinstance(body, dict) else None
+    if not isinstance(choices, list) or not choices:
+        raise ValueError("generator returned no choices")
+    message = choices[0].get("message") if isinstance(choices[0], dict) else None
+    content = message.get("content") if isinstance(message, dict) else None
+    if not isinstance(content, str) or not content.strip():
+        raise ValueError("generator returned empty content")
+    return content.strip()
 
 
 def _index_html(root: Path) -> str:

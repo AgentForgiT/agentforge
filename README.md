@@ -34,7 +34,7 @@ The draft AgentForge AI Context Specification is available at `.agentforge/specs
 
 ## Current Priority
 
-Sprint 39 ships per-user auth (ADR-0031): a named key store (`server.auth_keys_file`) with per-key rate limits, live add/revoke without restart, and a CLI management command (`agentforge auth-key`). Backward-compatible with the shared key. Release 0.4.0.
+Sprint 40 ships the twin QA layer (ADR-0032): `serve-twin /ask` — deterministic retrieval + optional generation through an OpenAI-compatible generator (default: the local AgentForge gateway), with a faithful extractive fallback so the twin never fabricates. Release 0.5.0.
 
 Gateway provider adapters live behind explicit internal modules under `agentforge_gateway.providers`, chat-completion request validation lives under `agentforge_gateway.requests`, gateway errors use a standard JSON envelope, successful chat-completion responses and streaming chunks pass through `agentforge_gateway.responses`, JSON configuration is validated by `agentforge_gateway.config`, and structured access records are emitted through `agentforge_gateway.logger`. Product backlog and epics live in `.agentforge/backlog.md`, canonical standards live in `.agentforge/standards/`, and repository hygiene is anchored by `.editorconfig` and `.gitattributes`. The public `agentforge-gateway` and `agentforge-cli` repositories remain historical pre-governance prototypes; new canonical gateway and CLI work belongs in this repository under `apps/gateway` and `apps/cli`.
 

@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Sprint 39: Per-User Auth
+## Sprint 40: Twin QA Layer
 
-Goal: ship the production auth story ADR-0023 deferred — a named key store with per-key rate limits, live revocation, and CLI management (ADR-0031).
+Goal: realize "ask the project's twin" — `/ask` over the ADR-0029 retrieval contract with pluggable generation (default local gateway) and a faithful extractive fallback (ADR-0032).
 
 Deliverables:
 
-- per-user auth requirements for issue #170
-- per-user auth boundary decision ADR-0031 for issue #171
-- `keystore.py` + gateway named-key auth + per-key buckets + live reload for issue #172
-- `auth-key add|list|revoke` CLI + tests for issue #173
-- docs + example config + `0.4.0` release for issue #174
+- twin QA requirements for issue #175
+- twin QA boundary decision ADR-0032 for issue #176
+- `/ask` endpoint + `ask_twin`/`generate` + generator config for issue #177
+- QA tests (generated/extractive/empty, generator call, 400); CI green for issue #178
+- docs + `0.5.0` release for issue #179
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, benchmark tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 40 twin QA deliverables.
 - 2026-08-01: Added Sprint 39 per-user auth deliverables.
 - 2026-08-01: Added Sprint 38 benchmark pipeline deliverables.
 - 2026-08-01: Added Sprint 37 twin-service deliverables.

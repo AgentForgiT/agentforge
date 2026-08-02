@@ -73,6 +73,21 @@ def build_parser() -> argparse.ArgumentParser:
         default=8737,
         help="Port to bind (default 8737)",
     )
+    serve_twin_parser.add_argument(
+        "--generator-url",
+        default=None,
+        help="OpenAI-compatible chat-completions URL for /ask (default local gateway)",
+    )
+    serve_twin_parser.add_argument(
+        "--generator-model",
+        default=None,
+        help="Generator model (default mock-coder)",
+    )
+    serve_twin_parser.add_argument(
+        "--generator-key",
+        default=None,
+        help="Bearer key for the generator (ADR-0031)",
+    )
 
     auth_key_parser = subparsers.add_parser(
         "auth-key",
@@ -127,7 +142,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "build-twin":
         return _run_build_twin(Path(args.project_path))
     if args.command == "serve-twin":
-        return _run_serve_twin(Path(args.project_path), args.port)
+        return _run_serve_twin(Path(args.project_path), args.port, args.generator_url, args.generator_model, args.generator_key)
     if args.command == "auth-key":
         return _run_auth_key(args)
     if args.command == "explain-context":
@@ -197,16 +212,18 @@ def _run_build_twin(project_path: Path) -> int:
     return 0
 
 
-def _run_serve_twin(project_path: Path, port: int) -> int:
-    from .twin_service import serve_twin
+def _run_serve_twin(project_path: Path, port: int, generator_url: str | None = None, generator_model: str | None = None, generator_key: str | None = None) -> int:
+    from .twin_service import resolve_generator_config, serve_twin
 
-    result = serve_twin(project_path, port=port)
+    generator = resolve_generator_config(generator_url, generator_model, generator_key)
+    result = serve_twin(project_path, port=port, generator=generator)
     if not result.ok:
         for error in result.errors:
             print(error)
         return 1
 
     print(f"serving twin at http://127.0.0.1:{port} (Ctrl+C to stop)")
+    print(f"generator: {generator.model} @ {generator.url}")
     try:
         import time
 

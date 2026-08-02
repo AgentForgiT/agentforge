@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0 - 2026-08-01
+
+- Added the twin QA layer (ADR-0032):
+  - `serve-twin /ask?q=` — deterministic top-K retrieval (ADR-0029 contract) + optional generation.
+  - Generator defaults to the local AgentForge gateway (`http://127.0.0.1:8080/v1/chat/completions`, `mock-coder`); flags `--generator-url/--generator-model/--generator-key` + `AGENTFORGE_GENERATOR_*` env.
+  - Honest response: `source: generated | extractive | empty` — extractive fallback quotes the top hits when no model is reachable; the twin never fabricates.
+  - Prompt discipline: model answers only from provided excerpts, says "not found in the twin" otherwise.
+- Added 10 twin-QA tests (generated/extractive/empty, generator call, 400). Live-verified all three states via the real gateway.
+
 ## 0.4.0 - 2026-08-01
 
 - Added per-user auth (ADR-0031):

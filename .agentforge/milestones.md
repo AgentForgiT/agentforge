@@ -354,25 +354,26 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## 0.4.0: Per-User Auth
+## 0.5.0: Twin QA Layer
 
 Scope:
 
-- define per-user auth requirements
-- decide the boundary (file-based named key store, per-key buckets, live reload, backward-compatible shared key, ADR-0031)
-- implement `keystore.py` + gateway named-key auth + `auth-key` CLI
-- cover store validation, per-key limits, live reload, CLI management, and shared-key coexistence in tests
+- define twin QA requirements
+- decide the boundary (deterministic retrieval + optional generation, extractive fallback, generator defaults to local gateway, ADR-0032)
+- implement `/ask` + `ask_twin`/`generate` + generator config
+- cover generated/extractive/empty states, generator call, and 400 in tests
 - ship docs
 
 Exit criteria:
 
-- ADR-0031 records the boundary for issue #171
-- gateway named-key auth + CLI land for issue #172/#173
-- CI Bootstrap Validate passes offline for issue #173
-- docs + example config; release notes document `0.4.0` for issue #174
+- ADR-0032 records the QA boundary for issue #176
+- `/ask` lands for issue #177
+- CI Bootstrap Validate passes offline for issue #178
+- docs explain the QA layer; release notes document `0.5.0` for issue #179
 
 ## Revision History
 
+- 2026-08-01: Added 0.5.0 twin QA milestone.
 - 2026-08-01: Added 0.4.0 per-user auth milestone.
 - 2026-08-01: Added 0.3.0 benchmark pipeline milestone.
 - 2026-08-01: Added 0.2.0 twin-service milestone.
