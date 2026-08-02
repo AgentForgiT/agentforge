@@ -20,13 +20,13 @@ class CliValidateContextTests(unittest.TestCase):
         result, output = run_cli(["validate-context", str(ROOT)])
 
         self.assertEqual(result, 0)
-        self.assertEqual(output, "aics ok\n")
+        self.assertIn("aics ok (level 3: Context Validated)", output)
 
     def test_validates_explicit_example_path(self) -> None:
         result, output = run_cli(["validate-context", str(ROOT / "examples" / "aics" / "minimal-project")])
 
         self.assertEqual(result, 0)
-        self.assertEqual(output, "aics ok\n")
+        self.assertIn("aics ok", output)
 
     def test_reports_missing_required_file(self) -> None:
         with copied_example() as project:
@@ -72,7 +72,7 @@ class CliValidateContextTests(unittest.TestCase):
         self.assertEqual(result, 0)
         self.assertIn("initialized AICS context:", output)
         self.assertEqual(validation_result, 0)
-        self.assertEqual(validation_output, "aics ok\n")
+        self.assertIn("aics ok", validation_output)
 
     def test_init_context_scaffolds_existing_directory_without_conflict(self) -> None:
         with temp_project_dir() as project:
@@ -87,7 +87,7 @@ class CliValidateContextTests(unittest.TestCase):
         self.assertEqual(result, 0)
         self.assertIn("initialized AICS context:", output)
         self.assertEqual(validation_result, 0)
-        self.assertEqual(validation_output, "aics ok\n")
+        self.assertIn("aics ok", validation_output)
 
     def test_init_context_reports_conflicts_without_writing_other_files(self) -> None:
         with temp_project_dir() as project:

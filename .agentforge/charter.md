@@ -1,11 +1,11 @@
+---
+status: Draft
+phase: Genesis
+applies-to: AgentForge ecosystem
+last-updated: 2026-06-28
+aics-version: 0.2
+---
 # AgentForge Project Charter
-
-Metadata:
-
-- Status: Draft
-- Phase: Genesis
-- Applies to: AgentForge ecosystem
-- Last updated: 2026-06-28
 
 ## Purpose
 

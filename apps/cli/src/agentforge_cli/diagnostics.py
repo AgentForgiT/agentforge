@@ -89,7 +89,11 @@ def _summarize_metadata(root: Path, metadata_files: tuple[str, ...]) -> str:
     missing = []
     for relative in metadata_files:
         path = root / relative
-        if path.is_file() and "Metadata:" not in path.read_text(encoding="utf-8"):
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8")
+        # v0.2: front matter (--- block) or v0.1: plain Metadata: block
+        if "Metadata:" not in text and not text.lstrip().startswith("---"):
             missing.append(relative)
     return _summarize_missing(tuple(missing))
 

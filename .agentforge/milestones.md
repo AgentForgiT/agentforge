@@ -354,26 +354,27 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## Genesis-0.0.24: Anthropic Outbound Provider
+## Genesis-0.0.25: AICS v0.2 Structured Metadata
 
 Scope:
 
-- define the anthropic outbound provider requirements
-- decide the outbound translation boundary (provider adapter, ADR-0021)
-- implement `AnthropicProvider` (request translation, response translation, streaming translation, keyless-local contrast: credentialed via `ANTHROPIC_API_KEY`)
-- register in factory + exports + example config
-- cover contract, registration, and config parsing in tests
+- define AICS v0.2 requirements (front matter, levels, version marker)
+- decide the front matter boundary (backward-compatible with v0.1, ADR-0022)
+- implement `aics-v0.2.md` + `aics-validation-v0.2.md` + validator (front matter parsing, level reporting, warnings) + CLI level output
+- migrate AgentForge's own context to front matter; add `.agentforge/aics-version`
+- cover parsing, levels, marker, and dogfooding in tests
 - ship docs
 
 Exit criteria:
 
-- ADR-0021 records the outbound boundary for issue #111
-- adapter and registration land for issue #112
-- CI Bootstrap Validate passes offline for issue #113
-- docs explain the anthropic provider; release notes document `Genesis-0.0.24` for issue #114
+- ADR-0022 records the front matter boundary for issue #116
+- validator + CLI level reporting land for issue #117
+- AgentForge repo validates at Level 3 in CI for issue #118
+- docs explain AICS v0.2; release notes document `Genesis-0.0.25` for issue #119
 
 ## Revision History
 
+- 2026-08-01: Added Genesis-0.0.25 AICS v0.2 structured metadata milestone.
 - 2026-08-01: Added Genesis-0.0.24 anthropic outbound provider milestone.
 - 2026-08-01: Added Genesis-0.0.23 thinking/tool-use mapping milestone.
 - 2026-08-01: Added Genesis-0.0.22 Anthropic Messages inbound milestone.

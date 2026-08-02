@@ -1,10 +1,10 @@
+---
+status: Draft
+phase: Genesis
+last-updated: 2026-07-06
+aics-version: 0.2
+---
 # AgentForge Repository Map
-
-Metadata:
-
-- Status: Draft
-- Phase: Genesis
-- Last updated: 2026-07-06
 
 ## Canonical Repositories
 

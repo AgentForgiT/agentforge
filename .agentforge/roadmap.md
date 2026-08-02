@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Genesis Sprint 25: Anthropic Outbound Provider
+## Genesis Sprint 26: AICS v0.2 Structured Metadata
 
-Goal: add the `anthropic` provider adapter so OpenAI-compatible clients can reach Anthropic's API through the gateway — the outbound mirror of ADR-0019/0020, translating at the provider boundary (ADR-0021).
+Goal: ship AICS v0.2 — the moat work — with structured YAML front matter, machine-reported adoption levels, and a version marker; dogfood it on the AgentForge repo itself (ADR-0022).
 
 Deliverables:
 
-- anthropic outbound provider requirements for issue #110
-- outbound provider boundary decision ADR-0021 for issue #111
-- `AnthropicProvider` adapter: OpenAI body → Messages payload (system fold, tools, tool_calls, max_tokens default), Anthropic response → `chat.completion`, Anthropic SSE → OpenAI chunks with `[DONE]` for issue #112
-- provider contract + registration + config tests; CI validation for issue #113
-- anthropic provider docs and `Genesis-0.0.24` release for issue #114
+- AICS v0.2 requirements for issue #115
+- front matter boundary decision ADR-0022 for issue #116
+- `aics-v0.2.md` spec + `aics-validation-v0.2.md` rules + validator front matter parsing, level reporting, warnings, version marker + CLI level output for issue #117
+- AgentForge context migration to front matter (dogfooding) + tests; CI validation for issue #118
+- AICS v0.2 docs and `Genesis-0.0.25` release for issue #119
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 26 AICS v0.2 structured metadata deliverables.
 - 2026-08-01: Added Sprint 25 anthropic outbound provider deliverables.
 - 2026-08-01: Added Sprint 24 thinking/tool-use mapping deliverables.
 - 2026-08-01: Added Sprint 23 Anthropic Messages inbound deliverables.

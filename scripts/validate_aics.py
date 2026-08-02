@@ -14,7 +14,10 @@ def main() -> int:
             print(error)
         return 1
 
-    print("aics ok")
+    level_names = {1: "Context Present", 2: "Context Governed", 3: "Context Validated"}
+    print(f"aics ok (level {result.level}: {level_names.get(result.level, '?')})")
+    for warning in result.warnings:
+        print(f"warning: {warning}")
     return 0
 
 

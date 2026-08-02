@@ -44,7 +44,7 @@ class CliInstallSmokeTests(unittest.TestCase):
                 check=False,
             )
             self.assertEqual(repo_result.returncode, 0, repo_result.stderr)
-            self.assertEqual(repo_result.stdout, "aics ok\n")
+            self.assertEqual(repo_result.stdout, "aics ok (level 3: Context Validated)\n")
 
             example_result = subprocess.run(
                 [str(command), "validate-context", str(ROOT / "examples" / "aics" / "minimal-project")],
@@ -77,7 +77,7 @@ class CliInstallSmokeTests(unittest.TestCase):
                 check=False,
             )
             self.assertEqual(scaffold_validate.returncode, 0, scaffold_validate.stderr)
-            self.assertEqual(scaffold_validate.stdout, "aics ok\n")
+            self.assertIn("aics ok", scaffold_validate.stdout)
 
             explain_result = subprocess.run(
                 [str(command), "explain-context", str(scaffold_project)],
@@ -105,7 +105,7 @@ class CliInstallSmokeTests(unittest.TestCase):
             shutil.rmtree(scaffold_temp)
 
         self.assertEqual(example_result.returncode, 0, example_result.stderr)
-        self.assertEqual(example_result.stdout, "aics ok\n")
+        self.assertIn("aics ok", example_result.stdout)
 
 
 class temp_virtualenv:

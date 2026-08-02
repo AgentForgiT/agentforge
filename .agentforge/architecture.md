@@ -1,10 +1,10 @@
+---
+status: Draft
+phase: Genesis
+last-updated: 2026-06-28
+aics-version: 0.2
+---
 # AgentForge Architecture
-
-Metadata:
-
-- Status: Draft
-- Phase: Genesis
-- Last updated: 2026-06-28
 
 ## Purpose
 

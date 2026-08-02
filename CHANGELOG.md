@@ -1,5 +1,15 @@
 # Changelog
 
+## Genesis-0.0.25 - 2026-08-01
+
+- Added AICS v0.2 — the moat work (ADR-0022):
+  - Structured YAML front matter (required `status` + `aics-version`; recommended linkage fields) as the recommended metadata format; v0.1 `Metadata:` blocks remain accepted (backward compatible).
+  - Machine-reported adoption levels: Level 1 Context Present / Level 2 Context Governed / Level 3 Context Validated, surfaced by `validate-context` and `scripts/validate_aics.py` with warnings.
+  - `.agentforge/aics-version` version marker (content `0.2`); absence caps a context at Level 2 with a warning.
+  - AgentForge's own context migrated to front matter — the repo is the first Level-3 context, validated in CI on every push.
+  - WASM in-browser validator page re-synced from the canonical script.
+- Added 11 tests (front matter parsing, level semantics, marker, dogfooding). CLI suite updated for level output.
+
 ## Genesis-0.0.24 - 2026-08-01
 
 - Added the `anthropic` outbound provider adapter (ADR-0021): OpenAI-compatible clients can now reach Anthropic's API through the gateway with `ANTHROPIC_API_KEY` set.

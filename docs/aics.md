@@ -11,9 +11,11 @@ Metadata:
 
 The AgentForge AI Context Specification, or AICS, defines a portable project context structure for AI-native engineering.
 
-The canonical draft lives at `.agentforge/specs/aics-v0.1.md`.
+The canonical drafts live at `.agentforge/specs/aics-v0.2.md` (current) and `.agentforge/specs/aics-v0.1.md` (baseline).
 
 ## Summary
+
+AICS v0.2 extends v0.1 with structured YAML front matter (machine-parseable metadata, ADR-0022), machine-reported adoption levels (1 Present / 2 Governed / 3 Validated), and a `.agentforge/aics-version` marker. v0.1 contexts remain valid and report up to Level 2.
 
 AICS v0.1 standardizes:
 
@@ -23,7 +25,7 @@ AICS v0.1 standardizes:
 - optional tool-specific adapter files
 - validation goals for machine-checkable context
 
-Validation rules are documented in `.agentforge/specs/aics-validation-v0.1.md`.
+Validation rules are documented in `.agentforge/specs/aics-validation-v0.2.md` (current) and `.agentforge/specs/aics-validation-v0.1.md` (baseline). `validate-context` reports the achieved adoption level and warnings.
 
 Run script validation:
 

@@ -1,11 +1,11 @@
+---
+status: Draft
+phase: Genesis
+applies-to: all AI assistants working on AgentForge
+last-updated: 2026-06-28
+aics-version: 0.2
+---
 # AgentForge AI Engineering Partner Operating Manual
-
-Metadata:
-
-- Status: Draft
-- Phase: Genesis
-- Applies to: all AI assistants working on AgentForge
-- Last updated: 2026-06-28
 
 ## Role
 
