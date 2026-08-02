@@ -24,6 +24,7 @@ from .errors import (
 )
 from .logger import configure_logging, get_logger
 from .mcp import McpServer
+from .keystore import load_key_store
 from .models import ModelRegistry
 from .providers import ChatProvider, build_provider
 from .ratelimit import TokenBucketRateLimiter
@@ -44,6 +45,7 @@ class GatewayApp:
         self.rate_limiter = (
             TokenBucketRateLimiter(config.rate_limit_rpm) if config.rate_limit_rpm else None
         )
+        self.named_keys = self._resolve_named_keys()
         self.mcp = McpServer(self)
 
     def _resolve_api_key(self) -> str | None:
@@ -53,6 +55,53 @@ class GatewayApp:
         if not key:
             raise RuntimeError(f"server.api_key_env names ${self.config.api_key_env} but it is not set")
         return key
+
+    def _resolve_named_keys(self) -> dict[str, object] | None:
+        """Startup validation of the named key store (fail-fast)."""
+        if not self.config.auth_keys_file:
+            return None
+        from pathlib import Path
+
+        self._named_limiters: dict[str, TokenBucketRateLimiter] = {}
+        # strict load at startup: malformed store fails fast
+        load_key_store(Path(self.config.auth_keys_file).resolve())
+        return self._named_keys_live() or None
+
+    def _named_keys_live(self) -> dict[str, object]:
+        """Reload the key store per request (ADR-0031).
+
+        Auth-key add/revoke take effect immediately, no restart. The
+        store is a small local file; per-request reads are cheap.
+        Per-key token buckets persist across requests (keyed by name)
+        so rate limits accumulate; revoked names drop their bucket.
+        Startup validation (self.named_keys) still fail-fasts on a
+        malformed file; live reads tolerate a transiently missing file
+        by returning an empty store (all requests 401 until restored).
+        """
+        if not self.config.auth_keys_file:
+            return {}
+        from pathlib import Path
+
+        try:
+            keys = load_key_store(Path(self.config.auth_keys_file).resolve())
+        except ValueError:
+            return {}
+
+        live_names = {named.name for named in keys}
+        # drop buckets for revoked names
+        for name in list(getattr(self, "_named_limiters", {})):
+            if name not in live_names:
+                del self._named_limiters[name]
+
+        store: dict[str, object] = {}
+        for named in keys:
+            limiter = None
+            if named.rate_limit_rpm:
+                if named.name not in self._named_limiters:
+                    self._named_limiters[named.name] = TokenBucketRateLimiter(named.rate_limit_rpm)
+                limiter = self._named_limiters[named.name]
+            store[named.name] = {"key": named.key, "limiter": limiter}
+        return store
 
     def health(self) -> dict[str, object]:
         return {
@@ -123,13 +172,23 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
                 return {}
             return {"Access-Control-Allow-Origin": origin}
 
-        def _authenticated(self) -> bool:
-            if app.api_key is None:
-                return True
+        def _bearer_key(self) -> str | None:
             header = self.headers.get("Authorization", "")
             if header.startswith("Bearer "):
-                return header[7:].strip() == app.api_key
-            return self.headers.get("x-api-key", "") == app.api_key
+                return header[7:].strip()
+            return None
+
+        def _authenticated(self) -> bool:
+            if app.api_key is None and app.named_keys is None:
+                return True
+            key = self._bearer_key() or self.headers.get("x-api-key", "")
+            if not key:
+                return False
+            if app.api_key is not None and key == app.api_key:
+                return True
+            if app.named_keys is not None:
+                return any(entry["key"] == key for entry in app._named_keys_live().values())
+            return False
 
         def _rate_limit_key(self) -> str:
             if app.api_key is not None:
@@ -140,6 +199,13 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
             return "ip:" + (self.client_address[0] if self.client_address else "unknown")
 
         def _rate_limited(self) -> bool:
+            # per-key limiter when a named key matched (ADR-0031)
+            if app.named_keys is not None:
+                key = self._bearer_key() or self.headers.get("x-api-key", "")
+                for name, entry in app._named_keys_live().items():
+                    limiter = entry.get("limiter")
+                    if entry["key"] == key and limiter is not None:
+                        return not limiter.allow(name)
             if app.rate_limiter is None:
                 return False
             return not app.rate_limiter.allow(self._rate_limit_key())

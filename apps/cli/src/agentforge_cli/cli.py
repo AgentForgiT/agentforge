@@ -74,6 +74,21 @@ def build_parser() -> argparse.ArgumentParser:
         help="Port to bind (default 8737)",
     )
 
+    auth_key_parser = subparsers.add_parser(
+        "auth-key",
+        help="Manage named gateway API keys (ADR-0031)",
+    )
+    auth_key_sub = auth_key_parser.add_subparsers(dest="auth_action", required=True)
+    add_parser = auth_key_sub.add_parser("add", help="Add a named key (prints the key once)")
+    add_parser.add_argument("--name", required=True, help="Key name (user/workload)")
+    add_parser.add_argument("--rate-limit", type=int, default=None, help="Per-key requests/minute")
+    add_parser.add_argument("--file", default=None, help="Key store path (default .agentforge/auth-keys.json)")
+    list_parser = auth_key_sub.add_parser("list", help="List key names + rate limits (never keys)")
+    list_parser.add_argument("--file", default=None, help="Key store path")
+    revoke_parser = auth_key_sub.add_parser("revoke", help="Revoke a named key")
+    revoke_parser.add_argument("--name", required=True, help="Key name to revoke")
+    revoke_parser.add_argument("--file", default=None, help="Key store path")
+
     explain_context_parser = subparsers.add_parser(
         "explain-context",
         help="Explain an AICS project context",
@@ -113,6 +128,8 @@ def main(argv: list[str] | None = None) -> int:
         return _run_build_twin(Path(args.project_path))
     if args.command == "serve-twin":
         return _run_serve_twin(Path(args.project_path), args.port)
+    if args.command == "auth-key":
+        return _run_auth_key(args)
     if args.command == "explain-context":
         return _run_explain_context(Path(args.project_path))
     if args.command == "doctor":
@@ -197,6 +214,41 @@ def _run_serve_twin(project_path: Path, port: int) -> int:
             time.sleep(3600)
     except KeyboardInterrupt:
         return 0
+
+
+def _default_key_store() -> Path:
+    return Path(".agentforge") / "auth-keys.json"
+
+
+def _run_auth_key(args: Any) -> int:
+    from .authkeys import add_key, list_keys, revoke_key
+
+    store = Path(args.file) if args.file else _default_key_store()
+    if args.auth_action == "add":
+        result = add_key(store, args.name, rate_limit_rpm=args.rate_limit)
+        if not result.ok:
+            for error in result.errors:
+                print(error)
+            return 1
+        print(f"added key '{args.name}' — copy the key now, it will not be shown again:")
+        print(result.new_key)
+        return 0
+    if args.auth_action == "list":
+        result = list_keys(store)
+        if not result.ok:
+            for error in result.errors:
+                print(error)
+            return 1
+        return 0
+    if args.auth_action == "revoke":
+        result = revoke_key(store, args.name)
+        if not result.ok:
+            for error in result.errors:
+                print(error)
+            return 1
+        print(f"revoked key '{args.name}'")
+        return 0
+    return 2
 
 
 def _run_explain_context(project_path: Path) -> int:

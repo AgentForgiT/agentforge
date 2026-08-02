@@ -73,6 +73,7 @@ Near-term work should remain small and releasable:
 
 ## Done and Removed
 
+- Per-user auth (Sprint 39, 2026-08-01): named key store (server.auth_keys_file), per-key rate limits, live add/revoke without restart, `agentforge auth-key` CLI; ADR-0031; released as 0.4.0.
 - Benchmark pipeline (Sprint 38, 2026-08-01): offline harness (gateway/CLI/AICS), schema-validated results.json, CI publishing to releases, observatory consumption; ADR-0030; released as 0.3.0.
 - Twin service (Sprint 37, 2026-08-01): `agentforge serve-twin` — read-only stdlib HTTP consumer of the twin profile (twin.json, governance search, index); ADR-0029; released as 0.2.0, the first feature release under semver.
 - Community and contribution paths (Genesis Sprint 36, 2026-08-01): expanded CONTRIBUTING (sprint pattern, validation, paths), `docs/community.md`, site contributing refresh; DEC-0007.
@@ -154,6 +155,7 @@ Change line 42 in config.py to reject timeout_seconds <= 0.
 
 ## Revision History
 
+- 2026-08-01: Promoted per-user auth into Sprint 39.
 - 2026-08-01: Promoted benchmark pipeline into Sprint 38.
 - 2026-08-01: Promoted twin service into Sprint 37.
 - 2026-08-01: Promoted community and contribution paths into Genesis Sprint 36.

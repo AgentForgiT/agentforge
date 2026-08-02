@@ -22,6 +22,7 @@ This module was migrated from the pre-governance `agentforge-gateway` prototype 
 - OpenAI-compatible SSE streaming for chat completions
 - Anthropic SSE streaming events for messages
 - opt-in API-key auth (`server.api_key_env`, ADR-0023)
+- per-user named keys with per-key rate limits (`server.auth_keys_file`, ADR-0031)
 - opt-in token-bucket rate limiting (`server.rate_limit_rpm`, ADR-0023)
 - reasoning-model support with null-content acceptance and field passthrough
 - opt-in CORS support for browser clients (`server.cors_origin`, ADR-0018)

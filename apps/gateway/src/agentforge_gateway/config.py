@@ -34,6 +34,7 @@ class GatewayConfig:
     log_level: str = "INFO"
     cors_origin: str | None = None
     api_key_env: str | None = None
+    auth_keys_file: str | None = None
     rate_limit_rpm: int | None = None
 
 
@@ -98,6 +99,7 @@ def parse_config(raw: object) -> GatewayConfig:
         log_level=_log_level(server.get("log_level", "INFO"), "server.log_level"),
         cors_origin=_cors_origin(server.get("cors_origin")),
         api_key_env=_optional_env_name(server.get("api_key_env"), "server.api_key_env"),
+        auth_keys_file=_optional_str(server.get("auth_keys_file"), "server.auth_keys_file"),
         rate_limit_rpm=_positive_int(server.get("rate_limit_rpm"), "server.rate_limit_rpm"),
         models=parsed_models,
         providers=parsed_providers,

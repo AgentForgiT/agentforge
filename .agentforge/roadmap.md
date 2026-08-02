@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Sprint 38: Benchmark Pipeline
+## Sprint 39: Per-User Auth
 
-Goal: give the observatory real data — a reproducible offline harness measuring gateway/CLI/AICS, schema-validated results published with releases, consumed by the website (ADR-0030).
+Goal: ship the production auth story ADR-0023 deferred — a named key store with per-key rate limits, live revocation, and CLI management (ADR-0031).
 
 Deliverables:
 
-- benchmark pipeline requirements for issue #165
-- benchmark boundary decision ADR-0030 for issue #166
-- `benchmarks/` harness (gateway latency/throughput, CLI timing, AICS timing) + `results.schema.json` + `run_benchmarks.py` for issue #167
-- harness tests + CI job attaching results.json to releases for issue #168
-- pipeline docs + observatory consumption + `0.3.0` release for issue #169
+- per-user auth requirements for issue #170
+- per-user auth boundary decision ADR-0031 for issue #171
+- `keystore.py` + gateway named-key auth + per-key buckets + live reload for issue #172
+- `auth-key add|list|revoke` CLI + tests for issue #173
+- docs + example config + `0.4.0` release for issue #174
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, benchmark tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 39 per-user auth deliverables.
 - 2026-08-01: Added Sprint 38 benchmark pipeline deliverables.
 - 2026-08-01: Added Sprint 37 twin-service deliverables.
 - 2026-08-01: Added Sprint 36 community deliverables.

@@ -275,6 +275,37 @@ When set, `/v1/chat/completions` and `/v1/messages` require `Authorization: Bear
 
 The bucket is keyed by API key when auth is on, else by client IP. Exceeding → 429 with a `Retry-After: 60` header. `GET /health` is exempt. Restart resets buckets.
 
+**Per-user named keys** — `server.auth_keys_file` points to a named key store (ADR-0031):
+
+```json
+{
+  "server": {
+    "auth_keys_file": ".agentforge/auth-keys.json"
+  }
+}
+```
+
+```json
+{
+  "keys": [
+    {"name": "alice", "key": "af-k-...", "rate_limit_rpm": 60},
+    {"name": "ci-bot", "key": "af-k-...", "rate_limit_rpm": 300}
+  ]
+}
+```
+
+Each named key has its own token bucket at its own `rate_limit_rpm`; the shared `api_key_env` key still works alongside. The store is reloaded per request, so `agentforge auth-key add|revoke` takes effect **without a restart**. Malformed store → startup configuration error.
+
+Manage keys with the CLI (the key is printed exactly once, at add time, and never again):
+
+```bash
+agentforge auth-key add --name alice --rate-limit 60
+agentforge auth-key list
+agentforge auth-key revoke --name alice
+```
+
+Example config: `apps/gateway/config.named-auth.example.json`. Store file permissions should be `0600` on POSIX; keys are never logged (ADR-0015).
+
 Both error responses carry `Access-Control-Allow-Origin` when CORS is enabled (ADR-0018).
 
 ## MCP Surface
@@ -352,6 +383,7 @@ The shipped `config.example.json` sets `cors_origin` to the public docs-site ori
 
 ## Revision History
 
+- 2026-08-01: Documented per-user named keys from ADR-0031.
 - 2026-08-01: Documented MCP surface from ADR-0026.
 - 2026-08-01: Documented auth and rate limiting from ADR-0023.
 - 2026-08-01: Documented anthropic outbound provider from ADR-0021.

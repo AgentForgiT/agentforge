@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 - 2026-08-01
+
+- Added per-user auth (ADR-0031):
+  - `server.auth_keys_file`: named key store with per-key `rate_limit_rpm`; each key gets its own token bucket.
+  - Live reload: `agentforge auth-key add|revoke` takes effect without a gateway restart.
+  - Backward-compatible: the shared `api_key_env` key works alongside named keys.
+  - `agentforge auth-key add|list|revoke` CLI — keys generated with `secrets`, printed exactly once, never re-shown or logged.
+  - Malformed store → startup configuration error (fail fast); live reads tolerate transient absence.
+- Added 17 named-key tests (store validation, auth, per-key limits, live reload, persistent buckets, CLI management). Gateway suite now 232.
+
 ## 0.3.0 - 2026-08-01
 
 - Added the benchmark pipeline (ADR-0030):

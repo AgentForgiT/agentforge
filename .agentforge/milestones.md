@@ -354,25 +354,26 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## 0.3.0: Benchmark Pipeline
+## 0.4.0: Per-User Auth
 
 Scope:
 
-- define benchmark pipeline requirements
-- decide the boundary (offline-first, reproducible, schema-validated, live evals deferred, ADR-0030)
-- implement `benchmarks/` harness + results schema + runner
-- cover harness suites, schema validation, and CI publishing in tests
-- ship docs + observatory consumption
+- define per-user auth requirements
+- decide the boundary (file-based named key store, per-key buckets, live reload, backward-compatible shared key, ADR-0031)
+- implement `keystore.py` + gateway named-key auth + `auth-key` CLI
+- cover store validation, per-key limits, live reload, CLI management, and shared-key coexistence in tests
+- ship docs
 
 Exit criteria:
 
-- ADR-0030 records the boundary for issue #166
-- harness + schema + runner land for issue #167
-- CI publishes results.json to releases for issue #168
-- docs + observatory consume published results; release notes document `0.3.0` for issue #169
+- ADR-0031 records the boundary for issue #171
+- gateway named-key auth + CLI land for issue #172/#173
+- CI Bootstrap Validate passes offline for issue #173
+- docs + example config; release notes document `0.4.0` for issue #174
 
 ## Revision History
 
+- 2026-08-01: Added 0.4.0 per-user auth milestone.
 - 2026-08-01: Added 0.3.0 benchmark pipeline milestone.
 - 2026-08-01: Added 0.2.0 twin-service milestone.
 - 2026-08-01: Added Genesis-0.0.33 community milestone.
