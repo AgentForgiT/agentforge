@@ -39,6 +39,7 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 | ADR-0021 | 2026-08-01 | Accepted | Add the Anthropic outbound provider adapter | `.agentforge/adrs/0021-anthropic-outbound-provider-boundary.md` |
 | ADR-0022 | 2026-08-01 | Accepted | Adopt YAML front matter for AICS v0.2 | `.agentforge/adrs/0022-aics-v0.2-front-matter.md` |
 | ADR-0023 | 2026-08-01 | Accepted | Add opt-in API-key auth and rate limiting | `.agentforge/adrs/0023-api-key-auth-rate-limit.md` |
+| ADR-0024 | 2026-08-01 | Accepted | Adopt v0.2-first scaffolds, additive migration, and a front matter schema | `.agentforge/adrs/0024-aics-tooling-boundary.md` |
 | DEC-0001 | 2026-06-28 | Accepted | Treat early gateway and CLI repos as pre-governance prototypes | `.agentforge/decisions/0001-pre-governance-prototypes.md` |
 | DEC-0002 | 2026-06-28 | Accepted | Keep prototype repositories public with canonical monorepo notices | `.agentforge/decisions/0002-prototype-repository-disposition.md` |
 | DEC-0003 | 2026-06-28 | Accepted | Build AICS validation CLI in the canonical monorepo | `.agentforge/decisions/0003-cli-path-for-aics-validation.md` |
@@ -47,6 +48,7 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 
 ## Revision History
 
+- 2026-08-01: Added ADR-0024.
 - 2026-08-01: Added ADR-0023.
 - 2026-08-01: Added ADR-0022.
 - 2026-08-01: Added ADR-0021.

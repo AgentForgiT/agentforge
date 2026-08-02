@@ -24,7 +24,10 @@ SCAFFOLD_FILES = (
     ".agentforge/adrs/ADR_TEMPLATE.md",
     ".agentforge/rfcs/RFC_TEMPLATE.md",
     ".agentforge/standards/.gitkeep",
+    ".agentforge/aics-version",
 )
+
+TEMPLATE_VERSION = "context-v0.2"
 
 
 @dataclass(frozen=True)
@@ -91,7 +94,7 @@ def _collect_conflicts(root: Path) -> list[str]:
 
 
 def _read_template(relative_path: str) -> str:
-    template_root = files("agentforge_cli").joinpath("templates", "context-v0.1")
+    template_root = files("agentforge_cli").joinpath("templates", TEMPLATE_VERSION)
     template_path = template_root
     for part in PurePosixPath(relative_path).parts:
         template_path = template_path.joinpath(part)

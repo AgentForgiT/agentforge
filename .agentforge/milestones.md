@@ -354,25 +354,26 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## Genesis-0.0.26: Gateway Auth and Rate Limiting
+## Genesis-0.0.27: AICS v0.3 Tooling
 
 Scope:
 
-- define auth/rate-limit requirements
-- decide the opt-in boundary (static key, token bucket, keyless default, ADR-0023)
-- implement `ratelimit.py` + `_guard` enforcement + config fields
-- cover config validation, 401 paths, 429 paths, CORS-on-error, and default-unchanged in tests
+- define AICS v0.3 tooling requirements
+- decide the tooling boundary (v0.2-first scaffolds, additive migration, declarative schema, ADR-0024)
+- implement `context-v0.2` templates + `migrate-context` + `aics-front-matter.schema.json`
+- cover scaffold-at-Level-3, migration, and idempotency in tests
 - ship docs
 
 Exit criteria:
 
-- ADR-0023 records the boundary for issue #121
-- auth/rate-limit enforcement lands for issue #122
-- CI Bootstrap Validate passes offline for issue #123
-- docs explain auth/rate limiting; release notes document `Genesis-0.0.26` for issue #124
+- ADR-0024 records the tooling boundary for issue #126
+- templates + migrate-context + schema land for issue #127
+- CI Bootstrap Validate passes offline for issue #128
+- docs explain the tooling; release notes document `Genesis-0.0.27` for issue #129
 
 ## Revision History
 
+- 2026-08-01: Added Genesis-0.0.27 AICS v0.3 tooling milestone.
 - 2026-08-01: Added Genesis-0.0.26 gateway auth/rate-limit milestone.
 - 2026-08-01: Added Genesis-0.0.25 AICS v0.2 structured metadata milestone.
 - 2026-08-01: Added Genesis-0.0.24 anthropic outbound provider milestone.

@@ -1,5 +1,13 @@
 # Changelog
 
+## Genesis-0.0.27 - 2026-08-01
+
+- Added AICS v0.3 tooling (ADR-0024):
+  - `init-context` scaffolds v0.2 front matter (`context-v0.2` templates with `aics-version: 0.2` + version marker) — new projects validate at Level 3 immediately.
+  - New `migrate-context` command: additive v0.1 → v0.2 conversion (plain `Metadata:` blocks → YAML front matter, version marker written, body content untouched, idempotent).
+  - `.agentforge/specs/aics-front-matter.schema.json` documents the canonical front matter shape (required `status` + `aics-version`).
+- Added 11 tests (scaffold-at-Level-3, conversion, migration, idempotency, CLI).
+
 ## Genesis-0.0.26 - 2026-08-01
 
 - Added opt-in API-key auth and rate limiting (ADR-0023):

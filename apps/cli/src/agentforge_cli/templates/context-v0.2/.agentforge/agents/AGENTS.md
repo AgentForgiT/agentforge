@@ -1,0 +1,30 @@
+---
+status: active
+applies-to: {{PROJECT_NAME}} AI assistants
+last-updated: {{DATE}}
+aics-version: 0.2
+---
+# {{PROJECT_NAME}} AI Operating Manual
+
+## Source of Truth
+
+AI assistants must read the constitution, charter, decisions, ADR records, and RFC proposals before significant work.
+
+## Governance
+
+The authority hierarchy is:
+
+1. Constitution
+2. Charter
+3. ADRs
+4. RFCs
+5. Standards
+6. Code
+
+## Behavior
+
+Preserve project context, document decisions, and avoid silently contradicting governance.
+
+## Revision History
+
+- {{DATE}}: Initial draft.

@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Genesis Sprint 27: Gateway Auth and Rate Limiting
+## Genesis Sprint 28: AICS v0.3 Tooling
 
-Goal: add opt-in API-key auth (`server.api_key_env`) and token-bucket rate limiting (`server.rate_limit_rpm`) while preserving the keyless default byte-for-byte (ADR-0023).
+Goal: close the adoption tooling loop — v0.2-first scaffolds, additive v0.1→v0.2 migration, and a canonical front matter schema (ADR-0024).
 
 Deliverables:
 
-- auth/rate-limit requirements for issue #120
-- auth and rate-limit boundary decision ADR-0023 for issue #121
-- `ratelimit.py` token bucket + `_guard` enforcement (401/429, CORS headers, health/preflight exempt) + config fields for issue #122
-- config validation, auth paths, rate-limit, and CORS-on-error tests; CI validation for issue #123
-- auth/rate-limit docs and `Genesis-0.0.26` release for issue #124
+- AICS v0.3 tooling requirements for issue #125
+- tooling boundary decision ADR-0024 for issue #126
+- `context-v0.2` templates (front matter + version marker) + `migrate-context` command + `aics-front-matter.schema.json` for issue #127
+- scaffold-at-Level-3, migration, and schema tests; CI validation for issue #128
+- AICS v0.3 docs and `Genesis-0.0.27` release for issue #129
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 28 AICS v0.3 tooling deliverables.
 - 2026-08-01: Added Sprint 27 gateway auth/rate-limit deliverables.
 - 2026-08-01: Added Sprint 26 AICS v0.2 structured metadata deliverables.
 - 2026-08-01: Added Sprint 25 anthropic outbound provider deliverables.

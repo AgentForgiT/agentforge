@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentforgit.github.io/agentforge-docs-site/schemas/aics-front-matter.schema.json",
+  "title": "AICS Front Matter",
+  "description": "Canonical shape of an AICS v0.2 YAML front matter block. This schema is the machine-checkable contract; the validator parses the same fields with string checks (no YAML dependency).",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "description": "Document lifecycle status.",
+      "enum": ["draft", "active", "accepted", "superseded", "deprecated"]
+    },
+    "aics-version": {
+      "type": "string",
+      "description": "AICS spec version the document targets.",
+      "const": "0.2"
+    },
+    "version": {
+      "type": "string",
+      "description": "Document version when applicable."
+    },
+    "phase": {
+      "type": "string",
+      "description": "Project phase or milestone."
+    },
+    "applies-to": {
+      "type": "string",
+      "description": "Scope of applicability."
+    },
+    "related-issues": {
+      "type": "string",
+      "description": "Issue references."
+    },
+    "related-adrs": {
+      "type": "string",
+      "description": "ADR references."
+    },
+    "related-rfcs": {
+      "type": "string",
+      "description": "RFC references."
+    },
+    "related-decisions": {
+      "type": "string",
+      "description": "Decision references."
+    },
+    "last-updated": {
+      "type": "string",
+      "description": "ISO date string."
+    }
+  },
+  "required": ["status", "aics-version"],
+  "additionalProperties": true
+}
