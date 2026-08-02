@@ -79,6 +79,7 @@ ADR-0008 defines the internal provider package boundary:
 - deterministic mock behavior lives in its own adapter module
 - OpenRouter payload mapping and upstream error handling live in their own adapter module
 - Ollama/local payload mapping and upstream error handling live in their own adapter module
+- Anthropic outbound payload mapping and upstream error handling live in their own adapter module (ADR-0021)
 - gateway routing depends on the provider protocol and factory, not concrete adapters
 
 `packages/providers` remains a long-term extraction target from ADR-0002, but extraction is deferred until provider maturity, ownership, or release cadence justifies it.
@@ -92,6 +93,25 @@ The `ollama` provider talks to Ollama's OpenAI-compatible `/v1` surface (default
 Non-streaming and streaming completions behave like the OpenRouter adapter: `provider_model` is substituted as the upstream `model`, responses/chunks get the public gateway alias, and HTTP/transport errors translate to the standard `UpstreamProviderError` envelope. A stopped local daemon surfaces as e.g. `provider 'ollama' request failed: ... Connection refused`.
 
 The adapter intentionally does NOT use Ollama's native `/api/chat` protocol; the gateway owns one OpenAI-compatible normalization path (ADR-0012, ADR-0014), and the native protocol would require a second one. Example config: `apps/gateway/config.ollama.example.json`.
+
+## Anthropic Outbound Provider
+
+ADR-0021 defines the outbound Anthropic provider boundary — the mirror of the inbound Anthropic surface (ADR-0019/0020): OpenAI-compatible clients reach Anthropic's API through the gateway.
+
+The `anthropic` provider translates at the provider boundary:
+
+- **Request**: OpenAI body → Anthropic Messages payload. `system` messages fold into the `system` parameter; OpenAI function `tools` → Anthropic `tools` (`input_schema` from `parameters`); assistant `tool_calls` → `tool_use` blocks; `tool` role messages → `tool_result` blocks; `max_tokens` defaults to 4096 (Anthropic requires it).
+- **Auth**: `x-api-key` + `anthropic-version: 2023-06-01`; key from `api_key_env` (default `ANTHROPIC_API_KEY`), like the OpenRouter pattern — the credentialed counterpoint to the keyless local trust of ADR-0017.
+- **Response**: Anthropic message → OpenAI `chat.completion`. Text blocks concatenate into `content`; `tool_use` blocks → `tool_calls` (arguments = JSON of `input`); `stop_reason` → `finish_reason` (`end_turn`→`stop`, `max_tokens`→`length`, `tool_use`→`tool_calls`); usage maps input/output tokens.
+- **Streaming**: Anthropic SSE events → OpenAI `chat.completion.chunk` stream with `data: [DONE]` terminator; `text_delta` → `delta.content`, `input_json_delta` → `delta.tool_calls`.
+
+Example config: `apps/gateway/config.anthropic.example.json`:
+
+```bash
+ANTHROPIC_API_KEY=... PYTHONPATH=apps/gateway/src python -m agentforge_gateway.cli --config apps/gateway/config.anthropic.example.json
+```
+
+Provider keys must stay in environment variables and must not be committed.
 
 ## Provider Contract Tests
 
@@ -279,6 +299,7 @@ The shipped `config.example.json` sets `cors_origin` to the public docs-site ori
 
 ## Revision History
 
+- 2026-08-01: Documented anthropic outbound provider from ADR-0021.
 - 2026-08-01: Documented thinking/tool-use mapping from ADR-0020.
 - 2026-08-01: Documented Anthropic Messages inbound surface from ADR-0019.
 - 2026-08-01: Documented CORS boundary from ADR-0018.

@@ -354,26 +354,27 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## Genesis-0.0.23: Anthropic Thinking + Tool-Use Mapping
+## Genesis-0.0.24: Anthropic Outbound Provider
 
 Scope:
 
-- define thinking/tool-use mapping requirements
-- decide the tool-use mapping boundary (edge translation, ADR-0020)
-- map `tools`, `tool_use`, `tool_result`, response `tool_calls` → `tool_use` blocks, streaming `input_json_delta`
-- accept (and log) Anthropic `thinking` without mapping
-- cover request, response, and streaming mapping in tests
+- define the anthropic outbound provider requirements
+- decide the outbound translation boundary (provider adapter, ADR-0021)
+- implement `AnthropicProvider` (request translation, response translation, streaming translation, keyless-local contrast: credentialed via `ANTHROPIC_API_KEY`)
+- register in factory + exports + example config
+- cover contract, registration, and config parsing in tests
 - ship docs
 
 Exit criteria:
 
-- ADR-0020 records the mapping boundary for issue #106
-- mapping lands for issue #107
-- CI Bootstrap Validate passes offline for issue #108
-- docs explain the mapping; release notes document `Genesis-0.0.23` for issue #109
+- ADR-0021 records the outbound boundary for issue #111
+- adapter and registration land for issue #112
+- CI Bootstrap Validate passes offline for issue #113
+- docs explain the anthropic provider; release notes document `Genesis-0.0.24` for issue #114
 
 ## Revision History
 
+- 2026-08-01: Added Genesis-0.0.24 anthropic outbound provider milestone.
 - 2026-08-01: Added Genesis-0.0.23 thinking/tool-use mapping milestone.
 - 2026-08-01: Added Genesis-0.0.22 Anthropic Messages inbound milestone.
 - 2026-08-01: Added Genesis-0.0.21 gateway CORS milestone.

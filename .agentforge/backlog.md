@@ -73,6 +73,7 @@ Near-term work should remain small and releasable:
 
 ## Done and Removed
 
+- Anthropic outbound provider adapter (Genesis Sprint 25, 2026-08-01): `anthropic` provider speaking the Messages API with OpenAI↔Anthropic translation at the provider boundary; ADR-0021.
 - Anthropic thinking + tool-use mapping (Genesis Sprint 24, 2026-08-01): `tools` → OpenAI function tools, `tool_use`/`tool_result` → `tool_calls`/`tool` role, response `tool_calls` → `tool_use` blocks, streaming `input_json_delta`; ADR-0020.
 - Anthropic Messages inbound surface (Genesis Sprint 23, 2026-08-01): `POST /v1/messages` with translation-at-the-edge to the OpenAI-compatible provider protocol; ADR-0019.
 - Gateway CORS support (Genesis Sprint 21, 2026-08-01): opt-in `server.cors_origin`, preflight handling, and `Access-Control-Allow-*` headers on JSON and SSE responses; ADR-0018.
@@ -142,6 +143,7 @@ Change line 42 in config.py to reject timeout_seconds <= 0.
 
 ## Revision History
 
+- 2026-08-01: Promoted anthropic outbound provider into Genesis Sprint 25.
 - 2026-08-01: Promoted Anthropic thinking/tool-use mapping into Genesis Sprint 24.
 - 2026-08-01: Promoted Anthropic Messages inbound surface into Genesis Sprint 23.
 - 2026-08-01: Promoted gateway CORS support into Genesis Sprint 21.

@@ -179,7 +179,7 @@ class ProviderFactoryTests(unittest.TestCase):
         self.assertIn("unsupported provider type: custom", str(ctx.exception))
 
     def test_supported_provider_types_are_explicit(self) -> None:
-        self.assertEqual(supported_provider_types(), ("mock", "ollama", "openrouter"))
+        self.assertEqual(supported_provider_types(), ("anthropic", "mock", "ollama", "openrouter"))
 
 
 class MockProviderTests(unittest.TestCase):

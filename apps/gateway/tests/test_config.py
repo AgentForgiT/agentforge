@@ -63,6 +63,7 @@ class GatewayConfigValidationTests(unittest.TestCase):
         load_config(REPO_ROOT / "apps/gateway/config.example.json")
         load_config(REPO_ROOT / "apps/gateway/config.openrouter.example.json")
         load_config(REPO_ROOT / "apps/gateway/config.ollama.example.json")
+        load_config(REPO_ROOT / "apps/gateway/config.anthropic.example.json")
 
     def test_cors_origin_absent_defaults_to_none(self) -> None:
         config = parse_config(minimal_config())

@@ -36,6 +36,7 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 | ADR-0018 | 2026-08-01 | Accepted | Add opt-in CORS support for browser clients | `.agentforge/adrs/0018-cors-browser-boundary.md` |
 | ADR-0019 | 2026-08-01 | Accepted | Translate Anthropic Messages at the inbound boundary | `.agentforge/adrs/0019-anthropic-messages-inbound-boundary.md` |
 | ADR-0020 | 2026-08-01 | Accepted | Map Anthropic thinking and tool-use at the inbound boundary | `.agentforge/adrs/0020-anthropic-tool-use-mapping.md` |
+| ADR-0021 | 2026-08-01 | Accepted | Add the Anthropic outbound provider adapter | `.agentforge/adrs/0021-anthropic-outbound-provider-boundary.md` |
 | DEC-0001 | 2026-06-28 | Accepted | Treat early gateway and CLI repos as pre-governance prototypes | `.agentforge/decisions/0001-pre-governance-prototypes.md` |
 | DEC-0002 | 2026-06-28 | Accepted | Keep prototype repositories public with canonical monorepo notices | `.agentforge/decisions/0002-prototype-repository-disposition.md` |
 | DEC-0003 | 2026-06-28 | Accepted | Build AICS validation CLI in the canonical monorepo | `.agentforge/decisions/0003-cli-path-for-aics-validation.md` |
@@ -44,6 +45,7 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 
 ## Revision History
 
+- 2026-08-01: Added ADR-0021.
 - 2026-08-01: Added ADR-0020.
 - 2026-08-01: Added ADR-0019.
 - 2026-08-01: Added ADR-0018.

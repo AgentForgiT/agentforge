@@ -1,5 +1,14 @@
 # Changelog
 
+## Genesis-0.0.24 - 2026-08-01
+
+- Added the `anthropic` outbound provider adapter (ADR-0021): OpenAI-compatible clients can now reach Anthropic's API through the gateway with `ANTHROPIC_API_KEY` set.
+  - OpenAI body → Anthropic Messages payload (system fold, function tools, tool_calls → tool_use, tool role → tool_result, `max_tokens` default 4096)
+  - Anthropic response → `chat.completion` (text concat, tool_use → tool_calls, stop_reason → finish_reason, usage mapping)
+  - Anthropic SSE events → OpenAI stream chunks with `[DONE]` (text_delta → content, input_json_delta → tool_calls)
+  - `x-api-key` + `anthropic-version: 2023-06-01` headers; key from `api_key_env` (default `ANTHROPIC_API_KEY`)
+- Added 12 tests (contract: success, headers, system/tools translation, tool round-trip, error translation, streaming text + tool deltas; registration; example config). Suite now 179, fully offline.
+
 ## Genesis-0.0.23 - 2026-08-01
 
 - Added Anthropic thinking + tool-use mapping at the inbound boundary (ADR-0020), closing ADR-0019's deferred items:

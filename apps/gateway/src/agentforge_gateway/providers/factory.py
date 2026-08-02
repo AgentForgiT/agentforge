@@ -4,6 +4,7 @@ from collections.abc import Callable
 
 from ..config import ProviderConfig
 from ..errors import ProviderConfigurationError
+from .anthropic import AnthropicProvider
 from .base import ChatProvider
 from .mock import MockProvider
 from .ollama import OllamaProvider
@@ -19,6 +20,7 @@ def _build_mock_provider(config: ProviderConfig) -> ChatProvider:
 
 PROVIDER_BUILDERS: dict[str, ProviderBuilder] = {
     "mock": _build_mock_provider,
+    "anthropic": AnthropicProvider,
     "ollama": OllamaProvider,
     "openrouter": OpenRouterProvider,
 }

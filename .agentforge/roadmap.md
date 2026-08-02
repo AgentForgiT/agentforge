@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Genesis Sprint 24: Anthropic Thinking + Tool-Use Mapping
+## Genesis Sprint 25: Anthropic Outbound Provider
 
-Goal: close ADR-0019's deferred items — map Anthropic `tools`, assistant `tool_use` blocks, user `tool_result` blocks, and `thinking` at the inbound boundary so Claude Code can run agentic loops through the gateway (ADR-0020).
+Goal: add the `anthropic` provider adapter so OpenAI-compatible clients can reach Anthropic's API through the gateway — the outbound mirror of ADR-0019/0020, translating at the provider boundary (ADR-0021).
 
 Deliverables:
 
-- thinking/tool-use mapping requirements for issue #105
-- tool-use mapping boundary decision ADR-0020 for issue #106
-- `tools` → OpenAI function tools, `tool_use` → `tool_calls`, `tool_result` → `tool` role, response `tool_calls` → `tool_use` blocks, streaming `input_json_delta`, thinking acceptance for issue #107
-- mapping tests (request, response, streaming); CI validation for issue #108
-- mapping docs and `Genesis-0.0.23` release for issue #109
+- anthropic outbound provider requirements for issue #110
+- outbound provider boundary decision ADR-0021 for issue #111
+- `AnthropicProvider` adapter: OpenAI body → Messages payload (system fold, tools, tool_calls, max_tokens default), Anthropic response → `chat.completion`, Anthropic SSE → OpenAI chunks with `[DONE]` for issue #112
+- provider contract + registration + config tests; CI validation for issue #113
+- anthropic provider docs and `Genesis-0.0.24` release for issue #114
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 25 anthropic outbound provider deliverables.
 - 2026-08-01: Added Sprint 24 thinking/tool-use mapping deliverables.
 - 2026-08-01: Added Sprint 23 Anthropic Messages inbound deliverables.
 - 2026-08-01: Added Sprint 21 gateway CORS deliverables.
