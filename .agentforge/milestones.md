@@ -354,25 +354,26 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## 0.5.0: Twin QA Layer
+## 0.6.0: Benchmark Trends
 
 Scope:
 
-- define twin QA requirements
-- decide the boundary (deterministic retrieval + optional generation, extractive fallback, generator defaults to local gateway, ADR-0032)
-- implement `/ask` + `ask_twin`/`generate` + generator config
-- cover generated/extractive/empty states, generator call, and 400 in tests
-- ship docs
+- define benchmark trends requirements
+- decide the boundary (history collected per-release from published results assets, derived better-direction, observatory deltas, ADR-0033)
+- implement `collect_history.py` + `history.schema.json`
+- cover merging, deltas, direction, and schema in tests
+- ship docs + observatory trends section
 
 Exit criteria:
 
-- ADR-0032 records the QA boundary for issue #176
-- `/ask` lands for issue #177
-- CI Bootstrap Validate passes offline for issue #178
-- docs explain the QA layer; release notes document `0.5.0` for issue #179
+- ADR-0033 records the trends boundary for issue #181
+- collector + schema land for issue #182
+- CI Bootstrap Validate passes offline for issue #183
+- observatory renders trends; release notes document `0.6.0` for issue #184
 
 ## Revision History
 
+- 2026-08-01: Added 0.6.0 benchmark trends milestone.
 - 2026-08-01: Added 0.5.0 twin QA milestone.
 - 2026-08-01: Added 0.4.0 per-user auth milestone.
 - 2026-08-01: Added 0.3.0 benchmark pipeline milestone.

@@ -1,0 +1,135 @@
+{
+  "schema_version": "0.1",
+  "releases": [
+    {
+      "tag": "0.5.0",
+      "timestamp": "2026-08-02T12:31:39Z",
+      "benchmarks": {
+        "gateway.chat_completion.median_latency_ms": 0.02,
+        "gateway.chat_completion.throughput_per_sec": 54722.56,
+        "cli.validate_context.median_ms": 2.95,
+        "cli.build_twin.median_ms": 3.75,
+        "aics.validate.median_ms": 1.03
+      }
+    },
+    {
+      "tag": "0.4.0",
+      "timestamp": "2026-08-02T11:13:28Z",
+      "benchmarks": {
+        "gateway.chat_completion.median_latency_ms": 0.02,
+        "gateway.chat_completion.throughput_per_sec": 51345.25,
+        "cli.validate_context.median_ms": 2.96,
+        "cli.build_twin.median_ms": 3.72,
+        "aics.validate.median_ms": 1.07
+      }
+    },
+    {
+      "tag": "0.3.0",
+      "timestamp": "2026-08-02T10:39:36Z",
+      "benchmarks": {
+        "gateway.chat_completion.median_latency_ms": 0.02,
+        "gateway.chat_completion.throughput_per_sec": 52471.4,
+        "cli.validate_context.median_ms": 2.09,
+        "cli.build_twin.median_ms": 2.63,
+        "aics.validate.median_ms": 0.89
+      }
+    }
+  ],
+  "trends": [
+    {
+      "name": "aics.validate.median_ms",
+      "unit": "ms",
+      "better": "lower",
+      "values": [
+        {
+          "tag": "0.5.0",
+          "value": 1.03
+        },
+        {
+          "tag": "0.4.0",
+          "value": 1.07
+        },
+        {
+          "tag": "0.3.0",
+          "value": 0.89
+        }
+      ]
+    },
+    {
+      "name": "cli.build_twin.median_ms",
+      "unit": "ms",
+      "better": "lower",
+      "values": [
+        {
+          "tag": "0.5.0",
+          "value": 3.75
+        },
+        {
+          "tag": "0.4.0",
+          "value": 3.72
+        },
+        {
+          "tag": "0.3.0",
+          "value": 2.63
+        }
+      ]
+    },
+    {
+      "name": "cli.validate_context.median_ms",
+      "unit": "ms",
+      "better": "lower",
+      "values": [
+        {
+          "tag": "0.5.0",
+          "value": 2.95
+        },
+        {
+          "tag": "0.4.0",
+          "value": 2.96
+        },
+        {
+          "tag": "0.3.0",
+          "value": 2.09
+        }
+      ]
+    },
+    {
+      "name": "gateway.chat_completion.median_latency_ms",
+      "unit": "ms",
+      "better": "lower",
+      "values": [
+        {
+          "tag": "0.5.0",
+          "value": 0.02
+        },
+        {
+          "tag": "0.4.0",
+          "value": 0.02
+        },
+        {
+          "tag": "0.3.0",
+          "value": 0.02
+        }
+      ]
+    },
+    {
+      "name": "gateway.chat_completion.throughput_per_sec",
+      "unit": "completions/s",
+      "better": "higher",
+      "values": [
+        {
+          "tag": "0.5.0",
+          "value": 54722.56
+        },
+        {
+          "tag": "0.4.0",
+          "value": 51345.25
+        },
+        {
+          "tag": "0.3.0",
+          "value": 52471.4
+        }
+      ]
+    }
+  ]
+}

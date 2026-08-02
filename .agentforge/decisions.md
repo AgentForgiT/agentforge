@@ -48,6 +48,7 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 | ADR-0030 | 2026-08-01 | Accepted | Benchmark the platform with an offline reproducible harness | `.agentforge/adrs/0030-benchmark-pipeline-boundary.md` |
 | ADR-0031 | 2026-08-01 | Accepted | Authenticate per user with a named key store | `.agentforge/adrs/0031-per-user-auth-boundary.md` |
 | ADR-0032 | 2026-08-01 | Accepted | Answer twin questions with retrieval + optional generation | `.agentforge/adrs/0032-twin-qa-boundary.md` |
+| ADR-0033 | 2026-08-01 | Accepted | Track benchmark trends across releases | `.agentforge/adrs/0033-benchmark-trends-boundary.md` |
 | DEC-0001 | 2026-06-28 | Accepted | Treat early gateway and CLI repos as pre-governance prototypes | `.agentforge/decisions/0001-pre-governance-prototypes.md` |
 | DEC-0002 | 2026-06-28 | Accepted | Keep prototype repositories public with canonical monorepo notices | `.agentforge/decisions/0002-prototype-repository-disposition.md` |
 | DEC-0003 | 2026-06-28 | Accepted | Build AICS validation CLI in the canonical monorepo | `.agentforge/decisions/0003-cli-path-for-aics-validation.md` |
@@ -59,6 +60,7 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 
 ## Revision History
 
+- 2026-08-01: Added ADR-0033.
 - 2026-08-01: Added ADR-0032.
 - 2026-08-01: Added ADR-0031.
 - 2026-08-01: Added ADR-0030.

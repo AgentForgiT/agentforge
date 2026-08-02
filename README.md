@@ -34,7 +34,7 @@ The draft AgentForge AI Context Specification is available at `.agentforge/specs
 
 ## Current Priority
 
-Sprint 40 ships the twin QA layer (ADR-0032): `serve-twin /ask` — deterministic retrieval + optional generation through an OpenAI-compatible generator (default: the local AgentForge gateway), with a faithful extractive fallback so the twin never fabricates. Release 0.5.0.
+Sprint 41 ships benchmark trends (ADR-0033): `benchmarks/collect_history.py` aggregates per-release `results.json` assets into a versioned `history.json` with release-to-release deltas, and the observatory renders the trend table (lower/higher-better arrows). Release 0.6.0.
 
 Gateway provider adapters live behind explicit internal modules under `agentforge_gateway.providers`, chat-completion request validation lives under `agentforge_gateway.requests`, gateway errors use a standard JSON envelope, successful chat-completion responses and streaming chunks pass through `agentforge_gateway.responses`, JSON configuration is validated by `agentforge_gateway.config`, and structured access records are emitted through `agentforge_gateway.logger`. Product backlog and epics live in `.agentforge/backlog.md`, canonical standards live in `.agentforge/standards/`, and repository hygiene is anchored by `.editorconfig` and `.gitattributes`. The public `agentforge-gateway` and `agentforge-cli` repositories remain historical pre-governance prototypes; new canonical gateway and CLI work belongs in this repository under `apps/gateway` and `apps/cli`.
 

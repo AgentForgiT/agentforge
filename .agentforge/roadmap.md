@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Sprint 40: Twin QA Layer
+## Sprint 41: Benchmark Trends
 
-Goal: realize "ask the project's twin" — `/ask` over the ADR-0029 retrieval contract with pluggable generation (default local gateway) and a faithful extractive fallback (ADR-0032).
+Goal: make per-release results tell a story — a history collector merging release `results.json` assets into a trend artifact, rendered as release-to-release deltas on the observatory (ADR-0033).
 
 Deliverables:
 
-- twin QA requirements for issue #175
-- twin QA boundary decision ADR-0032 for issue #176
-- `/ask` endpoint + `ask_twin`/`generate` + generator config for issue #177
-- QA tests (generated/extractive/empty, generator call, 400); CI green for issue #178
-- docs + `0.5.0` release for issue #179
+- benchmark trends requirements for issue #180
+- trends boundary decision ADR-0033 for issue #181
+- `collect_history.py` (injectable fetch, derived better-direction, deltas) + `history.schema.json` for issue #182
+- collector + delta + schema tests; CI green for issue #183
+- observatory trends section + `0.6.0` release for issue #184
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, benchmark tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 41 benchmark trends deliverables.
 - 2026-08-01: Added Sprint 40 twin QA deliverables.
 - 2026-08-01: Added Sprint 39 per-user auth deliverables.
 - 2026-08-01: Added Sprint 38 benchmark pipeline deliverables.

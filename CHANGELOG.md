@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.0 - 2026-08-01
+
+- Added benchmark trends (ADR-0033):
+  - `benchmarks/collect_history.py`: fetches per-release `results.json` assets (injectable fetch, stdlib), merges into versioned `history.json` with per-benchmark series, derived better-direction, and release-to-release deltas.
+  - `benchmarks/history.schema.json`; output validated before write.
+  - Observatory trends section: rows = benchmarks, columns = releases, delta arrows colored by better direction (green ↓ for lower-better, green ↑ for higher-better).
+  - Collected live: 3 releases (0.3.0–0.5.0), 5 trends.
+- Added 8 history tests (merging, direction, deltas, schema, skip logic).
+
 ## 0.5.0 - 2026-08-01
 
 - Added the twin QA layer (ADR-0032):

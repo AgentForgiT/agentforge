@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentforgit.github.io/agentforge-docs-site/schemas/history.schema.json",
+  "title": "AgentForge Benchmark History",
+  "description": "Release-to-release benchmark trends aggregated from per-release results.json assets (ADR-0033).",
+  "type": "object",
+  "required": ["schema_version", "releases", "trends"],
+  "properties": {
+    "schema_version": {"type": "string", "const": "0.1"},
+    "releases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["tag", "benchmarks"],
+        "properties": {
+          "tag": {"type": "string"},
+          "timestamp": {"type": "string"},
+          "benchmarks": {"type": "object", "additionalProperties": {"type": "number"}}
+        }
+      }
+    },
+    "trends": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "unit", "better", "values"],
+        "properties": {
+          "name": {"type": "string"},
+          "unit": {"type": "string"},
+          "better": {"type": "string", "enum": ["lower", "higher"]},
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["tag", "value"],
+              "properties": {
+                "tag": {"type": "string"},
+                "value": {"type": "number"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
