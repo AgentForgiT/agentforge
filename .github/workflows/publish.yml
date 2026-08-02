@@ -80,3 +80,28 @@ jobs:
           find dist -name '*.whl' -o -name '*.tar.gz' | while read -r f; do
             gh release upload "$TAG" "$f" --repo "$GH_REPO" --clobber
           done
+
+  benchmarks:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run offline benchmark harness
+        run: python benchmarks/run_benchmarks.py --samples 5
+      - name: Attach benchmark results to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          for i in $(seq 1 30); do
+            if gh release view "$TAG" --repo "$GH_REPO" >/dev/null 2>&1; then
+              break
+            fi
+            sleep 10
+          done
+          gh release view "$TAG" --repo "$GH_REPO" >/dev/null 2>&1 || { echo "release $TAG not found after waiting"; exit 1; }
+          gh release upload "$TAG" benchmarks/results.json --repo "$GH_REPO" --clobber

@@ -45,6 +45,7 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 | ADR-0027 | 2026-08-01 | Accepted | Distribute the SDK via tag-gated PyPI publish and release assets | `.agentforge/adrs/0027-sdk-distribution-mcp-registration.md` |
 | ADR-0028 | 2026-08-01 | Accepted | Build the engineering twin as a generated read-only profile | `.agentforge/adrs/0028-engineering-twin-boundary.md` |
 | ADR-0029 | 2026-08-01 | Accepted | Serve the twin as a read-only stdlib HTTP service | `.agentforge/adrs/0029-twin-service-boundary.md` |
+| ADR-0030 | 2026-08-01 | Accepted | Benchmark the platform with an offline reproducible harness | `.agentforge/adrs/0030-benchmark-pipeline-boundary.md` |
 | DEC-0001 | 2026-06-28 | Accepted | Treat early gateway and CLI repos as pre-governance prototypes | `.agentforge/decisions/0001-pre-governance-prototypes.md` |
 | DEC-0002 | 2026-06-28 | Accepted | Keep prototype repositories public with canonical monorepo notices | `.agentforge/decisions/0002-prototype-repository-disposition.md` |
 | DEC-0003 | 2026-06-28 | Accepted | Build AICS validation CLI in the canonical monorepo | `.agentforge/decisions/0003-cli-path-for-aics-validation.md` |
@@ -56,6 +57,7 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 
 ## Revision History
 
+- 2026-08-01: Added ADR-0030.
 - 2026-08-01: Added ADR-0029.
 - 2026-08-01: Added DEC-0008 (0.1.0 release-assets distribution).
 - 2026-08-01: Added DEC-0007 (community contribution paths).

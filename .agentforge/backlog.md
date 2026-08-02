@@ -73,6 +73,7 @@ Near-term work should remain small and releasable:
 
 ## Done and Removed
 
+- Benchmark pipeline (Sprint 38, 2026-08-01): offline harness (gateway/CLI/AICS), schema-validated results.json, CI publishing to releases, observatory consumption; ADR-0030; released as 0.3.0.
 - Twin service (Sprint 37, 2026-08-01): `agentforge serve-twin` — read-only stdlib HTTP consumer of the twin profile (twin.json, governance search, index); ADR-0029; released as 0.2.0, the first feature release under semver.
 - Community and contribution paths (Genesis Sprint 36, 2026-08-01): expanded CONTRIBUTING (sprint pattern, validation, paths), `docs/community.md`, site contributing refresh; DEC-0007.
 - Public 0.1.0 release scope (Genesis Sprint 35, 2026-08-01): scope requirements, release-gate checklist, DEC-0006; Genesis ends at 0.0.32 and 0.1.x follows under semver.
@@ -153,6 +154,7 @@ Change line 42 in config.py to reject timeout_seconds <= 0.
 
 ## Revision History
 
+- 2026-08-01: Promoted benchmark pipeline into Sprint 38.
 - 2026-08-01: Promoted twin service into Sprint 37.
 - 2026-08-01: Promoted community and contribution paths into Genesis Sprint 36.
 - 2026-08-01: Promoted public 0.1.0 scope into Genesis Sprint 35.

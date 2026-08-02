@@ -354,26 +354,27 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## 0.2.0: Twin Service
+## 0.3.0: Benchmark Pipeline
 
 Scope:
 
-- define twin-service requirements
-- decide the service boundary (read-only stdlib HTTP consumer of the profile, honest keyword retrieval, ADR-0029)
-- implement `serve-twin` + `twin_service.py`
-- cover endpoints, search, read-only, and missing-profile hints in tests
-- ship docs
+- define benchmark pipeline requirements
+- decide the boundary (offline-first, reproducible, schema-validated, live evals deferred, ADR-0030)
+- implement `benchmarks/` harness + results schema + runner
+- cover harness suites, schema validation, and CI publishing in tests
+- ship docs + observatory consumption
 
 Exit criteria:
 
-- ADR-0029 records the service boundary for issue #161
-- `serve-twin` lands for issue #162
-- CI Bootstrap Validate passes offline for issue #163
-- docs explain the twin service; release notes document `0.2.0` for issue #164
+- ADR-0030 records the boundary for issue #166
+- harness + schema + runner land for issue #167
+- CI publishes results.json to releases for issue #168
+- docs + observatory consume published results; release notes document `0.3.0` for issue #169
 
 ## Revision History
 
-- 2026-08-01: Added 0.2.0 twin-service milestone (first feature release under semver).
+- 2026-08-01: Added 0.3.0 benchmark pipeline milestone.
+- 2026-08-01: Added 0.2.0 twin-service milestone.
 - 2026-08-01: Added Genesis-0.0.33 community milestone.
 - 2026-08-01: Added Genesis-0.0.32 public 0.1.0 scope milestone.
 - 2026-08-01: Added Genesis-0.0.31 engineering-twin milestone.

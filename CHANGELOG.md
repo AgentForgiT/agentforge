@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0 - 2026-08-01
+
+- Added the benchmark pipeline (ADR-0030):
+  - `benchmarks/run_benchmarks.py`: reproducible offline harness — gateway chat-completion latency/throughput (mock provider, in-process), CLI validate/build-twin timing, AICS validation timing.
+  - `benchmarks/results.schema.json`; output validated before write.
+  - CI publishes `results.json` as a release asset on tags (publish workflow gains a benchmarks job).
+  - Benchmark Observatory page consumes the published results (measured section with suite/environment footer).
+- Added 7 benchmark tests (harness suites, schema validation, runner CLI).
+
 ## 0.2.0 - 2026-08-01
 
 - Added the twin service (ADR-0029) — first feature release under semver (DEC-0006):

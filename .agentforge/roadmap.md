@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Sprint 37: Twin Service
+## Sprint 38: Benchmark Pipeline
 
-Goal: give the twin profile a live read layer — `agentforge serve-twin`, a read-only stdlib HTTP service with `/twin.json`, `/search?q=` over the governance corpus, and an index page (ADR-0029). First feature release under semver (0.2.0).
+Goal: give the observatory real data — a reproducible offline harness measuring gateway/CLI/AICS, schema-validated results published with releases, consumed by the website (ADR-0030).
 
 Deliverables:
 
-- twin-service requirements for issue #160
-- twin-service boundary decision ADR-0029 for issue #161
-- `serve-twin` command + `twin_service.py` (endpoints, deterministic keyword search) for issue #162
-- endpoint, search, read-only, and 404-hint tests; CI validation for issue #163
-- twin-service docs and `0.2.0` release for issue #164
+- benchmark pipeline requirements for issue #165
+- benchmark boundary decision ADR-0030 for issue #166
+- `benchmarks/` harness (gateway latency/throughput, CLI timing, AICS timing) + `results.schema.json` + `run_benchmarks.py` for issue #167
+- harness tests + CI job attaching results.json to releases for issue #168
+- pipeline docs + observatory consumption + `0.3.0` release for issue #169
 
-Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, and `git diff --check`.
+Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, benchmark tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 38 benchmark pipeline deliverables.
 - 2026-08-01: Added Sprint 37 twin-service deliverables.
 - 2026-08-01: Added Sprint 36 community deliverables.
 - 2026-08-01: Added Sprint 35 public 0.1.0 scope deliverables.

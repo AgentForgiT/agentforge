@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentforgit.github.io/agentforge-docs-site/schemas/results.schema.json",
+  "title": "AgentForge Benchmark Results",
+  "description": "Schema-validated output of the offline benchmark harness (ADR-0030).",
+  "type": "object",
+  "required": ["schema_version", "suite", "environment", "timestamp", "benchmarks"],
+  "properties": {
+    "schema_version": {"type": "string", "const": "0.1"},
+    "suite": {"type": "string"},
+    "environment": {
+      "type": "object",
+      "required": ["python", "platform"],
+      "properties": {
+        "python": {"type": "string"},
+        "platform": {"type": "string"}
+      }
+    },
+    "timestamp": {"type": "string"},
+    "benchmarks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "unit", "value", "samples"],
+        "properties": {
+          "name": {"type": "string"},
+          "unit": {"type": "string"},
+          "value": {"type": "number"},
+          "samples": {"type": "array", "items": {"type": "number"}}
+        }
+      }
+    }
+  }
+}
