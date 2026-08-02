@@ -245,6 +245,38 @@ Errors use the Anthropic envelope (`{"type": "error", "error": {...}}`) with the
 
 Image blocks are rejected with a clear bad-request error. Computer/web-search tool types and tool-result images remain deferred per ADR-0020.
 
+## Auth and Rate Limiting
+
+ADR-0023 defines the auth and rate-limit boundary.
+
+Both controls are **opt-in** — unset, the gateway is byte-for-byte the keyless, unthrottled local service of earlier Genesis releases (ADR-0017).
+
+**API-key auth** — `server.api_key_env` names an environment variable whose value gates access:
+
+```json
+{
+  "server": {
+    "api_key_env": "AGENTFORGE_API_KEY"
+  }
+}
+```
+
+When set, `/v1/chat/completions` and `/v1/messages` require `Authorization: Bearer <key>` or `x-api-key: <key>`; missing/wrong key → 401 (standard envelope on the OpenAI surface, Anthropic envelope on `/v1/messages`). `GET /health` stays unauthenticated (probes). CORS preflight (`OPTIONS`) succeeds without auth so browser clients work. The key is read from the environment at startup and never logged (ADR-0015). Example config: `apps/gateway/config.auth.example.json`.
+
+**Rate limiting** — `server.rate_limit_rpm` sets requests-per-minute per client via a token bucket (stdlib, in-memory):
+
+```json
+{
+  "server": {
+    "rate_limit_rpm": 60
+  }
+}
+```
+
+The bucket is keyed by API key when auth is on, else by client IP. Exceeding → 429 with a `Retry-After: 60` header. `GET /health` is exempt. Restart resets buckets.
+
+Both error responses carry `Access-Control-Allow-Origin` when CORS is enabled (ADR-0018).
+
 ## Logging
 
 ADR-0015 defines the gateway logging boundary.
@@ -299,6 +331,7 @@ The shipped `config.example.json` sets `cors_origin` to the public docs-site ori
 
 ## Revision History
 
+- 2026-08-01: Documented auth and rate limiting from ADR-0023.
 - 2026-08-01: Documented anthropic outbound provider from ADR-0021.
 - 2026-08-01: Documented thinking/tool-use mapping from ADR-0020.
 - 2026-08-01: Documented Anthropic Messages inbound surface from ADR-0019.

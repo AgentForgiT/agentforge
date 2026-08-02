@@ -1,5 +1,14 @@
 # Changelog
 
+## Genesis-0.0.26 - 2026-08-01
+
+- Added opt-in API-key auth and rate limiting (ADR-0023):
+  - `server.api_key_env` names an env var; when set, `/v1/chat/completions` and `/v1/messages` require `Authorization: Bearer <key>` or `x-api-key: <key>`; missing/wrong → 401 (standard or Anthropic envelope per surface).
+  - `server.rate_limit_rpm` token-bucket rate limiting per key (auth on) or per IP (auth off); exceeding → 429 with `Retry-After: 60`.
+  - `GET /health` and CORS preflight exempt; 401/429 carry CORS headers; key never logged (ADR-0015).
+  - Keyless default byte-for-byte unchanged; new `config.auth.example.json`.
+- Added 21 tests (config validation, auth paths, rate-limit bucket + HTTP 429, CORS-on-error, default unchanged). Suite now 200.
+
 ## Genesis-0.0.25 - 2026-08-01
 
 - Added AICS v0.2 — the moat work (ADR-0022):

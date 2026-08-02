@@ -33,6 +33,8 @@ class GatewayConfig:
     providers: dict[str, ProviderConfig]
     log_level: str = "INFO"
     cors_origin: str | None = None
+    api_key_env: str | None = None
+    rate_limit_rpm: int | None = None
 
 
 DEFAULT_CONFIG = GatewayConfig(
@@ -95,9 +97,27 @@ def parse_config(raw: object) -> GatewayConfig:
         port=_port(server.get("port", 8080), "server.port"),
         log_level=_log_level(server.get("log_level", "INFO"), "server.log_level"),
         cors_origin=_cors_origin(server.get("cors_origin")),
+        api_key_env=_optional_env_name(server.get("api_key_env"), "server.api_key_env"),
+        rate_limit_rpm=_positive_int(server.get("rate_limit_rpm"), "server.rate_limit_rpm"),
         models=parsed_models,
         providers=parsed_providers,
     )
+
+
+def _optional_env_name(value: Any, label: str) -> str | None:
+    if value is None:
+        return None
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"{label} must be a non-empty string naming an environment variable")
+    return value.strip()
+
+
+def _positive_int(value: Any, label: str) -> int | None:
+    if value is None:
+        return None
+    if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
+        raise ValueError(f"{label} must be a positive integer")
+    return value
 
 
 def _cors_origin(value: Any) -> str | None:

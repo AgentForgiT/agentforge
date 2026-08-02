@@ -73,6 +73,7 @@ Near-term work should remain small and releasable:
 
 ## Done and Removed
 
+- Gateway API-key auth + rate limiting (Genesis Sprint 27, 2026-08-01): opt-in `server.api_key_env` + `server.rate_limit_rpm`, token-bucket per key/IP, 401/429 with CORS headers, keyless default unchanged; ADR-0023.
 - AICS v0.2 structured metadata (Genesis Sprint 26, 2026-08-01): YAML front matter, adoption levels 1/2/3, version marker; AgentForge repo is the first Level-3 context; ADR-0022.
 - Anthropic outbound provider adapter (Genesis Sprint 25, 2026-08-01): `anthropic` provider speaking the Messages API with OpenAI↔Anthropic translation at the provider boundary; ADR-0021.
 - Anthropic thinking + tool-use mapping (Genesis Sprint 24, 2026-08-01): `tools` → OpenAI function tools, `tool_use`/`tool_result` → `tool_calls`/`tool` role, response `tool_calls` → `tool_use` blocks, streaming `input_json_delta`; ADR-0020.
@@ -144,6 +145,7 @@ Change line 42 in config.py to reject timeout_seconds <= 0.
 
 ## Revision History
 
+- 2026-08-01: Promoted gateway auth/rate limiting into Genesis Sprint 27.
 - 2026-08-01: Promoted AICS v0.2 structured metadata into Genesis Sprint 26.
 - 2026-08-01: Promoted anthropic outbound provider into Genesis Sprint 25.
 - 2026-08-01: Promoted Anthropic thinking/tool-use mapping into Genesis Sprint 24.

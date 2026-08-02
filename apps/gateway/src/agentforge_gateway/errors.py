@@ -22,6 +22,14 @@ def internal_error_response() -> dict[str, object]:
     return error_response("internal server error", "internal_error")
 
 
+def unauthorized_response() -> dict[str, object]:
+    return error_response("unauthorized: valid API key required", "unauthorized")
+
+
+def rate_limited_response() -> dict[str, object]:
+    return error_response("rate limit exceeded", "rate_limited")
+
+
 class GatewayError(Exception):
     status_code = 500
     error_type = "internal_error"

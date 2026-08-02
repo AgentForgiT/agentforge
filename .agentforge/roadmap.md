@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Genesis Sprint 26: AICS v0.2 Structured Metadata
+## Genesis Sprint 27: Gateway Auth and Rate Limiting
 
-Goal: ship AICS v0.2 — the moat work — with structured YAML front matter, machine-reported adoption levels, and a version marker; dogfood it on the AgentForge repo itself (ADR-0022).
+Goal: add opt-in API-key auth (`server.api_key_env`) and token-bucket rate limiting (`server.rate_limit_rpm`) while preserving the keyless default byte-for-byte (ADR-0023).
 
 Deliverables:
 
-- AICS v0.2 requirements for issue #115
-- front matter boundary decision ADR-0022 for issue #116
-- `aics-v0.2.md` spec + `aics-validation-v0.2.md` rules + validator front matter parsing, level reporting, warnings, version marker + CLI level output for issue #117
-- AgentForge context migration to front matter (dogfooding) + tests; CI validation for issue #118
-- AICS v0.2 docs and `Genesis-0.0.25` release for issue #119
+- auth/rate-limit requirements for issue #120
+- auth and rate-limit boundary decision ADR-0023 for issue #121
+- `ratelimit.py` token bucket + `_guard` enforcement (401/429, CORS headers, health/preflight exempt) + config fields for issue #122
+- config validation, auth paths, rate-limit, and CORS-on-error tests; CI validation for issue #123
+- auth/rate-limit docs and `Genesis-0.0.26` release for issue #124
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 27 gateway auth/rate-limit deliverables.
 - 2026-08-01: Added Sprint 26 AICS v0.2 structured metadata deliverables.
 - 2026-08-01: Added Sprint 25 anthropic outbound provider deliverables.
 - 2026-08-01: Added Sprint 24 thinking/tool-use mapping deliverables.

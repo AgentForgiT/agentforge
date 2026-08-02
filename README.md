@@ -34,7 +34,7 @@ The draft AgentForge AI Context Specification is available at `.agentforge/specs
 
 ## Current Priority
 
-Genesis Sprint 26 ships AICS v0.2 — the moat work: structured YAML front matter (machine-parseable context, ADR-0022), machine-reported adoption levels (1/2/3), and a version marker. AgentForge's own repo is the first Level-3 context, validated in CI.
+Genesis Sprint 27 adds opt-in API-key auth and rate limiting (ADR-0023): `server.api_key_env` + `server.rate_limit_rpm` — keyless default unchanged, 401/429 with CORS headers, key never logged.
 
 Gateway provider adapters live behind explicit internal modules under `agentforge_gateway.providers`, chat-completion request validation lives under `agentforge_gateway.requests`, gateway errors use a standard JSON envelope, successful chat-completion responses and streaming chunks pass through `agentforge_gateway.responses`, JSON configuration is validated by `agentforge_gateway.config`, and structured access records are emitted through `agentforge_gateway.logger`. Product backlog and epics live in `.agentforge/backlog.md`, canonical standards live in `.agentforge/standards/`, and repository hygiene is anchored by `.editorconfig` and `.gitattributes`. The public `agentforge-gateway` and `agentforge-cli` repositories remain historical pre-governance prototypes; new canonical gateway and CLI work belongs in this repository under `apps/gateway` and `apps/cli`.
 

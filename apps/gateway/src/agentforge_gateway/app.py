@@ -19,12 +19,16 @@ from .errors import (
     internal_error_response,
     invalid_json_response,
     not_found_response,
+    unauthorized_response,
+    rate_limited_response,
 )
 from .logger import configure_logging, get_logger
 from .models import ModelRegistry
 from .providers import ChatProvider, build_provider
+from .ratelimit import TokenBucketRateLimiter
 from .requests import validate_chat_completion_request
 from .responses import normalize_chat_completion_response, normalize_stream_chunk
+import os
 
 
 class GatewayApp:
@@ -35,6 +39,18 @@ class GatewayApp:
             name: build_provider(provider)
             for name, provider in config.providers.items()
         }
+        self.api_key = self._resolve_api_key()
+        self.rate_limiter = (
+            TokenBucketRateLimiter(config.rate_limit_rpm) if config.rate_limit_rpm else None
+        )
+
+    def _resolve_api_key(self) -> str | None:
+        if not self.config.api_key_env:
+            return None
+        key = os.environ.get(self.config.api_key_env)
+        if not key:
+            raise RuntimeError(f"server.api_key_env names ${self.config.api_key_env} but it is not set")
+        return key
 
     def health(self) -> dict[str, object]:
         return {
@@ -105,6 +121,50 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
                 return {}
             return {"Access-Control-Allow-Origin": origin}
 
+        def _authenticated(self) -> bool:
+            if app.api_key is None:
+                return True
+            header = self.headers.get("Authorization", "")
+            if header.startswith("Bearer "):
+                return header[7:].strip() == app.api_key
+            return self.headers.get("x-api-key", "") == app.api_key
+
+        def _rate_limit_key(self) -> str:
+            if app.api_key is not None:
+                header = self.headers.get("Authorization", "")
+                if header.startswith("Bearer "):
+                    return "key:" + header[7:].strip()
+                return "key:" + self.headers.get("x-api-key", "")
+            return "ip:" + (self.client_address[0] if self.client_address else "unknown")
+
+        def _rate_limited(self) -> bool:
+            if app.rate_limiter is None:
+                return False
+            return not app.rate_limiter.allow(self._rate_limit_key())
+
+        def _guard(self, anthropic: bool = False) -> bool:
+            """Returns False (and writes the error response) when the request
+            must be rejected for auth or rate limiting. Health and OPTIONS
+            are exempt (probes/preflight)."""
+            if not self._authenticated():
+                if anthropic:
+                    self._send_json(401, GatewayError("unauthorized: valid API key required", status_code=401).to_anthropic_response())
+                else:
+                    self._send_json(401, unauthorized_response())
+                return False
+            if self._rate_limited():
+                self.send_response(429)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Retry-After", "60")
+                for name, value in self._cors_headers().items():
+                    self.send_header(name, value)
+                payload = json.dumps(rate_limited_response()).encode("utf-8")
+                self.send_header("Content-Length", str(len(payload)))
+                self.end_headers()
+                self.wfile.write(payload)
+                return False
+            return True
+
         def do_OPTIONS(self) -> None:
             self._request_started = time.monotonic()
             if app.config.cors_origin is None:
@@ -114,7 +174,7 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
             for name, value in self._cors_headers().items():
                 self.send_header(name, value)
             self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-            self.send_header("Access-Control-Allow-Headers", "Content-Type")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, x-api-key")
             self.send_header("Access-Control-Max-Age", "86400")
             self.send_header("Content-Length", "0")
             self.end_headers()
@@ -127,6 +187,8 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
                     self._send_json(200, app.health())
                     return
                 if self.path == "/v1/models":
+                    if not self._guard():
+                        return
                     self._send_json(200, app.models())
                     return
                 self._send_json(404, not_found_response())
@@ -141,6 +203,8 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
             is_anthropic = self.path == "/v1/messages"
             try:
                 if self.path == "/v1/chat/completions":
+                    if not self._guard():
+                        return
                     body = self._read_json()
                     if body.get("stream") is True:
                         self._handle_stream(body)
@@ -148,6 +212,8 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
                         self._send_json(200, app.chat_completions(body))
                     return
                 if is_anthropic:
+                    if not self._guard(anthropic=True):
+                        return
                     body = self._read_json()
                     if body.get("stream") is True:
                         self._handle_anthropic_stream(body)

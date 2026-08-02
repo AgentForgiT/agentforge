@@ -881,7 +881,7 @@ class CorsHttpTests(unittest.TestCase):
                 self.assertEqual(response.status, 204)
                 self.assertEqual(response.headers["Access-Control-Allow-Origin"], "https://example.com")
                 self.assertEqual(response.headers["Access-Control-Allow-Methods"], "GET, POST, OPTIONS")
-                self.assertEqual(response.headers["Access-Control-Allow-Headers"], "Content-Type")
+                self.assertEqual(response.headers["Access-Control-Allow-Headers"], "Content-Type, Authorization, x-api-key")
                 self.assertEqual(response.headers["Access-Control-Max-Age"], "86400")
         finally:
             server.close()

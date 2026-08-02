@@ -354,26 +354,26 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## Genesis-0.0.25: AICS v0.2 Structured Metadata
+## Genesis-0.0.26: Gateway Auth and Rate Limiting
 
 Scope:
 
-- define AICS v0.2 requirements (front matter, levels, version marker)
-- decide the front matter boundary (backward-compatible with v0.1, ADR-0022)
-- implement `aics-v0.2.md` + `aics-validation-v0.2.md` + validator (front matter parsing, level reporting, warnings) + CLI level output
-- migrate AgentForge's own context to front matter; add `.agentforge/aics-version`
-- cover parsing, levels, marker, and dogfooding in tests
+- define auth/rate-limit requirements
+- decide the opt-in boundary (static key, token bucket, keyless default, ADR-0023)
+- implement `ratelimit.py` + `_guard` enforcement + config fields
+- cover config validation, 401 paths, 429 paths, CORS-on-error, and default-unchanged in tests
 - ship docs
 
 Exit criteria:
 
-- ADR-0022 records the front matter boundary for issue #116
-- validator + CLI level reporting land for issue #117
-- AgentForge repo validates at Level 3 in CI for issue #118
-- docs explain AICS v0.2; release notes document `Genesis-0.0.25` for issue #119
+- ADR-0023 records the boundary for issue #121
+- auth/rate-limit enforcement lands for issue #122
+- CI Bootstrap Validate passes offline for issue #123
+- docs explain auth/rate limiting; release notes document `Genesis-0.0.26` for issue #124
 
 ## Revision History
 
+- 2026-08-01: Added Genesis-0.0.26 gateway auth/rate-limit milestone.
 - 2026-08-01: Added Genesis-0.0.25 AICS v0.2 structured metadata milestone.
 - 2026-08-01: Added Genesis-0.0.24 anthropic outbound provider milestone.
 - 2026-08-01: Added Genesis-0.0.23 thinking/tool-use mapping milestone.
