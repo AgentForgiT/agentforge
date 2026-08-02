@@ -34,7 +34,7 @@ The draft AgentForge AI Context Specification is available at `.agentforge/specs
 
 ## Current Priority
 
-Genesis Sprint 33 kicks off the Engineering Twin (ADR-0028): `agentforge build-twin` generates `context/twin.json` — a read-only, schema-validated project profile consolidating AICS governance, decisions, and the gateway surface. The vision's "ask the project's twin" begins with its data layer.
+Sprint 37 ships the twin service (ADR-0029): `agentforge serve-twin` — a read-only stdlib HTTP consumer of the twin profile with `/twin.json`, `/search?q=` over the governance corpus, and a minimal index page. The first 0.1.x feature release (0.2.0, per DEC-0006 semver).
 
 Gateway provider adapters live behind explicit internal modules under `agentforge_gateway.providers`, chat-completion request validation lives under `agentforge_gateway.requests`, gateway errors use a standard JSON envelope, successful chat-completion responses and streaming chunks pass through `agentforge_gateway.responses`, JSON configuration is validated by `agentforge_gateway.config`, and structured access records are emitted through `agentforge_gateway.logger`. Product backlog and epics live in `.agentforge/backlog.md`, canonical standards live in `.agentforge/standards/`, and repository hygiene is anchored by `.editorconfig` and `.gitattributes`. The public `agentforge-gateway` and `agentforge-cli` repositories remain historical pre-governance prototypes; new canonical gateway and CLI work belongs in this repository under `apps/gateway` and `apps/cli`.
 

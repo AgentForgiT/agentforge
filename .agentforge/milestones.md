@@ -354,25 +354,26 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## Genesis-0.0.33: Community and Contribution Paths
+## 0.2.0: Twin Service
 
 Scope:
 
-- define community/contributor requirements
-- decide the community boundary (four paths, governed, docs in repo + site, DEC-0007)
-- implement expanded `CONTRIBUTING.md` + `docs/community.md` + site refresh
-- verify governance consistency
+- define twin-service requirements
+- decide the service boundary (read-only stdlib HTTP consumer of the profile, honest keyword retrieval, ADR-0029)
+- implement `serve-twin` + `twin_service.py`
+- cover endpoints, search, read-only, and missing-profile hints in tests
 - ship docs
 
 Exit criteria:
 
-- DEC-0007 records the community boundary for issue #156
-- CONTRIBUTING + community docs land for issue #157
-- CI Bootstrap Validate passes offline for issue #158
-- docs explain the community; release notes document `Genesis-0.0.33` for issue #159
+- ADR-0029 records the service boundary for issue #161
+- `serve-twin` lands for issue #162
+- CI Bootstrap Validate passes offline for issue #163
+- docs explain the twin service; release notes document `0.2.0` for issue #164
 
 ## Revision History
 
+- 2026-08-01: Added 0.2.0 twin-service milestone (first feature release under semver).
 - 2026-08-01: Added Genesis-0.0.33 community milestone.
 - 2026-08-01: Added Genesis-0.0.32 public 0.1.0 scope milestone.
 - 2026-08-01: Added Genesis-0.0.31 engineering-twin milestone.

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0 - 2026-08-01
+
+- Added the twin service (ADR-0029) — first feature release under semver (DEC-0006):
+  - `agentforge serve-twin`: read-only stdlib HTTP service over the twin profile.
+  - `GET /twin.json` (404 + run-`build-twin` hint when absent), `GET /search?q=` (deterministic keyword search over ADRs, decision register, governance files, ranked by term overlap), `GET /` (minimal index page).
+  - Read-only, 127.0.0.1 by default, zero dependencies; honest retrieval — no embeddings or generation in v1.
+- Added 11 twin-service tests (search, endpoints, 404 hints, read-only). CLI suite now 50.
+
 ## Genesis-0.0.33 - 2026-08-01
 
 - Added the community layer (DEC-0007):

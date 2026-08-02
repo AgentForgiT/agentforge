@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Genesis Sprint 36: Community and Contribution Paths
+## Sprint 37: Twin Service
 
-Goal: build the adoption loop's human half — expanded CONTRIBUTING, a community overview (paths, release train, 0.1.0 gate), and a refreshed site page (DEC-0007).
+Goal: give the twin profile a live read layer — `agentforge serve-twin`, a read-only stdlib HTTP service with `/twin.json`, `/search?q=` over the governance corpus, and an index page (ADR-0029). First feature release under semver (0.2.0).
 
 Deliverables:
 
-- community/contributor requirements for issue #155
-- community boundary decision DEC-0007 for issue #156
-- expanded `CONTRIBUTING.md` + `docs/community.md` + site contributing refresh for issue #157
-- governance consistency + link checks; CI green for issue #158
-- community docs and `Genesis-0.0.33` release for issue #159
+- twin-service requirements for issue #160
+- twin-service boundary decision ADR-0029 for issue #161
+- `serve-twin` command + `twin_service.py` (endpoints, deterministic keyword search) for issue #162
+- endpoint, search, read-only, and 404-hint tests; CI validation for issue #163
+- twin-service docs and `0.2.0` release for issue #164
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 37 twin-service deliverables.
 - 2026-08-01: Added Sprint 36 community deliverables.
 - 2026-08-01: Added Sprint 35 public 0.1.0 scope deliverables.
 - 2026-08-01: Added Sprint 33 engineering-twin deliverables.

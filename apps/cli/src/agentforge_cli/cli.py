@@ -57,6 +57,23 @@ def build_parser() -> argparse.ArgumentParser:
         help="Project root to build the twin for",
     )
 
+    serve_twin_parser = subparsers.add_parser(
+        "serve-twin",
+        help="Serve the engineering twin profile read-only over HTTP",
+    )
+    serve_twin_parser.add_argument(
+        "project_path",
+        nargs="?",
+        default=".",
+        help="Project root whose twin to serve",
+    )
+    serve_twin_parser.add_argument(
+        "--port",
+        type=int,
+        default=8737,
+        help="Port to bind (default 8737)",
+    )
+
     explain_context_parser = subparsers.add_parser(
         "explain-context",
         help="Explain an AICS project context",
@@ -94,6 +111,8 @@ def main(argv: list[str] | None = None) -> int:
         return _run_migrate_context(Path(args.project_path))
     if args.command == "build-twin":
         return _run_build_twin(Path(args.project_path))
+    if args.command == "serve-twin":
+        return _run_serve_twin(Path(args.project_path), args.port)
     if args.command == "explain-context":
         return _run_explain_context(Path(args.project_path))
     if args.command == "doctor":
@@ -159,6 +178,25 @@ def _run_build_twin(project_path: Path) -> int:
 
     print(f"built engineering twin profile: {result.output}")
     return 0
+
+
+def _run_serve_twin(project_path: Path, port: int) -> int:
+    from .twin_service import serve_twin
+
+    result = serve_twin(project_path, port=port)
+    if not result.ok:
+        for error in result.errors:
+            print(error)
+        return 1
+
+    print(f"serving twin at http://127.0.0.1:{port} (Ctrl+C to stop)")
+    try:
+        import time
+
+        while True:
+            time.sleep(3600)
+    except KeyboardInterrupt:
+        return 0
 
 
 def _run_explain_context(project_path: Path) -> int:
