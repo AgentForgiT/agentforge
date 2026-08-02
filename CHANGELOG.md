@@ -1,5 +1,11 @@
 # Changelog
 
+## Genesis-0.0.28 - 2026-08-01
+
+- Added the Python SDK (ADR-0025): `apps/sdk` — dependency-free `AgentForgeClient` covering health, models, chat completions (non-stream + SSE), and Anthropic Messages (non-stream + SSE), with Bearer auth and typed `AgentForgeError` for gateway envelopes.
+- Added 10 SDK tests (transport, payloads, auth header, error envelope, both stream parsers, editable-install smoke).
+- CLI packaging fix: `context-v0.2` templates now included in package data.
+
 ## Genesis-0.0.27 - 2026-08-01
 
 - Added AICS v0.3 tooling (ADR-0024):

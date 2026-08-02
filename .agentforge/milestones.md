@@ -354,25 +354,26 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## Genesis-0.0.27: AICS v0.3 Tooling
+## Genesis-0.0.28: Gateway Python SDK
 
 Scope:
 
-- define AICS v0.3 tooling requirements
-- decide the tooling boundary (v0.2-first scaffolds, additive migration, declarative schema, ADR-0024)
-- implement `context-v0.2` templates + `migrate-context` + `aics-front-matter.schema.json`
-- cover scaffold-at-Level-3, migration, and idempotency in tests
+- define SDK requirements
+- decide the SDK boundary (thin client, stdlib-only, gateway owns logic, ADR-0025)
+- implement `AgentForgeClient` (health, models, both chat surfaces, SSE streaming, Bearer auth)
+- cover transport, streaming, auth, and errors in offline tests + install smoke
 - ship docs
 
 Exit criteria:
 
-- ADR-0024 records the tooling boundary for issue #126
-- templates + migrate-context + schema land for issue #127
-- CI Bootstrap Validate passes offline for issue #128
-- docs explain the tooling; release notes document `Genesis-0.0.27` for issue #129
+- ADR-0025 records the SDK boundary for issue #131
+- `AgentForgeClient` lands for issue #132
+- CI Bootstrap Validate passes offline for issue #133
+- docs explain the SDK; release notes document `Genesis-0.0.28` for issue #134
 
 ## Revision History
 
+- 2026-08-01: Added Genesis-0.0.28 gateway SDK milestone.
 - 2026-08-01: Added Genesis-0.0.27 AICS v0.3 tooling milestone.
 - 2026-08-01: Added Genesis-0.0.26 gateway auth/rate-limit milestone.
 - 2026-08-01: Added Genesis-0.0.25 AICS v0.2 structured metadata milestone.

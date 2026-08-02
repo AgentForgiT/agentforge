@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Genesis Sprint 28: AICS v0.3 Tooling
+## Genesis Sprint 29: Gateway Python SDK
 
-Goal: close the adoption tooling loop — v0.2-first scaffolds, additive v0.1→v0.2 migration, and a canonical front matter schema (ADR-0024).
+Goal: ship the first-party client — `apps/sdk` (`agentforge_sdk`), a dependency-free `AgentForgeClient` covering health, models, both chat surfaces, streaming, and auth (ADR-0025).
 
 Deliverables:
 
-- AICS v0.3 tooling requirements for issue #125
-- tooling boundary decision ADR-0024 for issue #126
-- `context-v0.2` templates (front matter + version marker) + `migrate-context` command + `aics-front-matter.schema.json` for issue #127
-- scaffold-at-Level-3, migration, and schema tests; CI validation for issue #128
-- AICS v0.3 docs and `Genesis-0.0.27` release for issue #129
+- SDK requirements for issue #130
+- SDK boundary decision ADR-0025 for issue #131
+- `AgentForgeClient` (health, models, chat_completions, anthropic_messages, SSE streaming, Bearer auth) for issue #132
+- offline transport tests + editable-install smoke; CI validation for issue #133
+- SDK docs and `Genesis-0.0.28` release for issue #134
 
-Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
+Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 29 SDK deliverables.
 - 2026-08-01: Added Sprint 28 AICS v0.3 tooling deliverables.
 - 2026-08-01: Added Sprint 27 gateway auth/rate-limit deliverables.
 - 2026-08-01: Added Sprint 26 AICS v0.2 structured metadata deliverables.
