@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Sprint 41: Benchmark Trends
+## Sprint 42: Benchmark Regression Gate
 
-Goal: make per-release results tell a story — a history collector merging release `results.json` assets into a trend artifact, rendered as release-to-release deltas on the observatory (ADR-0033).
+Goal: make trends enforceable — a release gate comparing current vs previous results, failing on regressions beyond threshold (ADR-0034).
 
 Deliverables:
 
-- benchmark trends requirements for issue #180
-- trends boundary decision ADR-0033 for issue #181
-- `collect_history.py` (injectable fetch, derived better-direction, deltas) + `history.schema.json` for issue #182
-- collector + delta + schema tests; CI green for issue #183
-- observatory trends section + `0.6.0` release for issue #184
+- regression gate requirements for issue #185
+- gate boundary decision ADR-0034 for issue #186
+- `check_regressions.py` (threshold, both better-directions, skip missing) for issue #187
+- gate tests + publish workflow wiring for issue #188
+- docs + `0.7.0` release for issue #189
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, benchmark tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 42 regression gate deliverables.
 - 2026-08-01: Added Sprint 41 benchmark trends deliverables.
 - 2026-08-01: Added Sprint 40 twin QA deliverables.
 - 2026-08-01: Added Sprint 39 per-user auth deliverables.

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.0 - 2026-08-01
+
+- Added the benchmark regression gate (ADR-0034):
+  - `benchmarks/check_regressions.py`: current vs previous release comparison; lower-better increases and higher-better decreases beyond threshold → REGRESSED (exit 1); improvements and within-threshold changes never fail; benchmarks missing from one side are skipped.
+  - Publish workflow benchmarks job now gates the fresh results against the previous release's (fetched via gh) before attaching.
+- Added 9 gate tests (both directions, threshold, improvements, skip, CLI exit codes).
+
 ## 0.6.0 - 2026-08-01
 
 - Added benchmark trends (ADR-0033):

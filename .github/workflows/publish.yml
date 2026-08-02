@@ -91,6 +91,31 @@ jobs:
           python-version: "3.12"
       - name: Run offline benchmark harness
         run: python benchmarks/run_benchmarks.py --samples 5
+      - name: Regression gate vs previous release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          gh release list --repo "$GH_REPO" --limit 20 --json tagName --jq '.[].tagName' > /tmp/tags.txt
+          PREV_TAG=""
+          while IFS= read -r t; do
+            if [ "$t" = "$TAG" ]; then
+              break
+            fi
+            PREV_TAG="$t"
+          done < /tmp/tags.txt
+          if [ -z "$PREV_TAG" ]; then
+            echo "no previous release found — skipping regression gate"
+          else
+            echo "gating against previous release: $PREV_TAG"
+            gh release download "$PREV_TAG" --repo "$GH_REPO" --pattern "results.json" --dir /tmp/prev || true
+            if [ -f /tmp/prev/results.json ]; then
+              python benchmarks/check_regressions.py --previous /tmp/prev/results.json --current benchmarks/results.json --threshold 10
+            else
+              echo "previous release $PREV_TAG has no results.json — skipping regression gate"
+            fi
+          fi
       - name: Attach benchmark results to release
         env:
           GH_TOKEN: ${{ github.token }}

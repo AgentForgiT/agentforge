@@ -73,6 +73,7 @@ Near-term work should remain small and releasable:
 
 ## Done and Removed
 
+- Benchmark regression gate (Sprint 42, 2026-08-01): `check_regressions.py` — current vs previous release comparison, threshold in percent, both better-directions, improvements never fail; wired into the publish workflow; ADR-0034; released as 0.7.0.
 - Benchmark trends (Sprint 41, 2026-08-01): `collect_history.py` merging per-release results assets into versioned history.json with deltas + derived better-direction; observatory trends section; ADR-0033; released as 0.6.0.
 - Twin QA layer (Sprint 40, 2026-08-01): `/ask` — deterministic retrieval + optional generation (default local gateway) with faithful extractive fallback; ADR-0032; released as 0.5.0.
 - Per-user auth (Sprint 39, 2026-08-01): named key store (server.auth_keys_file), per-key rate limits, live add/revoke without restart, `agentforge auth-key` CLI; ADR-0031; released as 0.4.0.
@@ -157,6 +158,7 @@ Change line 42 in config.py to reject timeout_seconds <= 0.
 
 ## Revision History
 
+- 2026-08-01: Promoted regression gate into Sprint 42.
 - 2026-08-01: Promoted benchmark trends into Sprint 41.
 - 2026-08-01: Promoted twin QA layer into Sprint 40.
 - 2026-08-01: Promoted per-user auth into Sprint 39.
