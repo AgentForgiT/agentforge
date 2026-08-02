@@ -354,25 +354,26 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## 0.9.0: Key Store Encryption at Rest
+## 0.10.0: MCP Resources and Prompts
 
 Scope:
 
-- define store encryption requirements
-- decide the boundary (stdlib primitives: PBKDF2-CTR confidentiality + HMAC-SHA256 integrity, encrypt-then-MAC; plaintext stores stay supported, ADR-0036)
-- implement `keystore.py` encrypt/decrypt + gateway env passphrase + `auth-key --encrypt`
-- cover roundtrip, wrong passphrase, tamper detection, plaintext compat, gateway auth, CLI in tests
+- define MCP content requirements
+- decide the boundary (read-only gateway-owned resources, redacted config, static templates with substitution, ADR-0037)
+- implement resources/list + read and prompts/list + get
+- cover list/read/get shapes, redaction, argument substitution, and error cases in tests
 - ship docs
 
 Exit criteria:
 
-- ADR-0036 records the encryption boundary for issue #196
-- encrypt/decrypt + CLI land for issue #197/#198
-- CI Bootstrap Validate passes offline for issue #198
-- docs explain encryption; release notes document `0.9.0` for issue #199
+- ADR-0037 records the content boundary for issue #201
+- resources + prompts land for issue #202/#203
+- CI Bootstrap Validate passes offline for issue #203
+- docs explain MCP content; release notes document `0.10.0` for issue #204
 
 ## Revision History
 
+- 2026-08-01: Added 0.10.0 MCP content milestone.
 - 2026-08-01: Added 0.9.0 store encryption milestone.
 - 2026-08-01: Added 0.8.0 per-benchmark thresholds milestone.
 - 2026-08-01: Added 0.7.0 regression gate milestone.

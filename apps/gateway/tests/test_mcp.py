@@ -32,12 +32,84 @@ class McpInitializeTests(unittest.TestCase):
         self.assertEqual(result["protocolVersion"], PROTOCOL_VERSION)
         self.assertEqual(result["serverInfo"]["name"], "agentforge-gateway")
         self.assertIn("tools", result["capabilities"])
+        self.assertIn("resources", result["capabilities"])
+        self.assertIn("prompts", result["capabilities"])
 
-    def test_resources_and_prompts_return_empty(self) -> None:
+    def test_resources_and_prompts_expose_content(self) -> None:
         resources = rpc("resources/list")
-        self.assertEqual(resources["result"], {"resources": []})
+        uris = [r["uri"] for r in resources["result"]["resources"]]
+        self.assertEqual(uris, ["models://registry", "models://config"])
         prompts = rpc("prompts/list")
-        self.assertEqual(prompts["result"], {"prompts": []})
+        names = [p["name"] for p in prompts["result"]["prompts"]]
+        self.assertEqual(names, ["request-builder", "config-review", "error-diagnosis"])
+
+
+class McpResourcesTests(unittest.TestCase):
+    def test_read_registry(self) -> None:
+        response = rpc("resources/read", {"uri": "models://registry"})
+        contents = response["result"]["contents"]
+        self.assertEqual(contents[0]["uri"], "models://registry")
+        self.assertEqual(contents[0]["mimeType"], "application/json")
+        self.assertIn("mock-coder", contents[0]["text"])
+
+    def test_read_config_redacts_secrets(self) -> None:
+        response = rpc("resources/read", {"uri": "models://config"})
+        text = response["result"]["contents"][0]["text"]
+        self.assertNotIn("sk-", text)
+        self.assertNotIn("af-k-", text)
+        self.assertNotIn("redacted", text)  # marker must not leak a value
+
+    def test_read_unknown_uri_errors(self) -> None:
+        response = rpc("resources/read", {"uri": "models://nope"})
+        self.assertEqual(response["error"]["code"], -32602)
+
+
+class McpPromptsTests(unittest.TestCase):
+    def test_request_builder_prompt(self) -> None:
+        response = rpc(
+            "prompts/get",
+            {"name": "request-builder", "arguments": {"model": "mock-coder", "user": "Hello"}},
+        )
+        result = response["result"]
+        self.assertEqual(result["description"], "Build an OpenAI-compatible chat-completions request body.")
+        body = result["messages"][0]["content"]["text"]
+        self.assertIn('"model": "mock-coder"', body)
+        self.assertIn('"content": "Hello"', body)
+
+    def test_request_builder_with_system(self) -> None:
+        response = rpc(
+            "prompts/get",
+            {"name": "request-builder", "arguments": {"model": "m", "system": "Be terse.", "user": "Hi"}},
+        )
+        body = response["result"]["messages"][0]["content"]["text"]
+        self.assertIn('"role": "system"', body)
+
+    def test_config_review_prompt_includes_config(self) -> None:
+        response = rpc(
+            "prompts/get",
+            {"name": "config-review", "arguments": {"config": '{"server": {"port": 8080}}'}},
+        )
+        text = response["result"]["messages"][0]["content"]["text"]
+        self.assertIn("keyless local trust", text)
+        self.assertIn('{"server": {"port": 8080}}', text)
+
+    def test_error_diagnosis_prompt(self) -> None:
+        response = rpc(
+            "prompts/get",
+            {"name": "error-diagnosis", "arguments": {"error": '{"error": {"type": "bad_request"}}'}},
+        )
+        text = response["result"]["messages"][0]["content"]["text"]
+        self.assertIn("error envelope", text)
+
+    def test_prompt_missing_required_arg_errors(self) -> None:
+        response = rpc("prompts/get", {"name": "request-builder", "arguments": {"model": "m"}})
+        self.assertEqual(response["error"]["code"], -32602)
+        self.assertIn("user", response["error"]["message"])
+
+    def test_prompt_unknown_name_errors(self) -> None:
+        response = rpc("prompts/get", {"name": "nope", "arguments": {}})
+        self.assertEqual(response["error"]["code"], -32602)
+        self.assertIn("unknown prompt", response["error"]["message"])
 
 
 class McpToolsListTests(unittest.TestCase):

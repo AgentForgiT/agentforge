@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.0 - 2026-08-01
+
+- Added MCP resources and prompts (ADR-0037), filling ADR-0026's deferred content:
+  - `resources/list` + `resources/read`: `models://registry` (live model registry) and `models://config` (redacted — API keys and provider secrets masked per ADR-0015); unknown URI → JSON-RPC error.
+  - `prompts/list` + `prompts/get`: `request-builder` (build a chat-completions body), `config-review` (common pitfalls), `error-diagnosis` (explain an error envelope); argument substitution, missing-required-arg and unknown-name errors.
+  - `initialize` capabilities now advertise resources + prompts.
+- Added 9 MCP content tests (list/read/get shapes, redaction, substitution, errors). MCP suite now 24. Live-verified: registry read, request-builder body, secret redaction (real key never appears).
+
 ## 0.9.0 - 2026-08-01
 
 - Added key-store encryption at rest (ADR-0036):

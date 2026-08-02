@@ -73,6 +73,47 @@ TOOL_DEFINITIONS = [
     },
 ]
 
+RESOURCE_DEFINITIONS = [
+    {
+        "uri": "models://registry",
+        "name": "Model Registry",
+        "description": "The live model registry (GET /v1/models shape).",
+        "mimeType": "application/json",
+    },
+    {
+        "uri": "models://config",
+        "name": "Gateway Configuration",
+        "description": "The active gateway configuration, redacted (no secrets).",
+        "mimeType": "application/json",
+    },
+]
+
+PROMPT_DEFINITIONS = [
+    {
+        "name": "request-builder",
+        "description": "Build an OpenAI-compatible chat-completions request body.",
+        "arguments": [
+            {"name": "model", "required": True, "description": "Gateway model alias"},
+            {"name": "system", "required": False, "description": "System prompt"},
+            {"name": "user", "required": True, "description": "User message"},
+        ],
+    },
+    {
+        "name": "config-review",
+        "description": "Review a gateway config for common pitfalls.",
+        "arguments": [
+            {"name": "config", "required": True, "description": "Gateway config JSON to review"}
+        ],
+    },
+    {
+        "name": "error-diagnosis",
+        "description": "Explain a gateway error envelope and suggest fixes.",
+        "arguments": [
+            {"name": "error", "required": True, "description": "Gateway error envelope JSON"}
+        ],
+    },
+]
+
 
 class McpServer:
     """Minimal stdlib MCP (Model Context Protocol) server over JSON-RPC 2.0.
@@ -106,8 +147,14 @@ class McpServer:
                 return _success(request_id, {"tools": TOOL_DEFINITIONS})
             if method == "tools/call":
                 return _success(request_id, self._call_tool(params))
-            if method in ("resources/list", "prompts/list"):
-                return _success(request_id, {"resources": []} if method == "resources/list" else {"prompts": []})
+            if method == "resources/list":
+                return _success(request_id, {"resources": RESOURCE_DEFINITIONS})
+            if method == "resources/read":
+                return _success(request_id, self._read_resource(params))
+            if method == "prompts/list":
+                return _success(request_id, {"prompts": PROMPT_DEFINITIONS})
+            if method == "prompts/get":
+                return _success(request_id, self._get_prompt(params))
             return _error(request_id, METHOD_NOT_FOUND, f"method not found: {method}")
         except McpToolError as exc:
             return _error(request_id, INVALID_PARAMS, str(exc))
@@ -126,9 +173,98 @@ class McpServer:
     def _initialize(self, params: Any) -> dict[str, Any]:
         return {
             "protocolVersion": PROTOCOL_VERSION,
-            "capabilities": {"tools": {"listChanged": False}},
+            "capabilities": {
+                "tools": {"listChanged": False},
+                "resources": {"subscribe": False, "listChanged": False},
+                "prompts": {"listChanged": False},
+            },
             "serverInfo": {"name": SERVER_NAME, "version": SERVER_VERSION},
         }
+
+    def _read_resource(self, params: Any) -> dict[str, Any]:
+        if not isinstance(params, dict):
+            raise McpToolError("invalid params")
+        uri = params.get("uri")
+        if not isinstance(uri, str):
+            raise McpToolError("resource uri required")
+        if uri == "models://registry":
+            text = json.dumps(self.app.models(), indent=2)
+        elif uri == "models://config":
+            text = json.dumps(_redacted_config(self.app), indent=2)
+        else:
+            raise McpToolError(f"unknown resource: {uri}")
+        return {"contents": [{"uri": uri, "mimeType": "application/json", "text": text}]}
+
+    def _get_prompt(self, params: Any) -> dict[str, Any]:
+        if not isinstance(params, dict):
+            raise McpToolError("invalid params")
+        name = params.get("name")
+        if not isinstance(name, str):
+            raise McpToolError("prompt name required")
+        arguments = params.get("arguments") or {}
+        if not isinstance(arguments, dict):
+            raise McpToolError("prompt arguments must be an object")
+
+        if name == "request-builder":
+            self._require_args(arguments, ["model", "user"])
+            model = arguments["model"]
+            system = arguments.get("system", "")
+            user = arguments["user"]
+            messages = []
+            if system:
+                messages.append({"role": "system", "content": system})
+            messages.append({"role": "user", "content": user})
+            body = json.dumps({"model": model, "messages": messages}, indent=2)
+            return {
+                "description": "Build an OpenAI-compatible chat-completions request body.",
+                "messages": [
+                    {"role": "user", "content": {"type": "text", "text": body}}
+                ],
+            }
+        if name == "config-review":
+            self._require_args(arguments, ["config"])
+            return {
+                "description": "Review a gateway config for common pitfalls.",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": {
+                            "type": "text",
+                            "text": (
+                                "Review this AgentForge gateway config for common pitfalls:\n"
+                                "- keyless local trust vs named keys (ADR-0017/0031)\n"
+                                "- CORS origin (ADR-0018)\n"
+                                "- rate limits (ADR-0023)\n\n"
+                                + arguments["config"]
+                            ),
+                        },
+                    }
+                ],
+            }
+        if name == "error-diagnosis":
+            self._require_args(arguments, ["error"])
+            return {
+                "description": "Explain a gateway error envelope and suggest fixes.",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": {
+                            "type": "text",
+                            "text": (
+                                "Explain this AgentForge gateway error envelope and suggest fixes:\n\n"
+                                + arguments["error"]
+                            ),
+                        },
+                    }
+                ],
+            }
+        raise McpToolError(f"unknown prompt: {name}")
+
+    @staticmethod
+    def _require_args(arguments: dict[str, Any], required: list[str]) -> None:
+        missing = [arg for arg in required if not arguments.get(arg)]
+        if missing:
+            raise McpToolError(f"missing required prompt arguments: {', '.join(missing)}")
 
     def _call_tool(self, params: Any) -> dict[str, Any]:
         if not isinstance(params, dict):
@@ -183,6 +319,45 @@ class McpServer:
 
 class McpToolError(Exception):
     pass
+
+
+def _redacted_config(app: Any) -> dict[str, Any]:
+    """Config resource view, redacted (ADR-0037 / ADR-0015 privacy).
+
+    Never renders API key values or provider secrets.
+    """
+    config = app.config
+    providers = {}
+    for name, provider in config.providers.items():
+        entry: dict[str, Any] = {"type": provider.type, "base_url": provider.base_url}
+        if provider.api_key_env:
+            entry["api_key_env"] = provider.api_key_env
+            entry["api_key"] = "***redacted***"
+        if provider.headers:
+            entry["headers"] = {k: ("***redacted***" if k.lower() in ("authorization", "x-api-key") else v) for k, v in provider.headers.items()}
+        providers[name] = entry
+
+    server: dict[str, Any] = {
+        "host": config.host,
+        "port": config.port,
+        "log_level": config.log_level,
+        "cors_origin": config.cors_origin,
+        "rate_limit_rpm": config.rate_limit_rpm,
+    }
+    if config.api_key_env:
+        server["api_key_env"] = config.api_key_env
+        server["api_key"] = "***redacted***"
+    if config.auth_keys_file:
+        server["auth_keys_file"] = config.auth_keys_file
+
+    return {
+        "server": server,
+        "models": {
+            name: {"provider": model.provider, "provider_model": model.provider_model}
+            for name, model in sorted(config.models.items())
+        },
+        "providers": providers,
+    }
 
 
 def _success(request_id: Any, result: dict[str, Any]) -> dict[str, Any]:

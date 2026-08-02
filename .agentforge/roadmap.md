@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Sprint 44: Key Store Encryption at Rest
+## Sprint 45: MCP Resources and Prompts
 
-Goal: encrypt the named key store with a password-derived key (stdlib primitives, encrypt-then-MAC), keep plaintext stores working (ADR-0036).
+Goal: fill the MCP surface's deferred content — read-only resources (registry, redacted config) and static prompt templates (ADR-0037).
 
 Deliverables:
 
-- store encryption requirements for issue #195
-- encryption boundary decision ADR-0036 for issue #196
-- `keystore.py` encrypt/decrypt (PBKDF2-CTR + HMAC, auto-detect marker) + gateway env passphrase for issue #197
-- `auth-key --encrypt` CLI + encryption tests for issue #198
-- docs + `0.9.0` release for issue #199
+- MCP content requirements for issue #200
+- MCP content boundary decision ADR-0037 for issue #201
+- `resources/list` + `resources/read` (registry, redacted config) for issue #202
+- `prompts/list` + `prompts/get` (request-builder, config-review, error-diagnosis) for issue #203
+- content tests + `0.10.0` release for issue #204
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, benchmark tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 45 MCP content deliverables.
 - 2026-08-01: Added Sprint 44 encryption deliverables.
 - 2026-08-01: Added Sprint 43 per-benchmark thresholds deliverables.
 - 2026-08-01: Added Sprint 42 regression gate deliverables.
