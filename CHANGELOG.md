@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0 - 2026-08-01
+
+- **The stability line.** Public 1.0.0 release (DEC-0009):
+  - Audited readiness gate — every box with evidence: 371 tests green offline (gateway 250, CLI 60, SDK 11, bench/AICS 50); 38 ADRs + 9 DECs all Accepted; docs complete (9 site pages); distribution automated (wheels + results on every release); AICS Level-3 in CI; API-surface inventory frozen.
+  - Semver promise: breaking changes require a minor bump AND an ADR; patches are 1.0.x.
+  - RELEASE-1.0.0.md records the transition and the full frozen surface (5 gateway surfaces, 4 providers, 8 CLI commands, 4 SDK methods, 7 MCP methods, AICS v0.2).
+
 ## 0.11.0 - 2026-08-01
 
 - Added the variance-aware regression gate (ADR-0038):

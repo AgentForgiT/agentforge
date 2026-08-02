@@ -354,25 +354,26 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## 0.11.0: Variance-Aware Regression Gate
+## 1.0.0: Stability Line
 
 Scope:
 
-- define variance-aware gate requirements
-- decide the boundary (threshold AND significance both required; stdlib Welch t-test via betai; insufficient samples fall back to threshold-only; ADR-0038)
-- implement `welch_t_pvalue` + significance integration + `--significance` flag
-- cover significant/low-variance, jittery/high-variance, fallback, and disabled cases in tests
-- ship docs
+- define the 1.0.0 readiness gate
+- decide the stability boundary (API surface frozen; breaking = minor bump + ADR; DEC-0009)
+- audit every gate box with evidence
+- write the release note + API-surface inventory
+- ship 1.0.0
 
 Exit criteria:
 
-- ADR-0038 records the variance-aware boundary for issue #206
-- statistical gate lands for issue #207
-- CI Bootstrap Validate passes offline for issue #208
-- docs explain significance; release notes document `0.11.0` for issue #209
+- DEC-0009 records the gate for issue #211
+- audit evidence collected for issue #212
+- RELEASE-1.0.0.md lands for issue #213
+- 1.0.0 tagged + released + publish workflow verified for issue #214
 
 ## Revision History
 
+- 2026-08-01: Added 1.0.0 stability line milestone.
 - 2026-08-01: Added 0.11.0 variance-aware gate milestone.
 - 2026-08-01: Added 0.10.0 MCP content milestone.
 - 2026-08-01: Added 0.9.0 store encryption milestone.

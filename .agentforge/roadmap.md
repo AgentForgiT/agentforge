@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Sprint 46: Variance-Aware Regression Gate
+## Sprint 47: 1.0.0 Readiness Gate
 
-Goal: stop the gate false-flagging jittery benchmarks — statistical significance (Welch's t-test, stdlib) gates every threshold breach (ADR-0038).
+Goal: ship the stability line — audit all gate boxes with evidence, freeze the API surface, release 1.0.0 (DEC-0009).
 
 Deliverables:
 
-- variance-aware gate requirements for issue #205
-- variance-aware boundary decision ADR-0038 for issue #206
-- `welch_t_pvalue` (stdlib lgamma + betai continued fraction) + significance integration for issue #207
-- significance/jitter/fallback tests + `--significance` flag for issue #208
-- docs + `0.11.0` release for issue #209
+- 1.0.0 readiness requirements for issue #210
+- readiness gate decision DEC-0009 for issue #211
+- audit evidence (suites, register, docs, distribution, AICS, API surface) for issue #212
+- RELEASE-1.0.0.md for issue #213
+- 1.0.0 tag + release + publish verification for issue #214
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, benchmark tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 47 1.0.0 readiness deliverables.
 - 2026-08-01: Added Sprint 46 variance-aware gate deliverables.
 - 2026-08-01: Added Sprint 45 MCP content deliverables.
 - 2026-08-01: Added Sprint 44 encryption deliverables.

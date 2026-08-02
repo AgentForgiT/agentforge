@@ -62,9 +62,11 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 | DEC-0006 | 2026-08-01 | Accepted | Define the public 0.1.0 release scope and gate | `.agentforge/decisions/0006-public-0.1.0-scope.md` |
 | DEC-0007 | 2026-08-01 | Accepted | Adopt four contribution paths and a community overview | `.agentforge/decisions/0007-community-contribution-paths.md` |
 | DEC-0008 | 2026-08-01 | Accepted | Ship 0.1.0 SDK/CLI as release assets until the PyPI token is provisioned | `.agentforge/decisions/0008-0.1.0-distribution-release-assets.md` |
+| DEC-0009 | 2026-08-01 | Accepted | Define the public 1.0.0 readiness gate and stability line | `.agentforge/decisions/0009-1.0.0-readiness-gate.md` |
 
 ## Revision History
 
+- 2026-08-01: Added DEC-0009 (1.0.0 readiness gate).
 - 2026-08-01: Added ADR-0038.
 - 2026-08-01: Added ADR-0037.
 - 2026-08-01: Added ADR-0036.
