@@ -277,6 +277,27 @@ The bucket is keyed by API key when auth is on, else by client IP. Exceeding →
 
 Both error responses carry `Access-Control-Allow-Origin` when CORS is enabled (ADR-0018).
 
+## MCP Surface
+
+ADR-0026 defines the gateway's MCP (Model Context Protocol) surface.
+
+`POST /mcp` speaks stdlib JSON-RPC 2.0 and exposes the gateway's existing capabilities as MCP tools — so MCP clients (Claude Code, other MCP hosts) can drive the gateway's providers as tools:
+
+- `initialize` — protocol version (`2026-07-28`), capabilities (`tools`), server info (`agentforge-gateway`).
+- `tools/list` — four tools: `gateway_health`, `gateway_list_models`, `gateway_chat_completion`, `gateway_anthropic_message`, each with a JSON Schema `inputSchema`.
+- `tools/call` — routes to the matching capability; success returns text content blocks, gateway/provider failures return `isError: true`, unknown tools return JSON-RPC error `-32602`.
+- `resources/list` and `prompts/list` — empty (deferred).
+
+Auth (ADR-0023) and CORS (ADR-0018) apply to `/mcp` exactly as to the other surfaces. The MCP surface is a view over existing capabilities — no new providers, no client-side logic.
+
+Example:
+
+```bash
+curl http://127.0.0.1:8080/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"gateway_chat_completion","arguments":{"model":"mock-coder","messages":[{"role":"user","content":"Hello"}]}}}'
+```
+
 ## Logging
 
 ADR-0015 defines the gateway logging boundary.
@@ -331,6 +352,7 @@ The shipped `config.example.json` sets `cors_origin` to the public docs-site ori
 
 ## Revision History
 
+- 2026-08-01: Documented MCP surface from ADR-0026.
 - 2026-08-01: Documented auth and rate limiting from ADR-0023.
 - 2026-08-01: Documented anthropic outbound provider from ADR-0021.
 - 2026-08-01: Documented thinking/tool-use mapping from ADR-0020.

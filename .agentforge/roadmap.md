@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Genesis Sprint 29: Gateway Python SDK
+## Genesis Sprint 30: Gateway MCP Surface
 
-Goal: ship the first-party client — `apps/sdk` (`agentforge_sdk`), a dependency-free `AgentForgeClient` covering health, models, both chat surfaces, streaming, and auth (ADR-0025).
+Goal: expose the gateway's capabilities as MCP tools over stdlib JSON-RPC 2.0 at `POST /mcp` — initialize, tools/list, tools/call — so MCP clients can drive the gateway's providers as tools (ADR-0026).
 
 Deliverables:
 
-- SDK requirements for issue #130
-- SDK boundary decision ADR-0025 for issue #131
-- `AgentForgeClient` (health, models, chat_completions, anthropic_messages, SSE streaming, Bearer auth) for issue #132
-- offline transport tests + editable-install smoke; CI validation for issue #133
-- SDK docs and `Genesis-0.0.28` release for issue #134
+- MCP surface requirements for issue #135
+- MCP boundary decision ADR-0026 for issue #136
+- `mcp.py` (JSON-RPC 2.0 dispatch, initialize, tools/list, tools/call, error shapes) + `/mcp` route with auth + CORS for issue #137
+- handshake, tool-schema, routing, and protocol-error tests; CI validation for issue #138
+- MCP docs and `Genesis-0.0.29` release for issue #139
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 30 MCP surface deliverables.
 - 2026-08-01: Added Sprint 29 SDK deliverables.
 - 2026-08-01: Added Sprint 28 AICS v0.3 tooling deliverables.
 - 2026-08-01: Added Sprint 27 gateway auth/rate-limit deliverables.

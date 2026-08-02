@@ -73,6 +73,7 @@ Near-term work should remain small and releasable:
 
 ## Done and Removed
 
+- Gateway MCP surface (Genesis Sprint 30, 2026-08-01): `POST /mcp` — stdlib JSON-RPC 2.0 server exposing health, models, and both chat surfaces as MCP tools; ADR-0026.
 - Python SDK (Genesis Sprint 29, 2026-08-01): `agentforge_sdk` — dependency-free `AgentForgeClient` over both gateway surfaces with streaming and auth; ADR-0025.
 - AICS v0.3 tooling (Genesis Sprint 28, 2026-08-01): v0.2-first scaffolds (Level 3 from birth), additive `migrate-context` command, canonical front matter JSON Schema; ADR-0024.
 - Gateway API-key auth + rate limiting (Genesis Sprint 27, 2026-08-01): opt-in `server.api_key_env` + `server.rate_limit_rpm`, token-bucket per key/IP, 401/429 with CORS headers, keyless default unchanged; ADR-0023.
@@ -147,6 +148,7 @@ Change line 42 in config.py to reject timeout_seconds <= 0.
 
 ## Revision History
 
+- 2026-08-01: Promoted gateway MCP surface into Genesis Sprint 30.
 - 2026-08-01: Promoted gateway Python SDK into Genesis Sprint 29.
 - 2026-08-01: Promoted AICS v0.3 tooling into Genesis Sprint 28.
 - 2026-08-01: Promoted gateway auth/rate limiting into Genesis Sprint 27.

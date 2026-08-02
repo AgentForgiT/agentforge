@@ -23,6 +23,7 @@ from .errors import (
     rate_limited_response,
 )
 from .logger import configure_logging, get_logger
+from .mcp import McpServer
 from .models import ModelRegistry
 from .providers import ChatProvider, build_provider
 from .ratelimit import TokenBucketRateLimiter
@@ -43,6 +44,7 @@ class GatewayApp:
         self.rate_limiter = (
             TokenBucketRateLimiter(config.rate_limit_rpm) if config.rate_limit_rpm else None
         )
+        self.mcp = McpServer(self)
 
     def _resolve_api_key(self) -> str | None:
         if not self.config.api_key_env:
@@ -219,6 +221,13 @@ def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
                         self._handle_anthropic_stream(body)
                     else:
                         self._send_json(200, app.anthropic_messages(body))
+                    return
+                if self.path == "/mcp":
+                    if not self._guard():
+                        return
+                    raw = self.rfile.read(int(self.headers.get("Content-Length", "0"))).decode("utf-8")
+                    response = app.mcp.handle(raw)
+                    self._send_json(200, response)
                     return
                 self._send_json(404, not_found_response())
             except GatewayError as exc:

@@ -354,25 +354,26 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## Genesis-0.0.28: Gateway Python SDK
+## Genesis-0.0.29: Gateway MCP Surface
 
 Scope:
 
-- define SDK requirements
-- decide the SDK boundary (thin client, stdlib-only, gateway owns logic, ADR-0025)
-- implement `AgentForgeClient` (health, models, both chat surfaces, SSE streaming, Bearer auth)
-- cover transport, streaming, auth, and errors in offline tests + install smoke
+- define MCP surface requirements
+- decide the MCP boundary (stdlib JSON-RPC 2.0 server over existing capabilities, ADR-0026)
+- implement `mcp.py` + `/mcp` route with auth + CORS
+- cover handshake, tool schemas, routing, and protocol errors in tests
 - ship docs
 
 Exit criteria:
 
-- ADR-0025 records the SDK boundary for issue #131
-- `AgentForgeClient` lands for issue #132
-- CI Bootstrap Validate passes offline for issue #133
-- docs explain the SDK; release notes document `Genesis-0.0.28` for issue #134
+- ADR-0026 records the MCP boundary for issue #136
+- `/mcp` surface lands for issue #137
+- CI Bootstrap Validate passes offline for issue #138
+- docs explain the MCP surface; release notes document `Genesis-0.0.29` for issue #139
 
 ## Revision History
 
+- 2026-08-01: Added Genesis-0.0.29 gateway MCP milestone.
 - 2026-08-01: Added Genesis-0.0.28 gateway SDK milestone.
 - 2026-08-01: Added Genesis-0.0.27 AICS v0.3 tooling milestone.
 - 2026-08-01: Added Genesis-0.0.26 gateway auth/rate-limit milestone.

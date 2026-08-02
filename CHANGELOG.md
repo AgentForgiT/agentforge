@@ -1,5 +1,13 @@
 # Changelog
 
+## Genesis-0.0.29 - 2026-08-01
+
+- Added the gateway MCP server surface (ADR-0026): `POST /mcp` speaks stdlib JSON-RPC 2.0 with `initialize`, `tools/list`, `tools/call`, and empty `resources/list`/`prompts/list`.
+  - Four MCP tools: `gateway_health`, `gateway_list_models`, `gateway_chat_completion`, `gateway_anthropic_message` — a view over existing capabilities, no new providers.
+  - JSON-RPC error shapes (-32700/-32600/-32601/-32602/-32603); gateway failures → `isError: true` tool results.
+  - Auth (ADR-0023) and CORS (ADR-0018) apply to `/mcp`.
+- Added 15 MCP tests (handshake, tool schemas, routing, protocol errors). Suite now 215.
+
 ## Genesis-0.0.28 - 2026-08-01
 
 - Added the Python SDK (ADR-0025): `apps/sdk` — dependency-free `AgentForgeClient` covering health, models, chat completions (non-stream + SSE), and Anthropic Messages (non-stream + SSE), with Bearer auth and typed `AgentForgeError` for gateway envelopes.
