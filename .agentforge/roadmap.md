@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Genesis Sprint 35: Public 0.1.0 Scope
+## Genesis Sprint 36: Community and Contribution Paths
 
-Goal: define the public `0.1.0` line — scope, exit criteria, and release gate (DEC-0006) — closing the Genesis era with a defined, auditable transition.
+Goal: build the adoption loop's human half — expanded CONTRIBUTING, a community overview (paths, release train, 0.1.0 gate), and a refreshed site page (DEC-0007).
 
 Deliverables:
 
-- 0.1.0 scope requirements for issue #150
-- release-scope decision DEC-0006 for issue #151
-- scope requirements + release-gate checklist + roadmap/milestones updates for issue #152
-- governance consistency checks; CI green for issue #153
-- scope docs and `Genesis-0.0.32` release for issue #154
+- community/contributor requirements for issue #155
+- community boundary decision DEC-0007 for issue #156
+- expanded `CONTRIBUTING.md` + `docs/community.md` + site contributing refresh for issue #157
+- governance consistency + link checks; CI green for issue #158
+- community docs and `Genesis-0.0.33` release for issue #159
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 36 community deliverables.
 - 2026-08-01: Added Sprint 35 public 0.1.0 scope deliverables.
 - 2026-08-01: Added Sprint 33 engineering-twin deliverables.
 - 2026-08-01: Added Sprint 31 distribution deliverables.

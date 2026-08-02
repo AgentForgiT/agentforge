@@ -50,9 +50,11 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 | DEC-0004 | 2026-07-02 | Accepted | Keep public prototype repositories as historical references after canonical gateway and CLI paths exist | `.agentforge/decisions/0004-post-sprint-8-prototype-disposition.md` |
 | DEC-0005 | 2026-07-06 | Accepted | Treat backlog, standards, and repository hygiene as required product foundation | `.agentforge/decisions/0005-product-foundation-hygiene.md` |
 | DEC-0006 | 2026-08-01 | Accepted | Define the public 0.1.0 release scope and gate | `.agentforge/decisions/0006-public-0.1.0-scope.md` |
+| DEC-0007 | 2026-08-01 | Accepted | Adopt four contribution paths and a community overview | `.agentforge/decisions/0007-community-contribution-paths.md` |
 
 ## Revision History
 
+- 2026-08-01: Added DEC-0007 (community contribution paths).
 - 2026-08-01: Added DEC-0006 (public 0.1.0 release scope).
 - 2026-08-01: Added ADR-0028.
 - 2026-08-01: Added ADR-0027.

@@ -354,25 +354,26 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## Genesis-0.0.32: Public 0.1.0 Scope
+## Genesis-0.0.33: Community and Contribution Paths
 
 Scope:
 
-- define the public 0.1.0 line (scope, exit criteria, release gate)
-- decide the transition (DEC-0006; Genesis stops at this release, 0.1.x follows under semver)
-- implement scope requirements + release-gate checklist + roadmap/milestones updates
+- define community/contributor requirements
+- decide the community boundary (four paths, governed, docs in repo + site, DEC-0007)
+- implement expanded `CONTRIBUTING.md` + `docs/community.md` + site refresh
 - verify governance consistency
 - ship docs
 
 Exit criteria:
 
-- DEC-0006 records the scope decision for issue #151
-- scope + gate artifacts land for issue #152
-- CI Bootstrap Validate passes offline for issue #153
-- docs explain the 0.1.0 gate; release notes document `Genesis-0.0.32` for issue #154
+- DEC-0007 records the community boundary for issue #156
+- CONTRIBUTING + community docs land for issue #157
+- CI Bootstrap Validate passes offline for issue #158
+- docs explain the community; release notes document `Genesis-0.0.33` for issue #159
 
 ## Revision History
 
+- 2026-08-01: Added Genesis-0.0.33 community milestone.
 - 2026-08-01: Added Genesis-0.0.32 public 0.1.0 scope milestone.
 - 2026-08-01: Added Genesis-0.0.31 engineering-twin milestone.
 - 2026-08-01: Added Genesis-0.0.30 distribution milestone.

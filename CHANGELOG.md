@@ -1,5 +1,12 @@
 # Changelog
 
+## Genesis-0.0.33 - 2026-08-01
+
+- Added the community layer (DEC-0007):
+  - Expanded `CONTRIBUTING.md`: sprint pattern, full validation suite, conventional commits, contribution paths.
+  - `docs/community.md`: four contribution paths (code/docs/research/integrations), the release train, the 0.1.0 gate, and where things live.
+  - Docs-site contributing page refreshed: live platform pages + the 0.1.0 gate link.
+
 ## Genesis-0.0.32 - 2026-08-01
 
 - Defined the public 0.1.0 release scope (DEC-0006):
