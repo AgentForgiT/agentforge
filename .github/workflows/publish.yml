@@ -34,7 +34,7 @@ jobs:
   publish-pypi:
     needs: build
     runs-on: ubuntu-latest
-    if: env.PYPI_TOKEN != ''
+    if: ${{ secrets.PYPI_TOKEN != '' }}
     env:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
     steps:
@@ -60,6 +60,15 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG="${GITHUB_REF#refs/tags/}"
+          # wait for the release to exist (it may be created after the tag push)
+          for i in $(seq 1 30); do
+            if gh release view "$TAG" >/dev/null 2>&1; then
+              break
+            fi
+            echo "waiting for release $TAG (attempt $i)..."
+            sleep 10
+          done
+          gh release view "$TAG" >/dev/null 2>&1 || { echo "release $TAG not found after waiting"; exit 1; }
           find dist -name '*.whl' -o -name '*.tar.gz' | while read -r f; do
             gh release upload "$TAG" "$f" --clobber
           done
