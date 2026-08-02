@@ -34,6 +34,38 @@ class _Verdict:
     regressed: bool
 
 
+def load_thresholds(path: Path | None) -> tuple[float, dict[str, float]]:
+    """Load thresholds config (ADR-0035): returns (default, per-name overrides).
+
+    Resolution order: per-benchmark name > config default > 10.
+    Raises ValueError with a clear message on invalid config.
+    """
+    if path is None:
+        return 10.0, {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"thresholds config is not valid JSON: {path}: {exc}") from exc
+    if not isinstance(data, dict):
+        raise ValueError("thresholds config must be an object")
+    default = data.get("default", 10.0)
+    if not isinstance(default, (int, float)) or isinstance(default, bool) or default <= 0:
+        raise ValueError("thresholds.default must be a positive number")
+    overrides: dict[str, float] = {}
+    benchmarks = data.get("benchmarks", {})
+    if not isinstance(benchmarks, dict):
+        raise ValueError("thresholds.benchmarks must be an object")
+    for name, value in benchmarks.items():
+        if not isinstance(value, (int, float)) or isinstance(value, bool) or value <= 0:
+            raise ValueError(f"threshold for '{name}' must be a positive number")
+        overrides[name] = float(value)
+    return float(default), overrides
+
+
+def _threshold_for(name: str, default: float, overrides: dict[str, float]) -> float:
+    return overrides.get(name, default)
+
+
 def _benchmarks_map(results: dict[str, Any]) -> tuple[dict[str, float], dict[str, str]]:
     values: dict[str, float] = {}
     units: dict[str, str] = {}
@@ -50,8 +82,14 @@ def check_regressions(
     previous: dict[str, Any],
     current: dict[str, Any],
     threshold_pct: float = 10.0,
+    overrides: dict[str, float] | None = None,
 ) -> tuple[list[_Verdict], bool]:
-    """Compare two results documents; returns (verdicts, has_regression)."""
+    """Compare two results documents; returns (verdicts, has_regression).
+
+    threshold_pct is the fallback default; overrides map benchmark names
+    to their own thresholds (ADR-0035: per-name > default > 10).
+    """
+    overrides = overrides or {}
     prev_values, prev_units = _benchmarks_map(previous)
     curr_values, _ = _benchmarks_map(current)
 
@@ -62,6 +100,7 @@ def check_regressions(
         pv = prev_values[name]
         cv = curr_values[name]
         better = _better_direction(name)
+        threshold = _threshold_for(name, threshold_pct, overrides)
         if pv == 0:
             delta_pct = 0.0
         else:
@@ -69,9 +108,9 @@ def check_regressions(
 
         regressed = False
         if better == "lower":
-            regressed = cv > pv * (1 + threshold_pct / 100.0)
+            regressed = cv > pv * (1 + threshold / 100.0)
         else:
-            regressed = cv < pv * (1 - threshold_pct / 100.0)
+            regressed = cv < pv * (1 - threshold / 100.0)
 
         if regressed:
             has_regression = True
@@ -107,18 +146,26 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="AgentForge benchmark regression gate")
     parser.add_argument("--previous", type=Path, required=True, help="previous release results.json")
     parser.add_argument("--current", type=Path, required=True, help="current release results.json")
-    parser.add_argument("--threshold", type=float, default=10.0, help="regression threshold in percent (default 10)")
+    parser.add_argument("--threshold", type=float, default=None, help="fallback regression threshold in percent (default 10)")
+    parser.add_argument("--thresholds", type=Path, default=None, help="thresholds config JSON (ADR-0035)")
     args = parser.parse_args()
+
+    try:
+        config_default, overrides = load_thresholds(args.thresholds)
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    fallback = args.threshold if args.threshold is not None else config_default
 
     previous = json.loads(args.previous.read_text(encoding="utf-8"))
     current = json.loads(args.current.read_text(encoding="utf-8"))
-    verdicts, has_regression = check_regressions(previous, current, args.threshold)
+    verdicts, has_regression = check_regressions(previous, current, fallback, overrides)
 
     prev_names = set(b.get("name") for b in previous.get("benchmarks", []))
     curr_names = set(b.get("name") for b in current.get("benchmarks", []))
-    skipped = sorted(prev_names.symmetric_difference(curr_names) - {None})  # type: ignore[arg-type]
+    skipped = sorted(s for s in prev_names.symmetric_difference(curr_names) if isinstance(s, str))
 
-    print(render(verdicts, sorted(s for s in skipped if isinstance(s, str))))
+    print(render(verdicts, skipped))
     return 1 if has_regression else 0
 
 

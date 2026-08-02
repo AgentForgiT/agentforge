@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Sprint 42: Benchmark Regression Gate
+## Sprint 43: Per-Benchmark Thresholds
 
-Goal: make trends enforceable — a release gate comparing current vs previous results, failing on regressions beyond threshold (ADR-0034).
+Goal: make the gate trustworthy per benchmark — a checked-in thresholds config (default + per-name overrides) resolved by the regression gate (ADR-0035).
 
 Deliverables:
 
-- regression gate requirements for issue #185
-- gate boundary decision ADR-0034 for issue #186
-- `check_regressions.py` (threshold, both better-directions, skip missing) for issue #187
-- gate tests + publish workflow wiring for issue #188
-- docs + `0.7.0` release for issue #189
+- per-benchmark thresholds requirements for issue #190
+- threshold config boundary decision ADR-0035 for issue #191
+- `benchmarks/thresholds.json` + `load_thresholds` + `--thresholds` flag + resolution order for issue #192
+- threshold resolution + config validation tests; CI green for issue #193
+- docs + `0.8.0` release for issue #194
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, benchmark tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 43 per-benchmark thresholds deliverables.
 - 2026-08-01: Added Sprint 42 regression gate deliverables.
 - 2026-08-01: Added Sprint 41 benchmark trends deliverables.
 - 2026-08-01: Added Sprint 40 twin QA deliverables.

@@ -354,25 +354,26 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## 0.7.0: Benchmark Regression Gate
+## 0.8.0: Per-Benchmark Thresholds
 
 Scope:
 
-- define regression gate requirements
-- decide the boundary (compare current vs previous results, threshold in percent, both better-directions, improvements never fail, ADR-0034)
-- implement `check_regressions.py`
-- cover regression/improvement/within-threshold/skip cases in tests + publish workflow wiring
+- define per-benchmark thresholds requirements
+- decide the boundary (checked-in config, per-name > config default > inline > 10, ADR-0035)
+- implement `thresholds.json` + `load_thresholds` + `--thresholds` flag
+- cover resolution order, fallback, and config validation in tests
 - ship docs
 
 Exit criteria:
 
-- ADR-0034 records the gate boundary for issue #186
-- gate lands for issue #187
-- CI green; publish workflow gates against previous release for issue #188
-- docs explain the gate; release notes document `0.7.0` for issue #189
+- ADR-0035 records the threshold config boundary for issue #191
+- config + loader + flag land for issue #192
+- CI Bootstrap Validate passes offline for issue #193
+- docs explain thresholds; release notes document `0.8.0` for issue #194
 
 ## Revision History
 
+- 2026-08-01: Added 0.8.0 per-benchmark thresholds milestone.
 - 2026-08-01: Added 0.7.0 regression gate milestone.
 - 2026-08-01: Added 0.6.0 benchmark trends milestone.
 - 2026-08-01: Added 0.5.0 twin QA milestone.

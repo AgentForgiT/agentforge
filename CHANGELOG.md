@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.0 - 2026-08-01
+
+- Added per-benchmark regression thresholds (ADR-0035):
+  - `benchmarks/thresholds.json` (checked-in): default 10% + per-name overrides — gateway latency/throughput 5% (stable), CLI/AICS timing 20% (jittery).
+  - `check_regressions.py --thresholds <path>`; resolution: per-name > config default > inline `--threshold` > 10; invalid config → usage error (exit 2).
+- Added 7 threshold tests (resolution, fallback, validation, CLI exit 2). Gate suite now 16.
+
 ## 0.7.0 - 2026-08-01
 
 - Added the benchmark regression gate (ADR-0034):

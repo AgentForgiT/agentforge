@@ -111,7 +111,7 @@ jobs:
             echo "gating against previous release: $PREV_TAG"
             gh release download "$PREV_TAG" --repo "$GH_REPO" --pattern "results.json" --dir /tmp/prev || true
             if [ -f /tmp/prev/results.json ]; then
-              python benchmarks/check_regressions.py --previous /tmp/prev/results.json --current benchmarks/results.json --threshold 10
+              python benchmarks/check_regressions.py --previous /tmp/prev/results.json --current benchmarks/results.json --thresholds benchmarks/thresholds.json
             else
               echo "previous release $PREV_TAG has no results.json — skipping regression gate"
             fi

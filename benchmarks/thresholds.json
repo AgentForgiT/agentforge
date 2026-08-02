@@ -1,0 +1,10 @@
+{
+  "default": 10,
+  "benchmarks": {
+    "gateway.chat_completion.median_latency_ms": 5,
+    "gateway.chat_completion.throughput_per_sec": 5,
+    "cli.validate_context.median_ms": 20,
+    "cli.build_twin.median_ms": 20,
+    "aics.validate.median_ms": 20
+  }
+}
