@@ -46,6 +46,17 @@ def build_parser() -> argparse.ArgumentParser:
         help="Project root to migrate",
     )
 
+    build_twin_parser = subparsers.add_parser(
+        "build-twin",
+        help="Build the engineering twin profile (context/twin.json)",
+    )
+    build_twin_parser.add_argument(
+        "project_path",
+        nargs="?",
+        default=".",
+        help="Project root to build the twin for",
+    )
+
     explain_context_parser = subparsers.add_parser(
         "explain-context",
         help="Explain an AICS project context",
@@ -81,6 +92,8 @@ def main(argv: list[str] | None = None) -> int:
         return _run_init_context(Path(args.project_path))
     if args.command == "migrate-context":
         return _run_migrate_context(Path(args.project_path))
+    if args.command == "build-twin":
+        return _run_build_twin(Path(args.project_path))
     if args.command == "explain-context":
         return _run_explain_context(Path(args.project_path))
     if args.command == "doctor":
@@ -132,6 +145,19 @@ def _run_migrate_context(project_path: Path) -> int:
     print(f"migrated AICS context to v0.2: {result.root}")
     for relative in result.migrated:
         print(f"  migrated: {relative}")
+    return 0
+
+
+def _run_build_twin(project_path: Path) -> int:
+    from .twin import build_twin
+
+    result = build_twin(project_path)
+    if not result.ok:
+        for error in result.errors:
+            print(error)
+        return 1
+
+    print(f"built engineering twin profile: {result.output}")
     return 0
 
 

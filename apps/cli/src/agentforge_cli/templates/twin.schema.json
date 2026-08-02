@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentforgit.github.io/agentforge-docs-site/schemas/twin.schema.json",
+  "title": "AgentForge Engineering Twin Profile",
+  "description": "Generated, read-only project profile produced by `agentforge build-twin` (ADR-0028). The repo remains the single source of truth; this is a derived consumer artifact.",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "aics_version", "profile", "governance"],
+  "properties": {
+    "schema_version": {"type": "string", "const": "0.1"},
+    "generated_at": {"type": "string"},
+    "aics_version": {"type": "string"},
+    "profile": {
+      "type": "object",
+      "required": ["project_name", "repo_root", "aics_level"],
+      "properties": {
+        "project_name": {"type": "string"},
+        "repo_root": {"type": "string"},
+        "aics_level": {"type": "integer", "minimum": 1, "maximum": 3}
+      }
+    },
+    "governance": {
+      "type": "object",
+      "required": ["constitution", "charter", "decisions", "architecture", "repo_map", "agents", "adr_count", "rfc_count"],
+      "properties": {
+        "constitution": {"type": "string"},
+        "charter": {"type": "string"},
+        "decisions": {"type": "string"},
+        "architecture": {"type": "string"},
+        "repo_map": {"type": "string"},
+        "agents": {"type": "string"},
+        "adr_count": {"type": "integer", "minimum": 0},
+        "rfc_count": {"type": "integer", "minimum": 0},
+        "decision_register": {"type": "array", "items": {"type": "object"}}
+      }
+    },
+    "gateway": {
+      "type": "object",
+      "properties": {
+        "models": {"type": "array", "items": {"type": "object"}},
+        "providers": {"type": "array", "items": {"type": "object"}},
+        "surfaces": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

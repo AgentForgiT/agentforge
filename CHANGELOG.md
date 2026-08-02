@@ -1,5 +1,12 @@
 # Changelog
 
+## Genesis-0.0.31 - 2026-08-01
+
+- Kicked off the Engineering Twin (ADR-0028):
+  - `agentforge build-twin` writes `context/twin.json` — a read-only, schema-validated project profile: AICS version + adoption level, governance inventory (constitution/charter/decisions/architecture/repo-map/agents, ADR + RFC counts, decision register), and the gateway surface (models, providers, surfaces) when configs are present.
+  - `context/twin.schema.json` documents the shape; the command validates its own output; AICS files are never modified; idempotent.
+- Added 7 twin tests (build, governance, read-only, idempotency, gateway surface, CLI).
+
 ## Genesis-0.0.30 - 2026-08-01
 
 - Added SDK distribution (ADR-0027):

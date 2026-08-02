@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Genesis Sprint 31: SDK Distribution + MCP Registration
+## Genesis Sprint 33: Engineering Twin Profile
 
-Goal: make the SDK installable and the gateway registerable — clean sdist/wheel, tag-gated PyPI publish + release assets, and canonical MCP registration docs (ADR-0027).
+Goal: kick off the Engineering Twin (ADR-0028) with its data layer — `agentforge build-twin` writes a read-only, schema-validated `context/twin.json` consolidating AICS governance, decisions, and the gateway surface.
 
 Deliverables:
 
-- distribution requirements for issue #140
-- distribution boundary decision ADR-0027 for issue #141
-- `publish.yml` (build both packages, token-gated PyPI publish, release-asset upload) + `docs/mcp.md` (Claude Code `claude mcp add` + `.mcp.json`) for issue #142
-- SDK build smoke + workflow validation; CI green for issue #143
-- distribution docs and `Genesis-0.0.30` release for issue #144
+- engineering-twin requirements for issue #145
+- twin boundary decision ADR-0028 for issue #146
+- `build-twin` command + `twin.py` + `twin.schema.json` for issue #147
+- twin build, schema, idempotency, and read-only tests; CI validation for issue #148
+- twin docs and `Genesis-0.0.31` release for issue #149
 
-Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, SDK build, and `git diff --check`.
+Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 33 engineering-twin deliverables.
 - 2026-08-01: Added Sprint 31 distribution deliverables.
 - 2026-08-01: Added Sprint 30 MCP surface deliverables.
 - 2026-08-01: Added Sprint 29 SDK deliverables.

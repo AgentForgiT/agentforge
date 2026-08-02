@@ -43,6 +43,7 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 | ADR-0025 | 2026-08-01 | Accepted | Add a dependency-free Python SDK client | `.agentforge/adrs/0025-gateway-sdk-boundary.md` |
 | ADR-0026 | 2026-08-01 | Accepted | Expose gateway capabilities as MCP tools | `.agentforge/adrs/0026-gateway-mcp-surface.md` |
 | ADR-0027 | 2026-08-01 | Accepted | Distribute the SDK via tag-gated PyPI publish and release assets | `.agentforge/adrs/0027-sdk-distribution-mcp-registration.md` |
+| ADR-0028 | 2026-08-01 | Accepted | Build the engineering twin as a generated read-only profile | `.agentforge/adrs/0028-engineering-twin-boundary.md` |
 | DEC-0001 | 2026-06-28 | Accepted | Treat early gateway and CLI repos as pre-governance prototypes | `.agentforge/decisions/0001-pre-governance-prototypes.md` |
 | DEC-0002 | 2026-06-28 | Accepted | Keep prototype repositories public with canonical monorepo notices | `.agentforge/decisions/0002-prototype-repository-disposition.md` |
 | DEC-0003 | 2026-06-28 | Accepted | Build AICS validation CLI in the canonical monorepo | `.agentforge/decisions/0003-cli-path-for-aics-validation.md` |
@@ -51,6 +52,7 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 
 ## Revision History
 
+- 2026-08-01: Added ADR-0028.
 - 2026-08-01: Added ADR-0027.
 - 2026-08-01: Added ADR-0026.
 - 2026-08-01: Added ADR-0025.

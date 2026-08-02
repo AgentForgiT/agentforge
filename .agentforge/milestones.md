@@ -354,25 +354,26 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## Genesis-0.0.30: SDK Distribution + MCP Registration
+## Genesis-0.0.31: Engineering Twin Profile
 
 Scope:
 
-- define distribution requirements
-- decide the distribution boundary (tag-gated PyPI publish, token-gated and dry-run-safe, release assets, ADR-0027)
-- implement `publish.yml` + `docs/mcp.md`
-- cover SDK build smoke and workflow validation
+- define engineering-twin requirements
+- decide the twin boundary (generated, read-only, schema-validated profile; repo is the source of truth, ADR-0028)
+- implement `build-twin` + `twin.py` + `twin.schema.json`
+- cover build, schema, idempotency, and read-only behavior in tests
 - ship docs
 
 Exit criteria:
 
-- ADR-0027 records the distribution boundary for issue #141
-- `publish.yml` + `docs/mcp.md` land for issue #142
-- CI Bootstrap Validate passes offline; SDK builds for issue #143
-- docs explain distribution/registration; release notes document `Genesis-0.0.30` for issue #144
+- ADR-0028 records the twin boundary for issue #146
+- `build-twin` lands for issue #147
+- CI Bootstrap Validate passes offline for issue #148
+- docs explain the twin; release notes document `Genesis-0.0.31` for issue #149
 
 ## Revision History
 
+- 2026-08-01: Added Genesis-0.0.31 engineering-twin milestone.
 - 2026-08-01: Added Genesis-0.0.30 distribution milestone.
 - 2026-08-01: Added Genesis-0.0.29 gateway MCP milestone.
 - 2026-08-01: Added Genesis-0.0.28 gateway SDK milestone.
