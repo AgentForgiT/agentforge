@@ -1,6 +1,7 @@
 __pycache__/
 *.egg-info/
 context/
+benchmarks/results.json
 *.py[cod]
 .pytest_cache/
 .venv/
