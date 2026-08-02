@@ -304,7 +304,16 @@ agentforge auth-key list
 agentforge auth-key revoke --name alice
 ```
 
-Example config: `apps/gateway/config.named-auth.example.json`. Store file permissions should be `0600` on POSIX; keys are never logged (ADR-0015).
+**Encryption at rest (ADR-0036)**: write the store encrypted with a passphrase-derived key:
+
+```bash
+export AGENTFORGE_AUTH_KEYS_PASSPHRASE="a-long-passphrase"
+agentforge auth-key add --name alice --encrypt
+```
+
+The encrypted store is a JSON envelope (`"encrypted": true`) using stdlib primitives — PBKDF2-HMAC-SHA256 (210k iterations) deriving encryption + MAC keys, a PBKDF2-CTR XOR stream for confidentiality, and HMAC-SHA256 encrypt-then-MAC for integrity. Documented honestly: stdlib primitives, not an audited AEAD. The gateway auto-detects the encrypted format and decrypts with `AGENTFORGE_AUTH_KEYS_PASSPHRASE`; a wrong passphrase or tampered store fails with a clear error. Plaintext stores remain fully supported.
+
+Example config: `apps/gateway/config.named-auth.example.json`. Store file permissions should be `0600` on POSIX; keys and passphrases are never logged (ADR-0015).
 
 Both error responses carry `Access-Control-Allow-Origin` when CORS is enabled (ADR-0018).
 
@@ -383,6 +392,7 @@ The shipped `config.example.json` sets `cors_origin` to the public docs-site ori
 
 ## Revision History
 
+- 2026-08-01: Documented store encryption from ADR-0036.
 - 2026-08-01: Documented per-user named keys from ADR-0031.
 - 2026-08-01: Documented MCP surface from ADR-0026.
 - 2026-08-01: Documented auth and rate limiting from ADR-0023.

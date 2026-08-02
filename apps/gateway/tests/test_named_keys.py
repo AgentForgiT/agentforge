@@ -12,7 +12,15 @@ sys.path.insert(0, str(ROOT / "src"))
 CLI_SRC = ROOT.parent / "cli" / "src"
 sys.path.insert(0, str(CLI_SRC))
 
-from agentforge_gateway.keystore import NamedKey, generate_key, load_key_store, write_key_store
+from agentforge_gateway.keystore import (
+    NamedKey,
+    decrypt_store,
+    encrypt_store,
+    generate_key,
+    load_key_store,
+    write_encrypted_key_store,
+    write_key_store,
+)
 
 
 def store_with(alice_rpm: int | None = 60, bob_rpm: int | None = 300) -> dict[str, str]:
@@ -309,6 +317,101 @@ class AuthKeyCliTests(unittest.TestCase):
             code, out = self.run_cli(["auth-key", "revoke", "--name", "only", "--file", str(store)])
             self.assertEqual(code, 1)
             self.assertIn("refusing", out)
+
+    def test_add_encrypt_writes_encrypted_store(self) -> None:
+        os.environ["AGENTFORGE_AUTH_KEYS_PASSPHRASE"] = "secret"
+        try:
+            with tempfile.TemporaryDirectory() as tmp:
+                store = Path(tmp) / "keys.json"
+                code, out = self.run_cli(["auth-key", "add", "--name", "enc", "--encrypt", "--file", str(store)])
+                self.assertEqual(code, 0, out)
+                self.assertIn('"encrypted": true', store.read_text(encoding="utf-8"))
+                # list works against the encrypted store with the env passphrase
+                code, out = self.run_cli(["auth-key", "list", "--file", str(store)])
+                self.assertEqual(code, 0, out)
+                self.assertIn("enc", out)
+        finally:
+            del os.environ["AGENTFORGE_AUTH_KEYS_PASSPHRASE"]
+
+    def test_add_encrypt_requires_passphrase(self) -> None:
+        os.environ.pop("AGENTFORGE_AUTH_KEYS_PASSPHRASE", None)
+        with tempfile.TemporaryDirectory() as tmp:
+            store = Path(tmp) / "keys.json"
+            code, out = self.run_cli(["auth-key", "add", "--name", "x", "--encrypt", "--file", str(store)])
+            self.assertEqual(code, 1)
+            self.assertIn("passphrase", out)
+
+
+class KeyStoreEncryptionTests(unittest.TestCase):
+    def test_encrypt_decrypt_roundtrip(self) -> None:
+        payload = {"keys": [{"name": "alice", "key": "af-k-x", "rate_limit_rpm": 60}]}
+        envelope = encrypt_store(payload, "correct horse")
+        self.assertTrue(envelope["encrypted"])
+        self.assertEqual(envelope["kdf"], "PBKDF2-HMAC-SHA256")
+        decrypted = decrypt_store(envelope, "correct horse")
+        self.assertEqual(decrypted, payload)
+
+    def test_wrong_passphrase_fails(self) -> None:
+        payload = {"keys": [{"name": "a", "key": "k"}]}
+        envelope = encrypt_store(payload, "right")
+        with self.assertRaises(ValueError):
+            decrypt_store(envelope, "wrong")
+
+    def test_tampered_ciphertext_detected(self) -> None:
+        payload = {"keys": [{"name": "a", "key": "k"}]}
+        envelope = encrypt_store(payload, "pass")
+        tampered = dict(envelope)
+        tampered["ciphertext"] = "0" * len(envelope["ciphertext"])
+        with self.assertRaises(ValueError):
+            decrypt_store(tampered, "pass")
+
+    def test_encrypted_store_roundtrips_through_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "keys.json"
+            write_encrypted_key_store(path, [NamedKey(name="alice", key="af-k-a", rate_limit_rpm=60)], "secret")
+            self.assertIn('"encrypted": true', path.read_text(encoding="utf-8"))
+            os.environ["AGENTFORGE_AUTH_KEYS_PASSPHRASE"] = "secret"
+            try:
+                keys = load_key_store(path)
+                self.assertEqual(keys[0].name, "alice")
+                self.assertEqual(keys[0].rate_limit_rpm, 60)
+            finally:
+                del os.environ["AGENTFORGE_AUTH_KEYS_PASSPHRASE"]
+
+    def test_encrypted_store_missing_passphrase_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "keys.json"
+            write_encrypted_key_store(path, [NamedKey(name="a", key="k")], "secret")
+            os.environ.pop("AGENTFORGE_AUTH_KEYS_PASSPHRASE", None)
+            with self.assertRaises(ValueError):
+                load_key_store(path)
+
+    def test_plaintext_store_still_loads(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "keys.json"
+            write_key_store(path, [NamedKey(name="bob", key="af-k-b")])
+            keys = load_key_store(path)
+            self.assertEqual(keys[0].name, "bob")
+
+    def test_gateway_authenticates_against_encrypted_store(self) -> None:
+        from agentforge_gateway.app import GatewayApp
+        from agentforge_gateway.config import DEFAULT_CONFIG, GatewayConfig
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "keys.json"
+            key = generate_key()
+            write_encrypted_key_store(path, [NamedKey(name="carol", key=key, rate_limit_rpm=100)], "secret")
+            os.environ["AGENTFORGE_AUTH_KEYS_PASSPHRASE"] = "secret"
+            try:
+                config = GatewayConfig(
+                    host="127.0.0.1", port=8080, auth_keys_file=str(path),
+                    models=DEFAULT_CONFIG.models, providers=DEFAULT_CONFIG.providers,
+                )
+                app = GatewayApp(config)
+                live = app._named_keys_live()
+                self.assertEqual(live["carol"]["key"], key)
+            finally:
+                del os.environ["AGENTFORGE_AUTH_KEYS_PASSPHRASE"]
 
 
 if __name__ == "__main__":

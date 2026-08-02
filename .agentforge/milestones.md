@@ -354,25 +354,26 @@ Exit criteria:
 - CI Bootstrap Validate passes offline without credentials for issue #88
 - docs explain the reasoning contract; release notes document `Genesis-0.0.19` for issue #89
 
-## 0.8.0: Per-Benchmark Thresholds
+## 0.9.0: Key Store Encryption at Rest
 
 Scope:
 
-- define per-benchmark thresholds requirements
-- decide the boundary (checked-in config, per-name > config default > inline > 10, ADR-0035)
-- implement `thresholds.json` + `load_thresholds` + `--thresholds` flag
-- cover resolution order, fallback, and config validation in tests
+- define store encryption requirements
+- decide the boundary (stdlib primitives: PBKDF2-CTR confidentiality + HMAC-SHA256 integrity, encrypt-then-MAC; plaintext stores stay supported, ADR-0036)
+- implement `keystore.py` encrypt/decrypt + gateway env passphrase + `auth-key --encrypt`
+- cover roundtrip, wrong passphrase, tamper detection, plaintext compat, gateway auth, CLI in tests
 - ship docs
 
 Exit criteria:
 
-- ADR-0035 records the threshold config boundary for issue #191
-- config + loader + flag land for issue #192
-- CI Bootstrap Validate passes offline for issue #193
-- docs explain thresholds; release notes document `0.8.0` for issue #194
+- ADR-0036 records the encryption boundary for issue #196
+- encrypt/decrypt + CLI land for issue #197/#198
+- CI Bootstrap Validate passes offline for issue #198
+- docs explain encryption; release notes document `0.9.0` for issue #199
 
 ## Revision History
 
+- 2026-08-01: Added 0.9.0 store encryption milestone.
 - 2026-08-01: Added 0.8.0 per-benchmark thresholds milestone.
 - 2026-08-01: Added 0.7.0 regression gate milestone.
 - 2026-08-01: Added 0.6.0 benchmark trends milestone.

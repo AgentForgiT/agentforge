@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.9.0 - 2026-08-01
+
+- Added key-store encryption at rest (ADR-0036):
+  - `keystore.py` encrypt/decrypt: PBKDF2-HMAC-SHA256 (210k iters) derives enc + MAC keys; PBKDF2-CTR XOR stream for confidentiality; HMAC-SHA256 encrypt-then-MAC for integrity (stdlib primitives, documented honestly — not audited AEAD).
+  - Encrypted stores auto-detect (`"encrypted": true`); gateway decrypts via `AGENTFORGE_AUTH_KEYS_PASSPHRASE`; wrong passphrase/tampering → clear error.
+  - `auth-key add --encrypt` (+ `--passphrase-env`); list/revoke work on encrypted stores transparently.
+  - Plaintext stores fully supported (backward compatible).
+- Added 9 encryption tests (roundtrip, wrong passphrase, tamper detection, plaintext compat, gateway auth, CLI encrypt). Named-key suite now 26.
+
 ## 0.8.0 - 2026-08-01
 
 - Added per-benchmark regression thresholds (ADR-0035):

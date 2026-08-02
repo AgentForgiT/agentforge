@@ -98,6 +98,8 @@ def build_parser() -> argparse.ArgumentParser:
     add_parser.add_argument("--name", required=True, help="Key name (user/workload)")
     add_parser.add_argument("--rate-limit", type=int, default=None, help="Per-key requests/minute")
     add_parser.add_argument("--file", default=None, help="Key store path (default .agentforge/auth-keys.json)")
+    add_parser.add_argument("--encrypt", action="store_true", help="Write the store encrypted (ADR-0036)")
+    add_parser.add_argument("--passphrase-env", default=None, help="Env var holding the store passphrase (default AGENTFORGE_AUTH_KEYS_PASSPHRASE)")
     list_parser = auth_key_sub.add_parser("list", help="List key names + rate limits (never keys)")
     list_parser.add_argument("--file", default=None, help="Key store path")
     revoke_parser = auth_key_sub.add_parser("revoke", help="Revoke a named key")
@@ -242,7 +244,7 @@ def _run_auth_key(args: Any) -> int:
 
     store = Path(args.file) if args.file else _default_key_store()
     if args.auth_action == "add":
-        result = add_key(store, args.name, rate_limit_rpm=args.rate_limit)
+        result = add_key(store, args.name, rate_limit_rpm=args.rate_limit, encrypt=args.encrypt, passphrase_env=args.passphrase_env)
         if not result.ok:
             for error in result.errors:
                 print(error)

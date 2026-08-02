@@ -9,7 +9,14 @@ if "apps/gateway/src" not in " ".join(sys.path):
     if _gateway_src.is_dir() and str(_gateway_src) not in sys.path:
         sys.path.insert(0, str(_gateway_src))
 
-from agentforge_gateway.keystore import NamedKey, generate_key, load_key_store, write_key_store  # type: ignore[import-not-found]
+from agentforge_gateway.keystore import (  # type: ignore[import-not-found]
+    NamedKey,
+    generate_key,
+    load_key_store,
+    load_passphrase_from_env,
+    write_encrypted_key_store,
+    write_key_store,
+)
 
 
 @dataclass(frozen=True)
@@ -22,7 +29,13 @@ class AuthKeyResult:
         return not self.errors
 
 
-def add_key(store_path: Path, name: str, rate_limit_rpm: int | None = None) -> AuthKeyResult:
+def add_key(
+    store_path: Path,
+    name: str,
+    rate_limit_rpm: int | None = None,
+    encrypt: bool = False,
+    passphrase_env: str | None = None,
+) -> AuthKeyResult:
     if not name.strip():
         return AuthKeyResult(errors=("key name must be non-empty",))
     try:
@@ -34,7 +47,13 @@ def add_key(store_path: Path, name: str, rate_limit_rpm: int | None = None) -> A
     key = generate_key()
     keys.append(NamedKey(name=name.strip(), key=key, rate_limit_rpm=rate_limit_rpm))
     try:
-        write_key_store(store_path, keys)
+        if encrypt:
+            passphrase = load_passphrase_from_env(passphrase_env or "AGENTFORGE_AUTH_KEYS_PASSPHRASE")
+            if not passphrase:
+                return AuthKeyResult(errors=("--encrypt requires the passphrase env to be set",))
+            write_encrypted_key_store(store_path, keys, passphrase)
+        else:
+            write_key_store(store_path, keys)
     except OSError as exc:
         return AuthKeyResult(errors=(f"could not write key store: {exc}",))
     return AuthKeyResult(new_key=key)

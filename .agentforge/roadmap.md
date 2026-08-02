@@ -242,22 +242,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, and `git diff --check`.
 
-## Sprint 43: Per-Benchmark Thresholds
+## Sprint 44: Key Store Encryption at Rest
 
-Goal: make the gate trustworthy per benchmark — a checked-in thresholds config (default + per-name overrides) resolved by the regression gate (ADR-0035).
+Goal: encrypt the named key store with a password-derived key (stdlib primitives, encrypt-then-MAC), keep plaintext stores working (ADR-0036).
 
 Deliverables:
 
-- per-benchmark thresholds requirements for issue #190
-- threshold config boundary decision ADR-0035 for issue #191
-- `benchmarks/thresholds.json` + `load_thresholds` + `--thresholds` flag + resolution order for issue #192
-- threshold resolution + config validation tests; CI green for issue #193
-- docs + `0.8.0` release for issue #194
+- store encryption requirements for issue #195
+- encryption boundary decision ADR-0036 for issue #196
+- `keystore.py` encrypt/decrypt (PBKDF2-CTR + HMAC, auto-detect marker) + gateway env passphrase for issue #197
+- `auth-key --encrypt` CLI + encryption tests for issue #198
+- docs + `0.9.0` release for issue #199
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, benchmark tests, and `git diff --check`.
 
 ## Revision History
 
+- 2026-08-01: Added Sprint 44 encryption deliverables.
 - 2026-08-01: Added Sprint 43 per-benchmark thresholds deliverables.
 - 2026-08-01: Added Sprint 42 regression gate deliverables.
 - 2026-08-01: Added Sprint 41 benchmark trends deliverables.

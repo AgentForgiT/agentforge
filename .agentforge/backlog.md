@@ -73,6 +73,7 @@ Near-term work should remain small and releasable:
 
 ## Done and Removed
 
+- Key store encryption at rest (Sprint 44, 2026-08-01): PBKDF2-CTR + HMAC-SHA256 encrypt-then-MAC envelope (stdlib primitives), `auth-key --encrypt`, gateway `AGENTFORGE_AUTH_KEYS_PASSPHRASE`, plaintext stores still supported; ADR-0036; released as 0.9.0.
 - Per-benchmark thresholds (Sprint 43, 2026-08-01): `thresholds.json` (default + per-name overrides), `--thresholds` flag, resolution per-name > config default > inline > 10; ADR-0035; released as 0.8.0.
 - Benchmark regression gate (Sprint 42, 2026-08-01): `check_regressions.py` — current vs previous release comparison, threshold in percent, both better-directions, improvements never fail; wired into the publish workflow; ADR-0034; released as 0.7.0.
 - Benchmark trends (Sprint 41, 2026-08-01): `collect_history.py` merging per-release results assets into versioned history.json with deltas + derived better-direction; observatory trends section; ADR-0033; released as 0.6.0.
@@ -159,6 +160,7 @@ Change line 42 in config.py to reject timeout_seconds <= 0.
 
 ## Revision History
 
+- 2026-08-01: Promoted key store encryption into Sprint 44.
 - 2026-08-01: Promoted per-benchmark thresholds into Sprint 43.
 - 2026-08-01: Promoted regression gate into Sprint 42.
 - 2026-08-01: Promoted benchmark trends into Sprint 41.

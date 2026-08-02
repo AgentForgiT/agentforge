@@ -34,7 +34,7 @@ The draft AgentForge AI Context Specification is available at `.agentforge/specs
 
 ## Current Priority
 
-Sprint 43 ships per-benchmark thresholds (ADR-0035): `benchmarks/thresholds.json` (checked-in default + per-name overrides) consumed by the regression gate — tight 5% on stable gateway latency, loose 20% on jittery CLI timing. Release 0.8.0.
+Sprint 44 ships key-store encryption at rest (ADR-0036): `auth-key add --encrypt` writes a PBKDF2 + HMAC-encrypted store (stdlib primitives, encrypt-then-MAC), the gateway auto-decrypts via `AGENTFORGE_AUTH_KEYS_PASSPHRASE`, and plaintext stores stay supported. Release 0.9.0.
 
 Gateway provider adapters live behind explicit internal modules under `agentforge_gateway.providers`, chat-completion request validation lives under `agentforge_gateway.requests`, gateway errors use a standard JSON envelope, successful chat-completion responses and streaming chunks pass through `agentforge_gateway.responses`, JSON configuration is validated by `agentforge_gateway.config`, and structured access records are emitted through `agentforge_gateway.logger`. Product backlog and epics live in `.agentforge/backlog.md`, canonical standards live in `.agentforge/standards/`, and repository hygiene is anchored by `.editorconfig` and `.gitattributes`. The public `agentforge-gateway` and `agentforge-cli` repositories remain historical pre-governance prototypes; new canonical gateway and CLI work belongs in this repository under `apps/gateway` and `apps/cli`.
 
