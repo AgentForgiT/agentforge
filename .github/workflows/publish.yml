@@ -5,6 +5,7 @@ on:
     tags:
       - "Genesis-*"
       - "0.*"
+      - "1.*"
 
 permissions:
   contents: write
