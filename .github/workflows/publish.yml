@@ -6,6 +6,12 @@ on:
       - "Genesis-*"
       - "0.*"
       - "1.*"
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag to attach assets to (e.g. 1.0.0)"
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -62,7 +68,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
-          TAG="${GITHUB_REF#refs/tags/}"
+          TAG="${{ github.event.inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || '' }}"
+          if [ -z "$TAG" ]; then TAG="${GITHUB_REF#refs/tags/}"; fi
           # debug: show what the API actually returns
           curl -sS -o /tmp/release.json -w "api_status=%{http_code}\n" \
             -H "Authorization: Bearer $GH_TOKEN" \
@@ -97,7 +104,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
-          TAG="${GITHUB_REF#refs/tags/}"
+          TAG="${{ github.event.inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || '' }}"
+          if [ -z "$TAG" ]; then TAG="${GITHUB_REF#refs/tags/}"; fi
           gh release list --repo "$GH_REPO" --limit 20 --json tagName --jq '.[].tagName' > /tmp/tags.txt
           PREV_TAG=""
           while IFS= read -r t; do
@@ -122,7 +130,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
-          TAG="${GITHUB_REF#refs/tags/}"
+          TAG="${{ github.event.inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || '' }}"
+          if [ -z "$TAG" ]; then TAG="${GITHUB_REF#refs/tags/}"; fi
           for i in $(seq 1 30); do
             if gh release view "$TAG" --repo "$GH_REPO" >/dev/null 2>&1; then
               break
