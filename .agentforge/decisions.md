@@ -54,6 +54,7 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 | ADR-0036 | 2026-08-01 | Accepted | Encrypt the named key store at rest with stdlib primitives | `.agentforge/adrs/0036-store-encryption-boundary.md` |
 | ADR-0037 | 2026-08-01 | Accepted | Expose MCP resources and prompts on the gateway | `.agentforge/adrs/0037-mcp-resources-prompts-boundary.md` |
 | ADR-0038 | 2026-08-01 | Accepted | Require statistical significance in the regression gate | `.agentforge/adrs/0038-variance-aware-regression-gate.md` |
+| ADR-0039 | 2026-08-08 | Accepted | MCP client mode boundary (outbound mirror of the MCP surface) | `.agentforge/adrs/0039-mcp-client-mode-boundary.md` |
 | DEC-0001 | 2026-06-28 | Accepted | Treat early gateway and CLI repos as pre-governance prototypes | `.agentforge/decisions/0001-pre-governance-prototypes.md` |
 | DEC-0002 | 2026-06-28 | Accepted | Keep prototype repositories public with canonical monorepo notices | `.agentforge/decisions/0002-prototype-repository-disposition.md` |
 | DEC-0003 | 2026-06-28 | Accepted | Build AICS validation CLI in the canonical monorepo | `.agentforge/decisions/0003-cli-path-for-aics-validation.md` |
@@ -67,6 +68,7 @@ Durable architecture decisions should be recorded as ADRs in `.agentforge/adrs/`
 ## Revision History
 
 - 2026-08-01: Added DEC-0009 (1.0.0 readiness gate).
+- 2026-08-08: Added ADR-0039 (MCP client mode boundary).
 - 2026-08-01: Added ADR-0038.
 - 2026-08-01: Added ADR-0037.
 - 2026-08-01: Added ADR-0036.
