@@ -1,0 +1,29 @@
+{
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8080,
+    "log_level": "INFO",
+    "mcp_servers": {
+      "local-notes": {
+        "url": "http://127.0.0.1:3001/mcp",
+        "timeout_seconds": 10
+      },
+      "secured-tools": {
+        "url": "http://127.0.0.1:3002/mcp",
+        "auth_header_env": "AGENTFORGE_MCP_TOOLS_TOKEN",
+        "timeout_seconds": 15
+      }
+    }
+  },
+  "models": {
+    "mock-coder": {
+      "provider": "mock",
+      "provider_model": "mock-coder-v1"
+    }
+  },
+  "providers": {
+    "mock": {
+      "type": "mock"
+    }
+  }
+}

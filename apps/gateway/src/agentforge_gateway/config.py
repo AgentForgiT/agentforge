@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import json
 from pathlib import Path
 from typing import Any
@@ -26,6 +26,21 @@ class ProviderConfig:
 
 
 @dataclass(frozen=True)
+class McpServerConfig:
+    """A remote MCP server the gateway can call (MCP client mode, ADR-0039).
+
+    Keyless by default (local trust boundary, mirroring ADR-0017); an
+    optional auth header env name enables token auth without storing secrets
+    in the config file.
+    """
+
+    name: str
+    url: str
+    auth_header_env: str | None = None
+    timeout_seconds: float = 10.0
+
+
+@dataclass(frozen=True)
 class GatewayConfig:
     host: str
     port: int
@@ -36,6 +51,7 @@ class GatewayConfig:
     api_key_env: str | None = None
     auth_keys_file: str | None = None
     rate_limit_rpm: int | None = None
+    mcp_servers: dict[str, McpServerConfig] = field(default_factory=dict)
 
 
 DEFAULT_CONFIG = GatewayConfig(
@@ -101,6 +117,7 @@ def parse_config(raw: object) -> GatewayConfig:
         api_key_env=_optional_env_name(server.get("api_key_env"), "server.api_key_env"),
         auth_keys_file=_optional_str(server.get("auth_keys_file"), "server.auth_keys_file"),
         rate_limit_rpm=_positive_int(server.get("rate_limit_rpm"), "server.rate_limit_rpm"),
+        mcp_servers=_parse_mcp_servers(server.get("mcp_servers")),
         models=parsed_models,
         providers=parsed_providers,
     )
@@ -169,6 +186,37 @@ def _parse_providers(providers: Any) -> dict[str, ProviderConfig]:
             headers=_headers(provider["headers"] if "headers" in provider else {}, f"provider '{name}'.headers"),
         )
 
+    return parsed
+
+
+def _parse_mcp_servers(value: Any) -> dict[str, McpServerConfig]:
+    """Parse the optional `server.mcp_servers` block (MCP client mode).
+
+    Each entry: `{name, url, auth_header_env?, timeout_seconds?}`.
+    Keyless by default (ADR-0039, mirroring ADR-0017's local trust boundary).
+    """
+    if value is None:
+        return {}
+    if not isinstance(value, dict):
+        raise ValueError("server.mcp_servers must be an object")
+    if not value:
+        return {}
+
+    parsed: dict[str, McpServerConfig] = {}
+    for name, entry in value.items():
+        if not isinstance(entry, dict):
+            raise ValueError(f"server.mcp_servers '{name}' must be an object")
+        url = _required_str(entry.get("url"), f"server.mcp_servers '{name}'.url")
+        parsed[name] = McpServerConfig(
+            name=name,
+            url=url,
+            auth_header_env=_optional_env_name(
+                entry.get("auth_header_env"), f"server.mcp_servers '{name}'.auth_header_env"
+            ),
+            timeout_seconds=_positive_number(
+                entry.get("timeout_seconds", 10.0), f"server.mcp_servers '{name}'.timeout_seconds"
+            ),
+        )
     return parsed
 
 

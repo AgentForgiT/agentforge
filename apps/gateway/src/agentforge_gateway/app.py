@@ -24,6 +24,7 @@ from .errors import (
 )
 from .logger import configure_logging, get_logger
 from .mcp import McpServer
+from .mcpclient import McpClient, McpClientError, build_mcp_clients, _flatten_content
 from .keystore import load_key_store
 from .models import ModelRegistry
 from .providers import ChatProvider, build_provider
@@ -34,7 +35,12 @@ import os
 
 
 class GatewayApp:
-    def __init__(self, config: GatewayConfig, providers: dict[str, ChatProvider] | None = None) -> None:
+    def __init__(
+        self,
+        config: GatewayConfig,
+        providers: dict[str, ChatProvider] | None = None,
+        mcp_transport: object | None = None,
+    ) -> None:
         self.config = config
         self.registry = ModelRegistry(config)
         self.providers = providers or {
@@ -47,6 +53,9 @@ class GatewayApp:
         )
         self.named_keys = self._resolve_named_keys()
         self.mcp = McpServer(self)
+        # MCP client mode (ADR-0039): one lazy client per configured server.
+        # The transport is injectable so tests stay fully offline.
+        self.mcp_clients = build_mcp_clients(config.mcp_servers, transport=mcp_transport)
 
     def _resolve_api_key(self) -> str | None:
         if not self.config.api_key_env:
@@ -146,6 +155,50 @@ class GatewayApp:
         stream = provider.chat_completion_stream(model, openai_body)
         for event in anthropic_sse_events(model, stream):
             yield event
+
+    # ------------------------------------------------------------ MCP client
+
+    def mcp_tools(self) -> list[dict[str, object]]:
+        """Namespaced tool definitions from all configured remote MCP servers.
+
+        Each remote tool becomes `mcp_<server>.<tool_name>` so it cannot
+        collide with the four built-in gateway tools (ADR-0039 R2).
+        """
+        tools: list[dict[str, object]] = []
+        for server_name, client in self.mcp_clients.items():
+            for tool in client.tools_list():
+                tool_name = tool.get("name") if isinstance(tool, dict) else None
+                if not isinstance(tool_name, str):
+                    continue
+                definition = {
+                    "name": f"mcp_{server_name}.{tool_name}",
+                    "description": (
+                        tool.get("description") if isinstance(tool, dict) else None
+                    ) or f"Remote MCP tool '{tool_name}' on server '{server_name}'.",
+                    "inputSchema": (tool.get("inputSchema") if isinstance(tool, dict) else None) or {
+                        "type": "object",
+                        "properties": {},
+                    },
+                }
+                tools.append(definition)
+        return tools
+
+    def call_mcp_tool(self, tool_name: str, arguments: dict[str, Any] | None = None) -> str:
+        """Dispatch a namespaced `mcp_<server>.<tool>` call to the remote server.
+
+        Raises :class:`McpClientError` (an error-envelope-compatible GatewayError)
+        when the server is unreachable, the tool is unknown, or the call fails.
+        """
+        server_name, sep, remote_tool = tool_name.partition(".")
+        if not sep or not server_name.startswith("mcp_"):
+            raise McpClientError(
+                f"unknown MCP tool '{tool_name}': expected mcp_<server>.<tool>"
+            )
+        server_key = server_name[len("mcp_") :]
+        if server_key not in self.mcp_clients:
+            raise McpClientError(f"unknown MCP tool '{tool_name}': expected mcp_<server>.<tool>")
+        client = self.mcp_clients[server_key]
+        return client.tools_call(remote_tool, arguments)
 
 
 def create_handler(app: GatewayApp) -> type[BaseHTTPRequestHandler]:
