@@ -2,9 +2,9 @@
 
 Metadata:
 
-- Status: Draft
-- Phase: Genesis
-- Last updated: 2026-07-10
+- Status: Accepted
+- Phase: Stable (post-1.0.0)
+- Last updated: 2026-08-08
 
 ## Genesis Sprint 1: Bootstrap Kit
 

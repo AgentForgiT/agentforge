@@ -34,7 +34,7 @@ The draft AgentForge AI Context Specification is available at `.agentforge/specs
 
 ## Current Priority
 
-Sprint 47 ships **1.0.0** — the stability line (DEC-0009): the API surface is frozen, every gate box is audited with evidence (371 tests, 38 ADRs, docs complete, distribution automated, AICS Level-3), and the semver promise is made public.
+**1.0.0 shipped (2026-08-01)** — the stability line (DEC-0009): the API surface is frozen, every gate box audited with evidence (371 tests, 38 ADRs, docs complete, distribution automated, AICS Level-3), and the semver promise is public. Releases continue on the 1.x line; the next sprint ships the first post-1.0.0 feature (minor bump + ADR), with ecosystem companion repos (mcp, benchmarks, integrations, workflows, community) acting as canonical-code reference hubs per DEC-0007.
 
 Gateway provider adapters live behind explicit internal modules under `agentforge_gateway.providers`, chat-completion request validation lives under `agentforge_gateway.requests`, gateway errors use a standard JSON envelope, successful chat-completion responses and streaming chunks pass through `agentforge_gateway.responses`, JSON configuration is validated by `agentforge_gateway.config`, and structured access records are emitted through `agentforge_gateway.logger`. Product backlog and epics live in `.agentforge/backlog.md`, canonical standards live in `.agentforge/standards/`, and repository hygiene is anchored by `.editorconfig` and `.gitattributes`. The public `agentforge-gateway` and `agentforge-cli` repositories remain historical pre-governance prototypes; new canonical gateway and CLI work belongs in this repository under `apps/gateway` and `apps/cli`.
 
