@@ -256,8 +256,23 @@ Deliverables:
 
 Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, benchmark tests, and `git diff --check`.
 
+## Sprint 48: MCP Client Mode
+
+Goal: let the gateway call remote MCP servers and expose their tools — the outbound mirror of the inbound `/mcp` surface, closing the ADR-0026 deferral.
+
+Deliverables:
+
+- MCP client mode requirements for issue #215
+- client-mode boundary decision ADR-0039 for issue #216
+- `McpServerConfig` + `server.mcp_servers` parsing, `mcpclient.py` (stdlib HTTP JSON-RPC 2.0, injectable transport), `mcp_tools()`/`call_mcp_tool()` namespacing for issue #217
+- offline suite (17 new tests) + CI validation for issue #218
+- docs + `1.1.0` release for issue #219
+
+Validation: local bootstrap, AICS, AICS minimal project, CLI tests, install test, gateway tests, SDK tests, benchmark tests, and `git diff --check`.
+
 ## Revision History
 
+- 2026-08-08: Added Sprint 48 MCP client-mode deliverables.
 - 2026-08-01: Added Sprint 47 1.0.0 readiness deliverables.
 - 2026-08-01: Added Sprint 46 variance-aware gate deliverables.
 - 2026-08-01: Added Sprint 45 MCP content deliverables.

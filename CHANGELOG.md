@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.0 - 2026-08-08
+
+- **MCP client mode (ADR-0039).** The gateway calls remote MCP servers and exposes their tools — the outbound mirror of the inbound `/mcp` surface:
+  - `server.mcp_servers` config (keyless default, optional `auth_header_env` bearer token).
+  - Lazy `initialize` + `tools/list` discovery; namespaced `mcp_<server>.<tool_name>` tool definitions.
+  - `tools/call` dispatch with content-flattening; failures translate to error-envelope records, never raw exceptions.
+  - Injectable transport keeps the suite fully offline (17 new tests; gateway suite 267 green; bootstrap/AICS/CLI/install/SDK/bench all green; CI Bootstrap Validate green on `25001af`).
+
 ## 1.0.0 - 2026-08-01
 
 - **The stability line.** Public 1.0.0 release (DEC-0009):

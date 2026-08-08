@@ -19,6 +19,7 @@ This module was migrated from the pre-governance `agentforge-gateway` prototype 
 - `POST /v1/chat/completions`
 - `POST /v1/messages` (Anthropic Messages inbound surface)
 - `POST /mcp` (MCP server surface: JSON-RPC 2.0 tools over gateway capabilities, ADR-0026)
+- MCP client mode (`server.mcp_servers`, lazy remote-tool discovery + `tools/call` dispatch, ADR-0039)
 - OpenAI-compatible SSE streaming for chat completions
 - Anthropic SSE streaming events for messages
 - opt-in API-key auth (`server.api_key_env`, ADR-0023)

@@ -371,8 +371,26 @@ Exit criteria:
 - RELEASE-1.0.0.md lands for issue #213
 - 1.0.0 tagged + released + publish workflow verified for issue #214
 
+## 1.1.0: MCP Client Mode
+
+Scope:
+
+- remotely call MCP servers from the gateway (outbound mirror of `/mcp`)
+- decide the boundary (`server.mcp_servers`, `mcp_<server>.<tool>` namespacing, keyless default; ADR-0039)
+- add `McpServerConfig` parsing + stdlib `McpClient` with injectable transport
+- cover handshake, discovery, dispatch, error translation, namespacing in offline tests
+- ship docs + `1.1.0` release
+
+Exit criteria:
+
+- ADR-0039 records the boundary for issue #216
+- implementation lands for issue #217 (gateway suite 267 green, 17 new MCP-client tests)
+- CI Bootstrap Validate green for issue #218
+- docs + release `1.1.0` for issue #219
+
 ## Revision History
 
+- 2026-08-08: Added 1.1.0 MCP client mode milestone.
 - 2026-08-01: Added 1.0.0 stability line milestone.
 - 2026-08-01: Added 0.11.0 variance-aware gate milestone.
 - 2026-08-01: Added 0.10.0 MCP content milestone.

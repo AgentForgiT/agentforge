@@ -338,6 +338,46 @@ curl http://127.0.0.1:8080/mcp \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"gateway_chat_completion","arguments":{"model":"mock-coder","messages":[{"role":"user","content":"Hello"}]}}}'
 ```
 
+## MCP Client Mode
+
+ADR-0039 adds the outbound mirror (released 1.1.0): the gateway **calls**
+remote MCP servers and exposes their tools — the inverse of the inbound
+`/mcp` surface above.
+
+Configuration (`server.mcp_servers`, optional — absent means zero behavior
+change):
+
+```json
+{
+  "server": {
+    "mcp_servers": {
+      "local-notes": { "url": "http://127.0.0.1:3001/mcp" },
+      "secured-tools": { "url": "http://127.0.0.1:3002/mcp", "auth_header_env": "AGENTFORGE_MCP_TOOLS_TOKEN" }
+    }
+  }
+}
+```
+
+Keyless by default (local trust boundary, ADR-0017 pattern); an optional
+`auth_header_env` names an environment variable holding a bearer token —
+never stored in the config file.
+
+Behavior:
+
+- **Lazy discovery** — each server is contacted only on first use
+  (`initialize` then `tools/list`).
+- **Namespacing** — remote tools surface as `mcp_<server>.<tool_name>`
+  (`mcp_local-notes.read_file`), so they cannot collide with the four
+  built-in gateway tools. `GatewayApp.mcp_tools()` lists them.
+- **Dispatch** — `GatewayApp.call_mcp_tool("mcp_<server>.<tool>", args)`
+  calls `tools/call` on the remote server; the content array is flattened to
+  one string. Remote failures become `upstream_provider_error`-compatible
+  error records, never raw exceptions.
+- **Offline tests** — the transport is injectable (`mcp_transport` on
+  `GatewayApp`), so the suite stays fully deterministic.
+
+See `apps/gateway/config.mcp-client.example.json` for a full example.
+
 ## Logging
 
 ADR-0015 defines the gateway logging boundary.

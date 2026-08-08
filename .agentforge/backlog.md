@@ -73,6 +73,7 @@ Near-term work should remain small and releasable:
 
 ## Done and Removed
 
+- MCP client mode (Sprint 48, 2026-08-08): gateway calls remote MCP servers (`server.mcp_servers`, `McpClient` stdlib HTTP JSON-RPC 2.0, `mcp_<server>.<tool>` namespacing, injectable transport); ADR-0039; released as 1.1.0, the first post-stability semver feature release.
 - Public 1.0.0 stability line (Sprint 47, 2026-08-01): audited gate (371 tests, 38 ADRs, 9 DECs, docs, distribution, AICS Level-3, API-surface inventory), RELEASE-1.0.0.md; DEC-0009; tagged 1.0.0.
 - Variance-aware regression gate (Sprint 46, 2026-08-01): Welch's t-test significance (stdlib betai) gates every threshold breach — jittery benchmarks no longer false-flag; `--significance` flag; ADR-0038; released as 0.11.0.
 - MCP resources and prompts (Sprint 45, 2026-08-01): resources/list + read (model registry, redacted config), prompts/list + get (request-builder, config-review, error-diagnosis); ADR-0037; released as 0.10.0.
